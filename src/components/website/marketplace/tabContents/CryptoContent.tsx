@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import ContainerLayout from "@/layout/ContainerLayout";
 import { ListFilter, Search } from "lucide-react";
 import React, { useState } from "react";
+import Contests from "../filterTabsContent/Contests";
 
 const CryptoContent = () => {
   const [activeTab, setActiveTab] = useState<
@@ -91,17 +92,14 @@ const CryptoContent = () => {
             </button>
           </div>
         </div>
+        
         <div>
           {/* Tab Content */}
-          {activeTab === "all" && <div className="p-4">All Events Content</div>}
-          {activeTab === "bitcoin" && (
-            <div className="p-4">Bitcoin Events Content</div>
-          )}
-          {activeTab === "ethereum" && (
-            <div className="p-4">Ethereum Events Content</div>
-          )}
+          {activeTab === "all" && <Contests type="all" />}
+          {activeTab === "bitcoin" && <Contests type="bitcoin" />}
+          {activeTab === "ethereum" && <Contests type="ethereum" />}
           {activeTab === "marketCapRanges" && (
-            <div className="p-4">Market Cap Ranges Content</div>
+            <Contests type="marketCapRanges" />
           )}
         </div>
       </ContainerLayout>
