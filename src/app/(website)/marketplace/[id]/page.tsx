@@ -1,5 +1,6 @@
 import LatestNews from "@/components/website/contestsDetails/LatestNews";
 import { LiveChart } from "@/components/website/contestsDetails/LiveChart";
+import { SelectPredictions } from "@/components/website/contestsDetails/SelectPredictions";
 import ContestCountdown from "@/helpers/ContestCountdown";
 import ContainerLayout from "@/layout/ContainerLayout";
 import { CircleQuestionMark, Clock, Plus, Search, Users } from "lucide-react";
@@ -89,6 +90,10 @@ const page = () => {
                 </div>
               </div>
 
+              <div className="mt-6">
+                <SelectPredictions />
+              </div>
+
               <p className="text-[#96A39C] font-semibold text-sm mt-4 text-center">
                 * Price is according to Bloomberg. Each prediction must be
                 unique. Closest prediction to the actual value wins
@@ -131,16 +136,22 @@ const page = () => {
 
             <div className="mt-8">
               <div className="flex justify-between items-center">
-                <h4 className="text-lg text-[#002913] font-semibold">Live Bitcoin Price</h4>
+                <h4 className="text-lg text-[#002913] font-semibold">
+                  Live Bitcoin Price
+                </h4>
                 <h4 className="text-primary font-semibold">$118,845.42</h4>
               </div>
 
               <div className="flex justify-between items-center mb-1">
-                <p className="text-sm text-primary font-semibold">24H Change: +1.3%</p>
+                <p className="text-sm text-primary font-semibold">
+                  24H Change: +1.3%
+                </p>
                 <p className="text-[#96A39C] text-xs">Current</p>
               </div>
 
-              <p className="text-[#96A39C] text-xs mb-5">Data from CoinGecko API</p>
+              <p className="text-[#96A39C] text-xs mb-5">
+                Data from CoinGecko API
+              </p>
 
               <LiveChart />
             </div>
