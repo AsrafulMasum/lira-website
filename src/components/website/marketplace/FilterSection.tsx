@@ -5,7 +5,7 @@ import CryptoContent from "./tabContents/CryptoContent";
 
 const FilterSection = () => {
   return (
-    <section>
+    <section className="bg-[#FAFFFC]">
       <Tabs defaultValue="crypto" className="w-full h-12">
         <ContainerLayout>
           <TabsList>
@@ -16,16 +16,16 @@ const FilterSection = () => {
           </TabsList>
         </ContainerLayout>
         <TabsContent value="all">
-          Make changes to your account here.
+          <CryptoContent />
         </TabsContent>
         <TabsContent value="crypto">
           <CryptoContent />
         </TabsContent>
         <TabsContent value="weather">
-          Change your weather settings here.
+          <CryptoContent />
         </TabsContent>
         <TabsContent value="stock">
-          Change your stock market settings here.
+          <CryptoContent />
         </TabsContent>
       </Tabs>
     </section>

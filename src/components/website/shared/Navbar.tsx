@@ -5,13 +5,13 @@ import ContainerLayout from "@/layout/ContainerLayout";
 
 const Navbar = () => {
   return (
-    <>
+    <div className="bg-[#FAFFFC]">
       <ContainerLayout>
         <nav className="w-full h-16 flex items-center">
           <Image className="w-16" src={logo} alt="Logo" />
         </nav>
       </ContainerLayout>
-    </>
+    </div>
   );
 };
 

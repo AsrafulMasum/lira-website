@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import ContestCountdown from "@/helpers/ContestCountdown";
 import { Clock, Users } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 const contests = [
@@ -133,54 +134,59 @@ const Contests = ({ type }: { type: string }) => {
       </h4>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {contests?.map((contest) => (
-          <Card key={contest._id}>
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-[#002913] leading-[132%]">
-                {contest.contestName}
-              </CardTitle>
-              <CardDescription className="flex items-center justify-between text-sm text-[#717A75]">
-                <p className="flex items-center gap-2">
-                  <Clock size={16} /> Ends In:{" "}
-                  <ContestCountdown endDate={contest.endsIn} />
-                </p>
-                <p className="flex items-center gap-2 text-[#96A39C]">
-                  <Users size={16} />
-                  {contest.totalEntries} entries
-                </p>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-3">
-                <img
-                  src={contest.prize.image}
-                  alt={contest.prize.name}
-                  className="mt-2 size-12 object-cover rounded-lg"
-                />
-                <div>
-                  <p className="text-[#004721] font-semibold leading-[124%] my-2">
-                    {contest.prize.name}
+          <Link key={contest._id} href={`/marketplace/${contest._id}`}>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold text-[#002913] leading-[132%]">
+                  {contest?.contestName.split("on")[0] + "on"}{" "}
+                  <span className="text-primary">
+                    {contest?.contestName.split("on")[1]}
+                  </span>{" "}
+                </CardTitle>
+                <CardDescription className="flex items-center justify-between text-sm text-[#717A75]">
+                  <p className="flex items-center gap-2">
+                    <Clock size={16} /> Ends In:{" "}
+                    <ContestCountdown endDate={contest.endsIn} isMarketPlace={true} />
                   </p>
-                  <p className="text-primary text-sm font-semibold">
-                    $ {contest.prize.price}{" "}
-                    <span className="text-[#96A39C] font-normal pl-1.5">
-                      Prize pool
-                    </span>
+                  <p className="flex items-center gap-2 text-[#96A39C]">
+                    <Users size={16} />
+                    {contest.totalEntries} entries
                   </p>
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-3">
+                  <img
+                    src={contest.prize.image}
+                    alt={contest.prize.name}
+                    className="mt-2 size-12 object-cover rounded-lg"
+                  />
+                  <div>
+                    <p className="text-[#004721] font-semibold leading-[124%] my-2">
+                      {contest.prize.name}
+                    </p>
+                    <p className="text-primary text-sm font-semibold">
+                      $ {contest.prize.price}{" "}
+                      <span className="text-[#96A39C] font-normal pl-1.5">
+                        Prize pool
+                      </span>
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between items-center">
-              <p className="bg-[#F2F7F5] py-2 px-3 rounded-lg text-sm text-[#717A75]">
-                {contest.category}
-              </p>
-              <CardAction>
-                <p className="bg-primary py-2 px-3 rounded-lg font-semibold text-white">
-                  <span className="text-sm font-normal">From</span> $
-                  {contest.entryPrice}
+              </CardContent>
+              <CardFooter className="flex justify-between items-center">
+                <p className="bg-[#F2F7F5] py-2 px-3 rounded-lg text-sm text-[#717A75]">
+                  {contest.category}
                 </p>
-              </CardAction>
-            </CardFooter>
-          </Card>
+                <CardAction>
+                  <p className="bg-primary py-2 px-3 rounded-lg font-semibold text-white">
+                    <span className="text-sm font-normal">From</span> $
+                    {contest.entryPrice}
+                  </p>
+                </CardAction>
+              </CardFooter>
+            </Card>
+          </Link>
         ))}
       </div>
     </section>
