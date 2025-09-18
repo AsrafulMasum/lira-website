@@ -1,5 +1,14 @@
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import LatestNews from "@/components/website/contestsDetails/LatestNews";
 import { LiveChart } from "@/components/website/contestsDetails/LiveChart";
+import RangeSheet from "@/components/website/contestsDetails/RangeSheet";
 import { SelectPredictions } from "@/components/website/contestsDetails/SelectPredictions";
 import ContestCountdown from "@/helpers/ContestCountdown";
 import ContainerLayout from "@/layout/ContainerLayout";
@@ -63,23 +72,28 @@ const page = () => {
                       <Search size={16} /> Search
                     </button>
 
-                    <button
-                      className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-[#E6EBE8] bg-[#F2F7F5]`}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                      >
-                        <path
-                          d="M7.50832 11.6667H1.66666V13.3334H7.50832V15.8334L10.8333 12.5L7.50832 9.16669V11.6667ZM12.4917 10.8334V8.33335H18.3333V6.66669H12.4917V4.16669L9.16666 7.50002L12.4917 10.8334Z"
-                          fill="#004721"
-                        />
-                      </svg>{" "}
-                      Range
-                    </button>
+                    <Sheet>
+                      <SheetTrigger asChild>
+                        <button
+                          className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-[#E6EBE8] bg-[#F2F7F5]`}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                          >
+                            <path
+                              d="M7.50832 11.6667H1.66666V13.3334H7.50832V15.8334L10.8333 12.5L7.50832 9.16669V11.6667ZM12.4917 10.8334V8.33335H18.3333V6.66669H12.4917V4.16669L9.16666 7.50002L12.4917 10.8334Z"
+                              fill="#004721"
+                            />
+                          </svg>{" "}
+                          Range
+                        </button>
+                      </SheetTrigger>
+                      <RangeSheet />
+                    </Sheet>
 
                     <button
                       className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-[#E6EBE8] bg-[#F2F7F5]`}
