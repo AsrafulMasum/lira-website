@@ -91,7 +91,7 @@ const page = () => {
                     </Sheet>
 
                     <Dialog>
-                      <DialogTrigger>
+                      <DialogTrigger asChild>
                         <button
                           className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-[#E6EBE8] bg-[#F2F7F5]`}
                         >
