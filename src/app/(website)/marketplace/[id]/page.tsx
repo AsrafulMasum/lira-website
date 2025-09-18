@@ -1,11 +1,5 @@
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import LatestNews from "@/components/website/contestsDetails/LatestNews";
 import { LiveChart } from "@/components/website/contestsDetails/LiveChart";
 import RangeSheet from "@/components/website/contestsDetails/RangeSheet";
@@ -15,6 +9,7 @@ import ContainerLayout from "@/layout/ContainerLayout";
 import { CircleQuestionMark, Clock, Plus, Search, Users } from "lucide-react";
 import Image from "next/image";
 import React from "react";
+import AddCustomValue from "@/components/website/contestsDetails/AddCustomValue";
 
 const contest = {
   _id: "c1a7f2e9-8b91-4a23-9f3c-1f9e12d92b10",
@@ -95,11 +90,16 @@ const page = () => {
                       <RangeSheet />
                     </Sheet>
 
-                    <button
-                      className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-[#E6EBE8] bg-[#F2F7F5]`}
-                    >
-                      <Plus size={16} /> Value
-                    </button>
+                    <Dialog>
+                      <DialogTrigger>
+                        <button
+                          className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-[#E6EBE8] bg-[#F2F7F5]`}
+                        >
+                          <Plus size={16} /> Value
+                        </button>
+                      </DialogTrigger>
+                      <AddCustomValue />
+                    </Dialog>
                   </div>
                 </div>
               </div>
