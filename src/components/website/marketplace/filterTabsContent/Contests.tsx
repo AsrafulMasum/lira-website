@@ -134,7 +134,7 @@ const Contests = ({ type }: { type: string }) => {
       </h4>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
         {contests?.map((contest) => (
-          <Link key={contest._id} href={`/marketplace/${contest._id}`}>
+          <Link key={contest._id} href={`/${contest._id}`}>
             <Card className="w-[390px] lg:w-auto shadow-none">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-[#002913] leading-[132%]">

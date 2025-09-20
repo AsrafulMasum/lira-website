@@ -2,7 +2,7 @@ import React from "react";
 
 const LearnToUse = () => {
   return (
-    <div className="mt-6 grid grid-cols-2 justify-center items-center gap-6">
+    <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 justify-center items-center gap-6">
       <div className="bg-[#FAFFFC] rounded-2xl border border-[#E6EBE8] p-6 space-y-3 h-full">
         <svg
           xmlns="http://www.w3.org/2000/svg"

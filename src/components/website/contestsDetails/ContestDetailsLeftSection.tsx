@@ -1,0 +1,94 @@
+import React from "react";
+import { SelectPredictions } from "./SelectPredictions";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Clock, Plus, Search, Users } from "lucide-react";
+import AddCustomValue from "./AddCustomValue";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
+import RangeSheet from "./RangeSheet";
+import ContestCountdown from "@/helpers/ContestCountdown";
+
+const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
+  return (
+    <div className="col-span-2">
+      <div className="sticky top-10">
+        <h4 className="text-3xl font-semibold text-[#002913]">
+          {contest?.contestName.split("on")[0] + "on"}{" "}
+          <span className="text-primary">
+            {contest?.contestName.split("on")[1]}
+          </span>{" "}
+        </h4>
+
+        <div className="flex items-center gap-4 text-[#717A75] font-semibold mt-4">
+          <p className="flex items-center gap-2">
+            <Clock size={16} /> Ends In:{" "}
+            <ContestCountdown endDate={contest.endsIn} isMarketPlace={true} />
+          </p>
+          <p className="flex items-center gap-2">
+            <Users size={16} />
+            {contest.totalEntries} entries
+          </p>
+        </div>
+
+        <div className="pt-10">
+          <div className="flex items-center justify-between">
+            <h4 className="text-2xl font-semibold text-[#002913]">
+              Select your predictions
+            </h4>
+            <div className="flex justify-center items-center gap-3">
+              <button
+                className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-[#E6EBE8] bg-[#F2F7F5]`}
+              >
+                <Search size={16} /> Search
+              </button>
+
+              <Sheet>
+                <SheetTrigger asChild>
+                  <button
+                    className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-[#E6EBE8] bg-[#F2F7F5]`}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      fill="none"
+                    >
+                      <path
+                        d="M7.50832 11.6667H1.66666V13.3334H7.50832V15.8334L10.8333 12.5L7.50832 9.16669V11.6667ZM12.4917 10.8334V8.33335H18.3333V6.66669H12.4917V4.16669L9.16666 7.50002L12.4917 10.8334Z"
+                        fill="#004721"
+                      />
+                    </svg>{" "}
+                    Range
+                  </button>
+                </SheetTrigger>
+                <RangeSheet />
+              </Sheet>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button
+                    className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-[#E6EBE8] bg-[#F2F7F5]`}
+                  >
+                    <Plus size={16} /> Value
+                  </button>
+                </DialogTrigger>
+                <AddCustomValue />
+              </Dialog>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <SelectPredictions />
+        </div>
+
+        <p className="text-[#96A39C] font-semibold text-sm mt-4 text-center">
+          * Price is according to Bloomberg. Each prediction must be unique.
+          Closest prediction to the actual value wins
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default ContestDetailsLeftSection;

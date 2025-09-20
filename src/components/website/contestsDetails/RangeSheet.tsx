@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Bar, BarChart, ResponsiveContainer, XAxis, Cell } from "recharts";
+import { useMediaQuery } from "react-responsive";
 
 // Sample data for the chart
 const chartData = [
@@ -28,6 +29,10 @@ const RangeSheet = ({ onClose }: { onClose?: () => void }) => {
 
   const minValue = 118000;
   const maxValue = 124000;
+
+  const isDesktop = useMediaQuery({ minWidth: 1024 });
+  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
+  const isMobile = useMediaQuery({ maxWidth: 767 });
 
   // Calculate which bars are in the selected range
   const isInRange = useCallback(
@@ -131,7 +136,10 @@ const RangeSheet = ({ onClose }: { onClose?: () => void }) => {
   const endPosition = getPositionFromValue(rangeEnd);
 
   return (
-    <SheetContent className="w-full h-full sm:max-w-md px-6 rounded-l-2xl pt-10 bg-[#FAFFFC]">
+    <SheetContent
+      className="w-full h-[75%] lg:h-full sm:max-w-md px-6 rounded-t-2xl lg:rounded-t-none lg:rounded-l-2xl pt-10 bg-[#FAFFFC]"
+      side={isMobile ? "bottom" : "right"}
+    >
       <SheetHeader className="space-y-0 p-0 pb-16">
         <SheetTitle className="text-xl font-semibold text-[#002913]">
           Choose a range
