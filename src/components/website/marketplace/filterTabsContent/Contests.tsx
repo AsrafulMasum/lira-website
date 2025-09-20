@@ -132,10 +132,10 @@ const Contests = ({ type }: { type: string }) => {
       <h4 className="text-2xl font-semibold text-[#4B524E] capitalize mt-10 mb-3 px-1">
         {type}
       </h4>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
         {contests?.map((contest) => (
           <Link key={contest._id} href={`/marketplace/${contest._id}`}>
-            <Card>
+            <Card className="w-[390px] lg:w-auto shadow-none">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-[#002913] leading-[132%]">
                   {contest?.contestName.split("on")[0] + "on"}{" "}
