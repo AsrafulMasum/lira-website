@@ -10,7 +10,9 @@ const Navbar = () => {
     <div className="bg-[#FAFFFC]">
       <ContainerLayout>
         <nav className="w-full h-16 flex justify-between items-center">
-          <Image className="w-16" src={logo} alt="Logo" />
+          <Link href="/">
+            <Image className="w-16" src={logo} alt="Logo" />
+          </Link>
           <div className="flex justify-center items-center gap-10">
             <ul className="hidden md:flex justify-center items-center gap-12">
               <li>
@@ -38,7 +40,7 @@ const Navbar = () => {
                 </Link>
               </li>
             </ul>
-            
+
             <button className="flex justify-center items-center gap-2 bg-[#F2F7F5] rounded-full py-1 pl-1 pr-3 border border-[#E6EBE8] cursor-pointer">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
