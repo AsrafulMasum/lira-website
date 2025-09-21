@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Check, Divide, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
+import SelectedValueSheet from "./SelectedValueSheet";
 
 interface PriceRange {
   id: string;
@@ -174,18 +176,28 @@ export function SelectPredictions() {
                 {selectedItems.size}
               </span>
               <span>Selected</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="19"
-                viewBox="0 0 18 19"
-                fill="none"
-              >
-                <path
-                  d="M9 3.5C5.25 3.5 2.0475 5.8325 0.75 9.125C2.0475 12.4175 5.25 14.75 9 14.75C12.75 14.75 15.9525 12.4175 17.25 9.125C15.9525 5.8325 12.75 3.5 9 3.5ZM9 12.875C6.93 12.875 5.25 11.195 5.25 9.125C5.25 7.055 6.93 5.375 9 5.375C11.07 5.375 12.75 7.055 12.75 9.125C12.75 11.195 11.07 12.875 9 12.875ZM9 6.875C7.755 6.875 6.75 7.88 6.75 9.125C6.75 10.37 7.755 11.375 9 11.375C10.245 11.375 11.25 10.37 11.25 9.125C11.25 7.88 10.245 6.875 9 6.875Z"
-                  fill="#717A75"
-                />
-              </svg>
+
+              <Sheet>
+                <SheetTrigger asChild>
+                  <button
+                    className="cursor-pointer"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="19"
+                      viewBox="0 0 18 19"
+                      fill="none"
+                    >
+                      <path
+                        d="M9 3.5C5.25 3.5 2.0475 5.8325 0.75 9.125C2.0475 12.4175 5.25 14.75 9 14.75C12.75 14.75 15.9525 12.4175 17.25 9.125C15.9525 5.8325 12.75 3.5 9 3.5ZM9 12.875C6.93 12.875 5.25 11.195 5.25 9.125C5.25 7.055 6.93 5.375 9 5.375C11.07 5.375 12.75 7.055 12.75 9.125C12.75 11.195 11.07 12.875 9 12.875ZM9 6.875C7.755 6.875 6.75 7.88 6.75 9.125C6.75 10.37 7.755 11.375 9 11.375C10.245 11.375 11.25 10.37 11.25 9.125C11.25 7.88 10.245 6.875 9 6.875Z"
+                        fill="#717A75"
+                      />
+                    </svg>
+                  </button>
+                </SheetTrigger>
+                <SelectedValueSheet />
+              </Sheet>
             </div>
             <div className="flex items-center gap-4">
               <span className="text-2xl font-semibold text-primary">
@@ -205,18 +217,28 @@ export function SelectPredictions() {
             {selectedItems.size}
           </span>
           <span>Selected</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="19"
-            viewBox="0 0 18 19"
-            fill="none"
-          >
-            <path
-              d="M9 3.5C5.25 3.5 2.0475 5.8325 0.75 9.125C2.0475 12.4175 5.25 14.75 9 14.75C12.75 14.75 15.9525 12.4175 17.25 9.125C15.9525 5.8325 12.75 3.5 9 3.5ZM9 12.875C6.93 12.875 5.25 11.195 5.25 9.125C5.25 7.055 6.93 5.375 9 5.375C11.07 5.375 12.75 7.055 12.75 9.125C12.75 11.195 11.07 12.875 9 12.875ZM9 6.875C7.755 6.875 6.75 7.88 6.75 9.125C6.75 10.37 7.755 11.375 9 11.375C10.245 11.375 11.25 10.37 11.25 9.125C11.25 7.88 10.245 6.875 9 6.875Z"
-              fill="#717A75"
-            />
-          </svg>
+
+          <Sheet>
+            <SheetTrigger asChild>
+              <button
+                className="cursor-pointer"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="19"
+                  viewBox="0 0 18 19"
+                  fill="none"
+                >
+                  <path
+                    d="M9 3.5C5.25 3.5 2.0475 5.8325 0.75 9.125C2.0475 12.4175 5.25 14.75 9 14.75C12.75 14.75 15.9525 12.4175 17.25 9.125C15.9525 5.8325 12.75 3.5 9 3.5ZM9 12.875C6.93 12.875 5.25 11.195 5.25 9.125C5.25 7.055 6.93 5.375 9 5.375C11.07 5.375 12.75 7.055 12.75 9.125C12.75 11.195 11.07 12.875 9 12.875ZM9 6.875C7.755 6.875 6.75 7.88 6.75 9.125C6.75 10.37 7.755 11.375 9 11.375C10.245 11.375 11.25 10.37 11.25 9.125C11.25 7.88 10.245 6.875 9 6.875Z"
+                    fill="#717A75"
+                  />
+                </svg>
+              </button>
+            </SheetTrigger>
+            <SelectedValueSheet />
+          </Sheet>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-2xl font-semibold text-primary">
