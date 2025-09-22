@@ -46,7 +46,7 @@ const SelectedValueSheet = () => {
             key={index}
             className="flex items-center justify-between bg-gray-100 rounded-lg px-4 py-3"
           >
-            <span className="text-[#004721] font-medium">{item}</span>
+            <span className="text-dark-primary font-medium">{item}</span>
             <button onClick={() => removeItem(index)}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +73,7 @@ const SelectedValueSheet = () => {
       >
         <div className="flex items-center justify-between pl-4">
           <div className="flex items-center gap-2">
-            <span className="text-[#004721] text-lg font-semibold">
+            <span className="text-dark-primary text-lg font-semibold">
               {items.length}
             </span>
             <button className="cursor-pointer" onClick={handleRemoveAll}>
@@ -96,7 +96,7 @@ const SelectedValueSheet = () => {
               {items.length * 3}
             </div>
             <Button
-              className="bg-[#004721] h-12 px-4 text-base font-bold hover:bg-[#004721]/90 text-primary-foreground rounded-2xl cursor-pointer"
+              className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer"
               disabled={!items.length}
             >
               Continue

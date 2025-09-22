@@ -19,7 +19,7 @@ const CryptoContent = () => {
     "all" | "bitcoin" | "ethereum" | "marketCapRanges"
   >("all");
   return (
-    <section className="bg-bg min-h-screen py-10">
+    <section className="bg-bg min-h-[calc(100vh-112px)] py-10">
       <ContainerLayout>
         <div className="flex flex-col lg:flex-row items-center gap-6">
           <div className="w-full lg:w-auto flex items-center gap-4 lg:border-r lg:pr-6">
@@ -30,7 +30,7 @@ const CryptoContent = () => {
                 placeholder="Search"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                className="px-10 rounded-2xl bg-[#FAFFFC] border border-[#E6EBE8]"
+                className="px-10 rounded-2xl bg-[#FAFFFC] border border-border-color"
               />
               {value && (
                 <button
@@ -55,7 +55,7 @@ const CryptoContent = () => {
             <div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex justify-center items-center gap-2 bg-[#FAFFFC] w-12 h-12 text-sm font-medium text-primary rounded-2xl border border-[#E6EBE8]">
+                  <button className="flex justify-center items-center gap-2 bg-[#FAFFFC] w-12 h-12 text-sm font-medium text-primary rounded-2xl border border-border-color">
                     <ListFilter className="size-4" />
                   </button>
                 </DropdownMenuTrigger>

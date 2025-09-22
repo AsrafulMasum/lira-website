@@ -18,7 +18,7 @@ const Navbar = () => {
               <li>
                 <Link
                   href="/community"
-                  className="text-[#004721] text-sm font-bold"
+                  className="text-dark-primary text-sm font-bold"
                 >
                   Community
                 </Link>
@@ -26,7 +26,7 @@ const Navbar = () => {
               <li>
                 <Link
                   href="/how-it-works"
-                  className="text-[#004721] text-sm font-bold"
+                  className="text-dark-primary text-sm font-bold"
                 >
                   How it works
                 </Link>
@@ -34,14 +34,14 @@ const Navbar = () => {
               <li>
                 <Link
                   href="/my-entries"
-                  className="text-[#004721] text-sm font-bold"
+                  className="text-dark-primary text-sm font-bold"
                 >
                   My Entries
                 </Link>
               </li>
             </ul>
 
-            <button className="flex justify-center items-center gap-2 bg-[#F2F7F5] rounded-full py-1 pl-1 pr-3 border border-[#E6EBE8] cursor-pointer">
+            <Link href="/profile" className="flex justify-center items-center gap-2 bg-bg rounded-full py-1 pl-1 pr-3 border border-border-color cursor-pointer">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="36"
@@ -75,7 +75,7 @@ const Navbar = () => {
               </svg>
               Name
               <ChevronRight />
-            </button>
+            </Link>
           </div>
         </nav>
       </ContainerLayout>

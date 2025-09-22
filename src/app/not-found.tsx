@@ -7,7 +7,7 @@ import { Home, Search, ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="max-h-[calc(100vh-64px)] h-[calc(100vh-64px)] bg-[#F2F7F5] flex items-center justify-center p-4">
+    <div className="max-h-[calc(100vh-64px)] h-[calc(100vh-64px)] bg-bg flex items-center justify-center p-4">
       <Card className="max-w-2xl w-full p-8 text-center space-y-8 border-0 shadow-none">
         {/* Large 404 Number */}
         <div className="space-y-4">

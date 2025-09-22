@@ -3,7 +3,7 @@ import React from "react";
 const LearnToUse = () => {
   return (
     <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 justify-center items-center gap-6">
-      <div className="bg-[#FAFFFC] rounded-2xl border border-[#E6EBE8] p-6 space-y-3 h-full">
+      <div className="bg-[#FAFFFC] rounded-2xl border border-border-color p-6 space-y-3 h-full">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="32"
@@ -16,19 +16,19 @@ const LearnToUse = () => {
             fill="#00E069"
           />
         </svg>
-        <h4 className="text-[#004721] text-lg font-semibold">
+        <h4 className="text-dark-primary text-lg font-semibold">
           Make a prediction
         </h4>
         <h6 className="text-[#4B524E] font-semibold">
           Choose a single value or a range. You can also input a custom number.
         </h6>
-        <p className="text-[#717A75] text-sm">
+        <p className="text-gray text-sm">
           Some values may be taken by other users. If you enter a range, we will
           show what is available and what is already taken.
         </p>
       </div>
 
-      <div className="bg-[#FAFFFC] rounded-2xl border border-[#E6EBE8] p-6 space-y-3 h-full">
+      <div className="bg-[#FAFFFC] rounded-2xl border border-border-color p-6 space-y-3 h-full">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="32"
@@ -41,12 +41,12 @@ const LearnToUse = () => {
             fill="#00E069"
           />
         </svg>
-        <h4 className="text-[#004721] text-lg font-semibold">Win the Prize</h4>
+        <h4 className="text-dark-primary text-lg font-semibold">Win the Prize</h4>
         <h6 className="text-[#4B524E] font-semibold">
           If your prediction is correct and your position wins, you receive the
           prize.
         </h6>
-        <p className="text-[#717A75] text-sm">
+        <p className="text-gray text-sm">
           In case of optional multi-entry (non-unique) setups, payouts are split
           accordingly.
         </p>

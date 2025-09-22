@@ -88,7 +88,7 @@ export function SelectPredictions() {
   return (
     <div className="w-full">
       <div className="w-full overflow-x-auto scrollbar-hide">
-        <Card className="w-full min-w-3xl max-w-4xl mx-auto pt-6 pb-0 border border-[#E6EBE8] shadow-none rounded-3xl gap-0">
+        <Card className="w-full min-w-3xl max-w-4xl mx-auto pt-6 pb-0 border border-border-color shadow-none rounded-3xl gap-0">
           {/* Price Range Tabs */}
           <div className="flex gap-1 px-6 border-b">
             {priceRanges.map((range) => (
@@ -108,29 +108,29 @@ export function SelectPredictions() {
           </div>
 
           {/* Stats Row */}
-          <div className="flex gap-4 bg-[#F2F7F5] px-6 pt-3 pb-5">
+          <div className="flex gap-4 bg-bg px-6 pt-3 pb-5">
             <Badge
               variant="secondary"
-              className="bg-[#E6EBE8] h-8 px-3 text-sm text-[#717A75] rounded-xl"
+              className="bg-border-color h-8 px-3 text-sm text-gray rounded-xl"
             >
               <span className="text-primary text-base">$3</span> Each
             </Badge>
             <Badge
               variant="secondary"
-              className="bg-[#E6EBE8] h-8 px-3 text-sm text-[#717A75] rounded-xl"
+              className="bg-border-color h-8 px-3 text-sm text-gray rounded-xl"
             >
               {takenPercentage}% Taken
             </Badge>
             <Badge
               variant="secondary"
-              className="bg-[#E6EBE8] h-8 px-3 text-sm text-[#717A75] rounded-xl"
+              className="bg-border-color h-8 px-3 text-sm text-gray rounded-xl"
             >
               {filteredItems.length} Entries
             </Badge>
           </div>
 
           {/* Selection Grid */}
-          <div className="grid grid-cols-5 gap-3 px-6 pb-3 bg-[#F2F7F5]">
+          <div className="grid grid-cols-5 gap-3 px-6 pb-3 bg-bg">
             {filteredItems.map((item) => {
               const isSelected = selectedItems.has(item.id);
               const isAvailable = item.available;
@@ -154,7 +154,7 @@ export function SelectPredictions() {
                   )}
 
                   {!isSelected && !isAvailable && (
-                    <div className="absolute left-4 w-5 h-5 bg-[#E6EBE8] rounded-full" />
+                    <div className="absolute left-4 w-5 h-5 bg-border-color rounded-full" />
                   )}
 
                   {isSelected && isAvailable && (
@@ -172,7 +172,7 @@ export function SelectPredictions() {
           {/* Footer */}
           <div className="hidden lg:flex items-center justify-between p-6 border-t">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="text-2xl font-semibold text-[#004721]">
+              <span className="text-2xl font-semibold text-dark-primary">
                 {selectedItems.size}
               </span>
               <span>Selected</span>
@@ -203,7 +203,7 @@ export function SelectPredictions() {
               <span className="text-2xl font-semibold text-primary">
                 ${totalPrice}
               </span>
-              <Button className="bg-[#004721] h-12 px-4 text-base font-bold hover:bg-[#004721]/90 text-primary-foreground rounded-2xl cursor-pointer">
+              <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer">
                 Continue
               </Button>
             </div>
@@ -213,7 +213,7 @@ export function SelectPredictions() {
 
       <div className="flex lg:hidden items-center justify-between p-6 border-t">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="text-2xl font-semibold text-[#004721]">
+          <span className="text-2xl font-semibold text-dark-primary">
             {selectedItems.size}
           </span>
           <span>Selected</span>
@@ -244,7 +244,7 @@ export function SelectPredictions() {
           <span className="text-2xl font-semibold text-primary">
             ${totalPrice}
           </span>
-          <Button className="bg-[#004721] h-12 px-4 text-base font-bold hover:bg-[#004721]/90 text-primary-foreground rounded-2xl cursor-pointer">
+          <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer">
             Continue
           </Button>
         </div>

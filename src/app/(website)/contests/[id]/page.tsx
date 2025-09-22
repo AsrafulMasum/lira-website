@@ -1,12 +1,5 @@
-import { Sheet, SheetTrigger } from "@/components/ui/sheet";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import RangeSheet from "@/components/website/contestsDetails/RangeSheet";
-import { SelectPredictions } from "@/components/website/contestsDetails/SelectPredictions";
-import ContestCountdown from "@/helpers/ContestCountdown";
 import ContainerLayout from "@/layout/ContainerLayout";
-import { Clock, Plus, Search, Users } from "lucide-react";
 import React from "react";
-import AddCustomValue from "@/components/website/contestsDetails/AddCustomValue";
 import LearnToUse from "@/components/website/contestsDetails/LearnToUse";
 import ContestDetailsRightSection from "@/components/website/contestsDetails/ContestDetailsRightSection";
 import ContestDetailsLeftSection from "@/components/website/contestsDetails/ContestDetailsLeftSection";
@@ -45,9 +38,9 @@ const page = () => {
       </ContainerLayout>
 
       {/* bottom */}
-      <div className="mt-16 bg-[#F2F7F5] py-12">
+      <div className="mt-16 bg-bg py-12">
         <ContainerLayout>
-          <h4 className="text-2xl font-semibold text-[#004721] text-center">
+          <h4 className="text-2xl font-semibold text-dark-primary text-center">
             Learn how easy Lira is!
           </h4>
           <LearnToUse />
