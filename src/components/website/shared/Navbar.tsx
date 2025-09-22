@@ -39,6 +39,14 @@ const Navbar = () => {
                   My Entries
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/dashboard"
+                  className="text-[#004721] text-sm font-bold"
+                >
+                  Dashboard
+                </Link>
+              </li>
             </ul>
 
             <button className="flex justify-center items-center gap-2 bg-[#F2F7F5] rounded-full py-1 pl-1 pr-3 border border-[#E6EBE8] cursor-pointer">

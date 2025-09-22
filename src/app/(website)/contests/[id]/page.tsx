@@ -1,12 +1,5 @@
-import { Sheet, SheetTrigger } from "@/components/ui/sheet";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import RangeSheet from "@/components/website/contestsDetails/RangeSheet";
-import { SelectPredictions } from "@/components/website/contestsDetails/SelectPredictions";
-import ContestCountdown from "@/helpers/ContestCountdown";
 import ContainerLayout from "@/layout/ContainerLayout";
-import { Clock, Plus, Search, Users } from "lucide-react";
 import React from "react";
-import AddCustomValue from "@/components/website/contestsDetails/AddCustomValue";
 import LearnToUse from "@/components/website/contestsDetails/LearnToUse";
 import ContestDetailsRightSection from "@/components/website/contestsDetails/ContestDetailsRightSection";
 import ContestDetailsLeftSection from "@/components/website/contestsDetails/ContestDetailsLeftSection";
