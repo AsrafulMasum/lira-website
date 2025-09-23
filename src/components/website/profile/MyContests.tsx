@@ -30,7 +30,7 @@ const MyContests = () => {
         id="rightDiv"
         ref={rightRef}
       >
-        <PastContests />
+        <PastContests viewAll={false} />
       </div>
     </section>
   );
