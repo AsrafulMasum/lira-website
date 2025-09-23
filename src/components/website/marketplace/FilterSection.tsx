@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ContainerLayout from "@/layout/ContainerLayout";
 import React from "react";
-import CryptoContent from "./tabContents/CryptoContent";
+import CryptoContent from "./tabGroupContents/CryptoContent";
 
 const FilterSection = () => {
   return (
