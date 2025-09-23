@@ -1,12 +1,12 @@
-import { OngoingContests } from "@/components/profile/OngoingContests";
+import Settings from "@/components/profile/Settings";
 import ContainerLayout from "@/layout/ContainerLayout";
 import React from "react";
 
 const page = () => {
   return (
-    <section>
+    <section className="bg-[#FAFFFC]">
       <ContainerLayout>
-        <OngoingContests viewAll={true} />
+        <Settings />
       </ContainerLayout>
     </section>
   );

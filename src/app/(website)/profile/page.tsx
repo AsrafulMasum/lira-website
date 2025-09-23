@@ -1,7 +1,7 @@
 "use client";
 
-import MyContests from "@/components/website/profile/MyContests";
-import TopCard from "@/components/website/profile/TopCard";
+import MyContests from "@/components/profile/MyContests";
+import TopCard from "@/components/profile/TopCard";
 import ContainerLayout from "@/layout/ContainerLayout";
 import Link from "next/link";
 import React from "react";
@@ -15,7 +15,10 @@ const Profile = () => {
             Welcome, Firas 👋
           </h4>
           <div className="flex items-center gap-4">
-            <button className="flex items-center gap-1 py-3 pl-3 pr-4 border border-border-color bg-bg rounded-xl text-dark-primary text-sm font-bold cursor-pointer">
+            <Link
+              href="/profile/settings"
+              className="flex items-center gap-1 py-3 pl-3 pr-4 border border-border-color bg-bg rounded-xl text-dark-primary text-sm font-bold cursor-pointer"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -29,8 +32,12 @@ const Profile = () => {
                 />
               </svg>{" "}
               Settings
-            </button>
-            <Link href="/login" className="flex items-center gap-1 py-3 pl-3 pr-4 border border-border-color bg-bg rounded-xl text-dark-primary text-sm font-bold cursor-pointer">
+            </Link>
+            
+            <Link
+              href="/login"
+              className="flex items-center gap-1 py-3 pl-3 pr-4 border border-border-color bg-bg rounded-xl text-dark-primary text-sm font-bold cursor-pointer"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"

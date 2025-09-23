@@ -1,4 +1,4 @@
-import PastContests from "@/components/website/profile/PastContests";
+import PastContests from "@/components/profile/PastContests";
 import ContainerLayout from "@/layout/ContainerLayout";
 import React from "react";
 
