@@ -3,6 +3,7 @@
 import MyContests from "@/components/website/profile/MyContests";
 import TopCard from "@/components/website/profile/TopCard";
 import ContainerLayout from "@/layout/ContainerLayout";
+import Link from "next/link";
 import React from "react";
 
 const Profile = () => {
@@ -29,7 +30,7 @@ const Profile = () => {
               </svg>{" "}
               Settings
             </button>
-            <button className="flex items-center gap-1 py-3 pl-3 pr-4 border border-border-color bg-bg rounded-xl text-dark-primary text-sm font-bold cursor-pointer">
+            <Link href="/login" className="flex items-center gap-1 py-3 pl-3 pr-4 border border-border-color bg-bg rounded-xl text-dark-primary text-sm font-bold cursor-pointer">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -43,7 +44,7 @@ const Profile = () => {
                 />
               </svg>{" "}
               Log out
-            </button>
+            </Link>
           </div>
         </div>
 

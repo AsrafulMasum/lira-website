@@ -69,9 +69,67 @@ const contestData = [
     image:
       "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
   },
+  {
+    id: 5,
+    title: "Predict the BTC price on July 1 at 9:00 PM",
+    prize: "Win a Rolex Daytona",
+    prizePool: "$2,845.50",
+    entries: 8,
+    timeLeft: "2d 3h 20m",
+    image:
+      "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
+  },
+  {
+    id: 6,
+    title: "Predict the BTC price on July 1 at 9:00 PM",
+    prize: "Win a Rolex Daytona",
+    prizePool: "$2,845.50",
+    entries: 8,
+    timeLeft: "2d 3h 20m",
+    image:
+      "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
+  },
+  {
+    id: 7,
+    title: "Predict the BTC price on July 1 at 9:00 PM",
+    prize: "Win a Rolex Daytona",
+    prizePool: "$2,845.50",
+    entries: 8,
+    timeLeft: "2d 3h 20m",
+    image:
+      "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
+  },
+  {
+    id: 8,
+    title: "Predict the BTC price on July 1 at 9:00 PM",
+    prize: "Win a Rolex Daytona",
+    prizePool: "$2,845.50",
+    entries: 8,
+    timeLeft: "2d 3h 20m",
+    image:
+      "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
+  },
 ];
 
 export function OngoingContests({ viewAll }: { viewAll?: boolean }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3; // Change to 4, 6, 8 as needed
+
+  // ✅ Calculate indexes
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  const currentContests = contestData.slice(indexOfFirst, indexOfLast);
+
+  const totalPages = Math.ceil(contestData.length / itemsPerPage);
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
   if (viewAll) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -132,7 +190,7 @@ export function OngoingContests({ viewAll }: { viewAll?: boolean }) {
 
           {/* Contest List - Full View */}
           <div className="space-y-4 mb-6">
-            {contestData.map((contest) => (
+            {currentContests.map((contest) => (
               <Card
                 key={contest.id}
                 className="p-6 bg-white border border-gray-200 shadow-sm"
@@ -216,7 +274,7 @@ export function OngoingContests({ viewAll }: { viewAll?: boolean }) {
   }
 
   return (
-    <div className="col-span-2 bg-[#FAFFFC] rounded-2xl p-6">
+    <div className="bg-[#FAFFFC] rounded-2xl p-6 ">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-2xl font-semibold text-dark-primary">Ongoing</h2>
@@ -292,7 +350,7 @@ export function OngoingContests({ viewAll }: { viewAll?: boolean }) {
 
       {/* Contest List */}
       <div className="space-y-4 mb-6">
-        {contestData.map((contest) => (
+        {currentContests.map((contest) => (
           <Card
             key={contest.id}
             className="p-6 bg-white border-border-color shadow-none gap-5"
@@ -388,24 +446,45 @@ export function OngoingContests({ viewAll }: { viewAll?: boolean }) {
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between px-6">
         <div className="text-sm text-gray-500">
-          Showing 1 to 8 of 12 contests
+          Showing {indexOfFirst + 1} to{" "}
+          {indexOfLast > contestData.length ? contestData.length : indexOfLast}{" "}
+          of {contestData.length} contests
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="text-gray-400">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-gray-400"
+            onClick={handlePrev}
+            disabled={currentPage === 1}
+          >
             <ChevronLeft className="w-4 h-4" />
           </Button>
+
+          {Array.from({ length: totalPages }, (_, i) => (
+            <Button
+              key={i + 1}
+              size="sm"
+              className={`${
+                currentPage === i + 1
+                  ? "bg-dark-primary text-white hover:bg-primary cursor-pointer"
+                  : "bg-white text-gray-600 border hover:text-white hover:bg-primary cursor-pointer"
+              }`}
+              onClick={() => setCurrentPage(i + 1)}
+            >
+              {i + 1}
+            </Button>
+          ))}
+
           <Button
+            variant="ghost"
             size="sm"
-            className="bg-green-600 text-white hover:bg-green-700"
+            className="text-gray-400"
+            onClick={handleNext}
+            disabled={currentPage === totalPages}
           >
-            1
-          </Button>
-          <Button variant="ghost" size="sm" className="text-gray-600">
-            2
-          </Button>
-          <Button variant="ghost" size="sm" className="text-gray-400">
             <ChevronRight className="w-4 h-4" />
           </Button>
         </div>
