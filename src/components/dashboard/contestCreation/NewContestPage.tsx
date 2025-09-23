@@ -12,12 +12,23 @@ import PricingStep from "./steps/PricingStep";
 
 type Step = "details" | "predictions" | "pricing" | "timing";
 
+type PricingModel = "flat" | "tiered" | "tiered-percent";
+
+interface Tier {
+  id: string;
+  minValue?: string;
+  maxValue?: string;
+  fromPercent?: string;
+  toPercent?: string;
+  pricePerPrediction: string;
+}
+
 interface ContestData {
   // Details step
   category: string;
   name: string;
   description: string;
-  statesAllowed: string;
+  statesAllowed: string[];
   prizeTitle: string;
   prizeType: string;
   prizeImage?: File;
@@ -28,12 +39,17 @@ interface ContestData {
   increment: string;
   unit: string;
   entriesPerPrediction: number;
+  placePercentages: number[];
 
   // Pricing step
-  // Add pricing fields as needed
+  pricingModel: PricingModel;
+  flatPrice: string;
+  tiers: Tier[];
 
   // Timing step
-  // Add timing fields as needed
+  predictionEventDate: string;
+  predictionEventTime: string;
+  endOffset: string;
 }
 
 const steps: { id: Step; label: string }[] = [
@@ -51,7 +67,7 @@ const NewContestPage = () => {
     category: "",
     name: "",
     description: "",
-    statesAllowed: "All states",
+    statesAllowed: [],
     prizeTitle: "",
     prizeType: "Cash",
     minValue: "",
@@ -59,6 +75,20 @@ const NewContestPage = () => {
     increment: "",
     unit: "Percentage %",
     entriesPerPrediction: 1,
+    placePercentages: [100],
+    pricingModel: "flat",
+    flatPrice: "",
+    tiers: [{
+      id: "tier-1",
+      minValue: "",
+      maxValue: "",
+      fromPercent: "",
+      toPercent: "",
+      pricePerPrediction: ""
+    }],
+    predictionEventDate: "",
+    predictionEventTime: "",
+    endOffset: "",
   });
 
   const currentStepIndex = steps.findIndex((step) => step.id === currentStep);
@@ -71,6 +101,7 @@ const NewContestPage = () => {
       contestData.category &&
       contestData.name &&
       contestData.description &&
+      contestData.statesAllowed.length > 0 &&
       contestData.prizeTitle
     );
   };
@@ -82,13 +113,19 @@ const NewContestPage = () => {
   };
 
   const validatePricingStep = () => {
-    // Add pricing validation logic here
-    return true; // Placeholder for now
+    if (contestData.pricingModel === "flat") {
+      return contestData.flatPrice !== "";
+    } else {
+      return contestData.tiers.some(tier => tier.pricePerPrediction !== "");
+    }
   };
 
   const validateTimingStep = () => {
-    // Add timing validation logic here
-    return true; // Placeholder for now
+    return (
+      contestData.predictionEventDate &&
+      contestData.predictionEventTime &&
+      contestData.endOffset
+    );
   };
 
   const isCurrentStepValid = () => {
@@ -146,17 +183,17 @@ const NewContestPage = () => {
         return (
           <PredictionsStep data={contestData} onUpdate={updateContestData} />
         );
-      // case "pricing":
-      //   return <PricingStep data={contestData} onUpdate={updateContestData} />;
-      // case "timing":
-      //   return <TimingStep data={contestData} onUpdate={updateContestData} />;
+   case "pricing":
+        return <PricingStep data={contestData} onUpdate={updateContestData} />;
+      case "timing":
+        return <TimingStep data={contestData} onUpdate={updateContestData} />;
       default:
         return null;
     }
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-20">
       {/* Header */}
       <div className="flex items-center justify-between p-6 border-b">
         <div className="flex items-center gap-4">

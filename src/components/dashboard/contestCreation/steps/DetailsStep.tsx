@@ -13,12 +13,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import StatesSelectionModal from "../StatesSelectionModal";
+import Image from "next/image";
 
 interface ContestData {
   category: string;
   name: string;
   description: string;
-  statesAllowed: string;
+  statesAllowed: string[];
   prizeTitle: string;
   prizeType: string;
   prizeImage?: File;
@@ -34,6 +36,10 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ data, onUpdate }) => {
     onUpdate({ [field]: value });
   };
 
+  const handleStatesChange = (states: string[]) => {
+    onUpdate({ statesAllowed: states });
+  };
+
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -41,8 +47,25 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ data, onUpdate }) => {
     }
   };
 
+  const removeImage = () => {
+    onUpdate({ prizeImage: undefined });
+  };
+
+  const getStatesDisplayText = () => {
+    if (!data.statesAllowed || data.statesAllowed.length === 0) {
+      return "Select states";
+    }
+    if (data.statesAllowed.length === 50) {
+      return "All states";
+    }
+    if (data.statesAllowed.length === 1) {
+      return data.statesAllowed[0];
+    }
+    return `${data.statesAllowed.length} states selected`;
+  };
+
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
+    <div className="max-w-2xl mx-auto space-y-8 py-10">
       <div className="text-center">
         <h1 className="text-2xl font-semibold text-gray-900 mb-2">Details</h1>
       </div>
@@ -58,7 +81,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ data, onUpdate }) => {
             value={data.category}
             onValueChange={(value) => handleInputChange("category", value)}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full mt-2 py-6">
               <SelectValue placeholder="Search the category" />
             </SelectTrigger>
             <SelectContent>
@@ -77,7 +100,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ data, onUpdate }) => {
             placeholder="Placeholder"
             value={data.name}
             onChange={(e) => handleInputChange("name", e.target.value)}
-            className="w-full"
+            className="w-full mt-2"
           />
         </div>
 
@@ -90,17 +113,28 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ data, onUpdate }) => {
             placeholder="Placeholder"
             value={data.description}
             onChange={(e) => handleInputChange("description", e.target.value)}
-            className="w-full min-h-[120px] resize-none"
+            className="w-full min-h-[120px] mt-2 resize-none"
           />
         </div>
 
         {/* States Allowed */}
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-green-600">
-            States allowed
-          </span>
-          <span className="text-sm font-medium text-green-600">All states</span>
-        </div>
+        <StatesSelectionModal
+          selectedStates={data.statesAllowed || []}
+          onStatesChange={handleStatesChange}
+        >
+          <div className="flex items-center border py-4 bg-bg justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-xl transition-colors">
+            <span className="text-sm font-medium text-green-600">
+              States allowed
+            </span>
+            <span className={`text-sm font-medium ${
+              !data.statesAllowed || data.statesAllowed.length === 0 
+                ? 'text-gray-400' 
+                : 'text-green-600'
+            }`}>
+              {getStatesDisplayText()}
+            </span>
+          </div>
+        </StatesSelectionModal>
       </div>
 
       {/* Prize Section */}
@@ -115,7 +149,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ data, onUpdate }) => {
               placeholder="Placeholder"
               value={data.prizeTitle}
               onChange={(e) => handleInputChange("prizeTitle", e.target.value)}
-              className="w-full"
+              className="w-full mt-2"
             />
           </div>
 
@@ -126,7 +160,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ data, onUpdate }) => {
               value={data.prizeType}
               onValueChange={(value) => handleInputChange("prizeType", value)}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full mt-2 py-[22px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -140,37 +174,79 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ data, onUpdate }) => {
 
         {/* File Upload */}
         <div className="space-y-2">
-          <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center bg-gray-50">
-            <div className="space-y-4">
-              <div className="text-gray-500">
-                <p className="text-sm">Drop an image here</p>
-                <p className="text-xs text-gray-400">PNG, JPEG, WEBP, GIF</p>
+          {data.prizeImage ? (
+            <div className="border-2 border-gray-200 rounded-lg p-4 bg-bg">
+              <div className="space-y-4">
+                <div className="relative">
+                  <Image
+                    src={URL.createObjectURL(data.prizeImage)}
+                    alt="Prize preview"
+                    width={46200}
+                    height={46200}
+                    className="w-full h-72 object-contain rounded-lg"
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-green-600">
+                    {data.prizeImage.name}
+                  </p>
+                  <div className="flex gap-2">
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                      >
+                        Replace
+                      </Button>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={removeImage}
+                      className="bg-white border-red-300 text-red-700 hover:bg-red-50"
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </div>
               </div>
-
-              <div className="relative">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileUpload}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  Upload
-                </Button>
-              </div>
-
-              {data.prizeImage && (
-                <p className="text-sm text-green-600 mt-2">
-                  {data.prizeImage.name} uploaded
-                </p>
-              )}
             </div>
-          </div>
+          ) : (
+            <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center bg-bg">
+              <div className="space-y-4">
+                <div className="text-gray-500">
+                  <p className="text-sm">Drop an image here</p>
+                  <p className="text-xs text-gray-400">PNG, JPEG, WEBP, GIF</p>
+                </div>
+
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
