@@ -33,6 +33,7 @@ import {
   BarChart3,
   Settings,
 } from "lucide-react";
+import Link from "next/link";
 
 // Sample contest data
 const contests = [
@@ -266,9 +267,9 @@ const ContestManagementPage = () => {
         <h2 className="text-3xl font-semibold text-[#004721]">
           Contest management
         </h2>
-        <Button 
+        <Button
           className="cursor-pointer"
-          onClick={() => router.push('/dashboard/new-contest')}
+          onClick={() => router.push("/dashboard/new-contest")}
         >
           <Plus className="w-4 h-4 mr-2" /> New Contest
         </Button>
@@ -321,13 +322,15 @@ const ContestManagementPage = () => {
 
         {/* Right Side Buttons */}
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            className="flex items-center gap-2 cursor-pointer text-primary font-bold bg-bg"
-          >
-            <Settings className="w-4 h-4" />
-            Organize
-          </Button>
+          <Link href={"/dashboard/organize"}>
+            <Button
+              variant="outline"
+              className="flex items-center gap-2 cursor-pointer text-primary font-bold bg-bg"
+            >
+              <Settings className="w-4 h-4" />
+              Organize
+            </Button>
+          </Link>
           <Button
             variant="outline"
             className="flex items-center gap-2 cursor-pointer text-primary font-bold bg-bg"
