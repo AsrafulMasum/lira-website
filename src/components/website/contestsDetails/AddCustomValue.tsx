@@ -33,13 +33,13 @@ const AddCustomValue = () => {
         </DialogHeader>
 
         <div className="my-6">
-          <label className="text-sm text-[#717A75]">Value from 0 to ∞</label>
+          <label className="text-sm text-gray">Value from 0 to ∞</label>
           <Input
             type="number"
             placeholder="118,000"
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            className="w-full h-14 bg-[#F2F7F5] mt-2"
+            className="w-full h-14 bg-bg mt-2"
           />
         </div>
       </div>
@@ -48,14 +48,14 @@ const AddCustomValue = () => {
         <Button
           variant="outline"
           onClick={handleCancel}
-          className="px-6 bg-[#F2F7F5] flex-1 border-[#E6EBE8] hover:bg-[#F2F7F5] text-[#004721] hover:text-[#004721] h-11 cursor-pointer text-sm font-semibold rounded-2xl"
+          className="px-6 bg-bg flex-1 border-border-color hover:bg-bg text-dark-primary hover:text-dark-primary h-11 cursor-pointer text-sm font-semibold rounded-2xl"
         >
           Cancel
         </Button>
         <Button
           onClick={handleAdd}
           disabled={!value.trim()}
-          className="px-6 bg-[#004721] hover:bg-[#004721] disabled:bg-[#C0CCC5] h-11 cursor-pointer text-sm text-white font-semibold flex-1 rounded-2xl"
+          className="px-6 bg-dark-primary hover:bg-dark-primary disabled:bg-[#C0CCC5] h-11 cursor-pointer text-sm text-white font-semibold flex-1 rounded-2xl"
         >
           Add
         </Button>

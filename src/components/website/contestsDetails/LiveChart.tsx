@@ -82,7 +82,7 @@ export function LiveChart() {
     <Card className="pt-0 bg-transparent shadow-none border-none">
       <CardHeader className="flex items-center gap-2 space-y-0 sm:flex-row p-0">
         <Tabs
-          className="!w-full !bg-[#E6EBE8] rounded-full px-6 mx-0"
+          className="!w-full !bg-border-color rounded-full px-6 mx-0"
           value={timeRange}
           onValueChange={setTimeRange}
         >

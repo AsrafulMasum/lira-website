@@ -16,21 +16,21 @@ const ContestDetailsRightSection = ({contest}:any) => {
         className="w-full h-[200px] rounded-2xl object-cover"
       />
 
-      <h4 className="text-[#004721] text-2xl font-semibold mt-4 leading-[120%] tracking-[-0.52px]">
+      <h4 className="text-dark-primary text-2xl font-semibold mt-4 leading-[120%] tracking-[-0.52px]">
         Win a {contest?.prize?.name}
       </h4>
 
       <p className="text-primary font-semibold text-2xl mt-2">
         ${contest?.prize?.price}{" "}
-        <span className="text-[#96A39C] text-base">Prize pool</span>
+        <span className="text-gray-text text-base">Prize pool</span>
       </p>
 
-      <p className="flex items-center gap-1 text-[#717A75] font-semibold text-sm mt-3">
+      <p className="flex items-center gap-1 text-gray font-semibold text-sm mt-3">
         <CircleQuestionMark size={16} /> Learn how it works
       </p>
 
-      <div className="bg-[#F2F7F5] py-4 px-6 rounded-2xl mt-8 flex items-center gap-6">
-        <p className="text-[#004721] text-sm font-semibold">
+      <div className="bg-bg py-4 px-6 rounded-2xl mt-8 flex items-center gap-6">
+        <p className="text-dark-primary text-sm font-semibold">
           Make your prediction before it ends!
         </p>
         <ContestCountdown endDate={contest.endsIn} isMarketPlace={false} />
@@ -48,10 +48,10 @@ const ContestDetailsRightSection = ({contest}:any) => {
           <p className="text-sm text-primary font-semibold">
             24H Change: +1.3%
           </p>
-          <p className="text-[#96A39C] text-xs">Current</p>
+          <p className="text-gray-text text-xs">Current</p>
         </div>
 
-        <p className="text-[#96A39C] text-xs mb-5">Data from CoinGecko API</p>
+        <p className="text-gray-text text-xs mb-5">Data from CoinGecko API</p>
 
         <LiveChart />
       </div>

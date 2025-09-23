@@ -38,9 +38,9 @@ const page = () => {
       </ContainerLayout>
 
       {/* bottom */}
-      <div className="mt-16 bg-[#F2F7F5] py-12">
+      <div className="mt-16 bg-bg py-12">
         <ContainerLayout>
-          <h4 className="text-2xl font-semibold text-[#004721] text-center">
+          <h4 className="text-2xl font-semibold text-dark-primary text-center">
             Learn how easy Lira is!
           </h4>
           <LearnToUse />

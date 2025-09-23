@@ -18,7 +18,7 @@ const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
           </span>{" "}
         </h4>
 
-        <div className="flex items-center gap-4 text-[#717A75] font-semibold mt-4">
+        <div className="flex items-center gap-4 text-gray font-semibold mt-4">
           <p className="flex items-center gap-2">
             <Clock size={16} /> Ends In:{" "}
             <ContestCountdown endDate={contest.endsIn} isMarketPlace={true} />
@@ -36,7 +36,7 @@ const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
             </h4>
             <div className="flex justify-center items-center gap-3">
               <button
-                className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-[#E6EBE8] bg-[#F2F7F5]`}
+                className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-border-color bg-bg`}
               >
                 <Search size={16} /> Search
               </button>
@@ -44,7 +44,7 @@ const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
               <Sheet>
                 <SheetTrigger asChild>
                   <button
-                    className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-[#E6EBE8] bg-[#F2F7F5]`}
+                    className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-border-color bg-bg`}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +67,7 @@ const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
               <Dialog>
                 <DialogTrigger asChild>
                   <button
-                    className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-[#E6EBE8] bg-[#F2F7F5]`}
+                    className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-border-color bg-bg`}
                   >
                     <Plus size={16} /> Value
                   </button>
@@ -82,7 +82,7 @@ const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
           <SelectPredictions />
         </div>
 
-        <p className="text-[#96A39C] font-semibold text-sm mt-4 text-center">
+        <p className="text-gray-text font-semibold text-sm mt-4 text-center">
           * Price is according to Bloomberg. Each prediction must be unique.
           Closest prediction to the actual value wins
         </p>

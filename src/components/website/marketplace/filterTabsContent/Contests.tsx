@@ -143,12 +143,12 @@ const Contests = ({ type }: { type: string }) => {
                     {contest?.contestName.split("on")[1]}
                   </span>{" "}
                 </CardTitle>
-                <CardDescription className="flex items-center justify-between text-sm text-[#717A75]">
+                <CardDescription className="flex items-center justify-between text-sm text-gray">
                   <p className="flex items-center gap-2">
                     <Clock size={16} /> Ends In:{" "}
                     <ContestCountdown endDate={contest.endsIn} isMarketPlace={true} />
                   </p>
-                  <p className="flex items-center gap-2 text-[#96A39C]">
+                  <p className="flex items-center gap-2 text-gray-text">
                     <Users size={16} />
                     {contest.totalEntries} entries
                   </p>
@@ -162,12 +162,12 @@ const Contests = ({ type }: { type: string }) => {
                     className="mt-2 size-12 object-cover rounded-lg"
                   />
                   <div>
-                    <p className="text-[#004721] font-semibold leading-[124%] my-2">
+                    <p className="text-dark-primary font-semibold leading-[124%] my-2">
                       {contest.prize.name}
                     </p>
                     <p className="text-primary text-sm font-semibold">
                       $ {contest.prize.price}{" "}
-                      <span className="text-[#96A39C] font-normal pl-1.5">
+                      <span className="text-gray-text font-normal pl-1.5">
                         Prize pool
                       </span>
                     </p>
@@ -175,7 +175,7 @@ const Contests = ({ type }: { type: string }) => {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between items-center">
-                <p className="bg-[#F2F7F5] py-2 px-3 rounded-lg text-sm text-[#717A75]">
+                <p className="bg-bg py-2 px-3 rounded-lg text-sm text-gray">
                   {contest.category}
                 </p>
                 <CardAction>

@@ -20,7 +20,7 @@ const ContestDetailsMobileView = ({ contest }: any) => {
         </span>{" "}
       </h4>
 
-      <div className="flex items-center gap-4 text-[#717A75] mt-3">
+      <div className="flex items-center gap-4 text-gray mt-3">
         <p className="flex items-center gap-2">
           <Clock size={16} /> Ends In:{" "}
           <ContestCountdown endDate={contest.endsIn} isMarketPlace={true} />
@@ -31,7 +31,7 @@ const ContestDetailsMobileView = ({ contest }: any) => {
         </p>
       </div>
 
-      <div className="flex items-center gap-4 mt-6 bg-[#F2F7F5] rounded-2xl py-2 pl-2 pr-3">
+      <div className="flex items-center gap-4 mt-6 bg-bg rounded-2xl py-2 pl-2 pr-3">
         <Image
           src={contest?.prize?.image}
           alt={contest.prize.name}
@@ -41,18 +41,18 @@ const ContestDetailsMobileView = ({ contest }: any) => {
         />
 
         <div>
-          <h4 className="text-[#004721] text-lg font-semibold leading-[120%] tracking-[-0.52px]">
+          <h4 className="text-dark-primary text-lg font-semibold leading-[120%] tracking-[-0.52px]">
             Win a {contest?.prize?.name}
           </h4>
 
           <p className="text-primary font-semibold text-base mt-2">
             ${contest?.prize?.price}{" "}
-            <span className="text-[#96A39C] text-sm font-normal">
+            <span className="text-gray-text text-sm font-normal">
               Prize pool
             </span>
           </p>
 
-          <p className="flex items-center gap-1 text-[#717A75] font-semibold text-sm mt-2">
+          <p className="flex items-center gap-1 text-gray font-semibold text-sm mt-2">
             <CircleQuestionMark size={16} /> Learn how it works
           </p>
         </div>
@@ -68,7 +68,7 @@ const ContestDetailsMobileView = ({ contest }: any) => {
 
       <div className="grid grid-cols-2 lg:flex justify-center items-center gap-3">
         <button
-          className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-[#004721] border-[#E6EBE8] bg-[#F2F7F5]`}
+          className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg`}
         >
           <Search size={16} /> Search
         </button>
@@ -76,7 +76,7 @@ const ContestDetailsMobileView = ({ contest }: any) => {
         <Sheet>
           <SheetTrigger asChild>
             <button
-              className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-[#004721] border-[#E6EBE8] bg-[#F2F7F5]`}
+              className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +99,7 @@ const ContestDetailsMobileView = ({ contest }: any) => {
         <Dialog>
           <DialogTrigger asChild className="col-span-2">
             <button
-              className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-[#004721] border-[#E6EBE8] bg-[#F2F7F5]`}
+              className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg`}
             >
               <Plus size={16} /> Add a custom value
             </button>
@@ -108,8 +108,8 @@ const ContestDetailsMobileView = ({ contest }: any) => {
         </Dialog>
       </div>
 
-      <div className="bg-[#F2F7F5] py-4 px-6 rounded-2xl mt-8 flex items-center gap-6">
-        <p className="text-[#004721] text-sm font-semibold">
+      <div className="bg-bg py-4 px-6 rounded-2xl mt-8 flex items-center gap-6">
+        <p className="text-dark-primary text-sm font-semibold">
           Make your prediction before it ends!
         </p>
         <ContestCountdown endDate={contest.endsIn} isMarketPlace={false} />
@@ -127,10 +127,10 @@ const ContestDetailsMobileView = ({ contest }: any) => {
           <p className="text-sm text-primary font-semibold">
             24H Change: +1.3%
           </p>
-          <p className="text-[#96A39C] text-xs">Current</p>
+          <p className="text-gray-text text-xs">Current</p>
         </div>
 
-        <p className="text-[#96A39C] text-xs mb-5">Data from CoinGecko API</p>
+        <p className="text-gray-text text-xs mb-5">Data from CoinGecko API</p>
 
         <LiveChart />
       </div>
