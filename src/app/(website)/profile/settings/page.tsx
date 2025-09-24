@@ -1,4 +1,4 @@
-import Settings from "@/components/profile/Settings";
+import Settings from "@/components/profile/settings/Settings";
 import ContainerLayout from "@/layout/ContainerLayout";
 import React from "react";
 
