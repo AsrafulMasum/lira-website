@@ -6,7 +6,7 @@ type ContainerLayoutProps = {
 
 const ContainerLayout: React.FC<ContainerLayoutProps> = ({ children }) => {
   return (
-    <div className="w-full max-w-[1280px] px-4 xl:px-0 xl:mx-auto">
+    <div className="w-full max-w-[1280px] px-5 xl:px-0 xl:mx-auto">
       {children}
     </div>
   );

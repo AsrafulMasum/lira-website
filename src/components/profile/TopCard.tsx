@@ -26,8 +26,8 @@ const TopCard = () => {
     }
   };
   return (
-    <div className="mt-12 bg-[#007A3914] p-2 rounded-3xl flex items-center gap-2">
-      <div className="w-[320px] flex justify-between items-center bg-[#FAFFFC] py-6 pl-8 pr-6 rounded-2xl">
+    <div className="mt-12 bg-[#007A3914] p-2 rounded-3xl flex flex-col lg:flex-row items-center gap-2">
+      <div className="w-full lg:w-[320px] flex justify-between items-center bg-[#FAFFFC] py-6 pl-8 pr-6 rounded-2xl">
         <div>
           <h4 className="text-primary text-3xl font-semibold pb-2">2,845</h4>
           <p className="flex items-center gap-1 text-gray-text text-sm font-semibold">
@@ -51,7 +51,7 @@ const TopCard = () => {
         </button>
       </div>
 
-      <div className="flex-1 bg-[#FAFFFC] py-6 px-8 rounded-2xl h-full flex justify-between items-center">
+      <div className="flex-1 bg-[#FAFFFC] py-6 px-8 rounded-2xl h-full flex flex-col lg:flex-row justify-between lg:items-center gap-4 border border-primary lg:border-0">
         <div>
           <h4 className="text-dark-primary text-2xl font-semibold pb-2.5">
             Invite friends and earn rewards!
@@ -61,7 +61,7 @@ const TopCard = () => {
           </p>
         </div>
 
-        <button className="py-4 pl-5 pr-4 border border-border-color bg-white rounded-xl text-[#002913] text-sm font-bold flex items-center gap-5">
+        <button className="py-4 pl-5 pr-4 border border-border-color bg-white rounded-xl text-[#002913] text-sm font-bold flex justify-between items-center gap-5">
           <span ref={textRef}>/firas123</span>
           <div
             onClick={handleCopy}

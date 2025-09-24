@@ -20,7 +20,7 @@ import Image from "next/image";
 
 const statsData = [
   { value: "24", label: "Entries", value2: "12", label2: "Contests" },
-  { value: "$104.00", label: "Total Spent" },
+  { value: "$104.00", label: "Total Spent", onlyDesktop: true },
   {
     value: "$18,000",
     label: "Potential earnings",
@@ -379,45 +379,26 @@ export function OngoingContests({ viewAll }: { viewAll?: boolean }) {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         {statsData.map((stat, index) => (
           <Card
             key={index}
-            className="p-6 bg-bg border-0 shadow-none rounded-xl"
+            className={`p-4 lg:p-6 bg-bg border-0 shadow-none rounded-xl ${
+              stat?.onlyDesktop && "hidden lg:block"
+            }`}
           >
             <div className="flex items-center justify-between">
               <div className="w-full flex justify-between items-center gap-2">
                 <div>
-                  <div className={`text-2xl font-semibold text-primary mb-1`}>
+                  <div
+                    className={`text-lg lg:text-2xl font-semibold text-primary mb-1`}
+                  >
                     {stat.value}
                   </div>
-                  <div className="text-sm font-semibold text-gray-text flex items-center gap-1">
+                  <div className="text-xs lg:text-sm font-semibold text-gray-text flex items-center gap-1">
                     {stat.label}
                     {stat.hasInfo && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="19"
-                        height="19"
-                        viewBox="0 0 19 19"
-                        fill="none"
-                      >
-                        <path
-                          d="M9.29581 14C9.55831 14 9.78031 13.9093 9.96181 13.7278C10.1433 13.5463 10.2338 13.3245 10.2333 13.0625C10.2328 12.8005 10.1423 12.5785 9.96181 12.3965C9.78131 12.2145 9.55931 12.124 9.29581 12.125C9.03231 12.126 8.81056 12.2168 8.63056 12.3973C8.45056 12.5778 8.35981 12.7995 8.35831 13.0625C8.35681 13.3255 8.44756 13.5475 8.63056 13.7285C8.81356 13.9095 9.03531 14 9.29581 14ZM8.62081 11.1125H10.0083C10.0083 10.7 10.0553 10.375 10.1493 10.1375C10.2433 9.9 10.5088 9.575 10.9458 9.1625C11.2708 8.8375 11.5271 8.528 11.7146 8.234C11.9021 7.94 11.9958 7.587 11.9958 7.175C11.9958 6.475 11.7396 5.9375 11.2271 5.5625C10.7146 5.1875 10.1083 5 9.40831 5C8.69581 5 8.11781 5.1875 7.67431 5.5625C7.23081 5.9375 6.92131 6.3875 6.74581 6.9125L7.98331 7.4C8.04581 7.175 8.18656 6.93125 8.40556 6.66875C8.62456 6.40625 8.95881 6.275 9.40831 6.275C9.80831 6.275 10.1083 6.3845 10.3083 6.6035C10.5083 6.8225 10.6083 7.063 10.6083 7.325C10.6083 7.575 10.5333 7.8095 10.3833 8.0285C10.2333 8.2475 10.0458 8.4505 9.82081 8.6375C9.27081 9.125 8.93331 9.49375 8.80831 9.74375C8.68331 9.99375 8.62081 10.45 8.62081 11.1125ZM9.33331 17C8.29581 17 7.32081 16.8033 6.40831 16.4098C5.49581 16.0163 4.70206 15.4818 4.02706 14.8063C3.35206 14.1308 2.81781 13.337 2.42431 12.425C2.03081 11.513 1.83381 10.538 1.83331 9.5C1.83281 8.462 2.02981 7.487 2.42431 6.575C2.81881 5.663 3.35306 4.86925 4.02706 4.19375C4.70106 3.51825 5.49481 2.984 6.40831 2.591C7.32181 2.198 8.29681 2.001 9.33331 2C10.3698 1.999 11.3448 2.196 12.2583 2.591C13.1718 2.986 13.9656 3.52025 14.6396 4.19375C15.3136 4.86725 15.8481 5.661 16.2431 6.575C16.6381 7.489 16.8348 8.464 16.8333 9.5C16.8318 10.536 16.6348 11.511 16.2423 12.425C15.8498 13.339 15.3156 14.1328 14.6396 14.8063C13.9636 15.4798 13.1698 16.0143 12.2583 16.4098C11.3468 16.8053 10.3718 17.002 9.33331 17ZM9.33331 15.5C11.0083 15.5 12.4271 14.9188 13.5896 13.7563C14.7521 12.5938 15.3333 11.175 15.3333 9.5C15.3333 7.825 14.7521 6.40625 13.5896 5.24375C12.4271 4.08125 11.0083 3.5 9.33331 3.5C7.65831 3.5 6.23956 4.08125 5.07706 5.24375C3.91456 6.40625 3.33331 7.825 3.33331 9.5C3.33331 11.175 3.91456 12.5938 5.07706 13.7563C6.23956 14.9188 7.65831 15.5 9.33331 15.5Z"
-                          fill="#96A39C"
-                        />
-                      </svg>
-                    )}
-                  </div>
-                </div>
-
-                {stat.value2 && stat.label2 && (
-                  <div>
-                    <div className={`text-2xl font-semibold text-primary mb-1`}>
-                      {stat.value2}
-                    </div>
-                    <div className="text-sm font-semibold text-gray-text flex items-center gap-1">
-                      {stat.label2}
-                      {stat.hasInfo && (
+                      <div className="hidden lg:block">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="19"
@@ -430,6 +411,35 @@ export function OngoingContests({ viewAll }: { viewAll?: boolean }) {
                             fill="#96A39C"
                           />
                         </svg>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {stat.value2 && stat.label2 && (
+                  <div>
+                    <div
+                      className={`text-lg lg:text-2xl font-semibold text-primary mb-1`}
+                    >
+                      {stat.value2}
+                    </div>
+                    <div className="text-xs lg:text-sm font-semibold text-gray-text flex items-center gap-1">
+                      {stat.label2}
+                      {stat.hasInfo && (
+                        <div className="hidden lg:block">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="19"
+                            height="19"
+                            viewBox="0 0 19 19"
+                            fill="none"
+                          >
+                            <path
+                              d="M9.29581 14C9.55831 14 9.78031 13.9093 9.96181 13.7278C10.1433 13.5463 10.2338 13.3245 10.2333 13.0625C10.2328 12.8005 10.1423 12.5785 9.96181 12.3965C9.78131 12.2145 9.55931 12.124 9.29581 12.125C9.03231 12.126 8.81056 12.2168 8.63056 12.3973C8.45056 12.5778 8.35981 12.7995 8.35831 13.0625C8.35681 13.3255 8.44756 13.5475 8.63056 13.7285C8.81356 13.9095 9.03531 14 9.29581 14ZM8.62081 11.1125H10.0083C10.0083 10.7 10.0553 10.375 10.1493 10.1375C10.2433 9.9 10.5088 9.575 10.9458 9.1625C11.2708 8.8375 11.5271 8.528 11.7146 8.234C11.9021 7.94 11.9958 7.587 11.9958 7.175C11.9958 6.475 11.7396 5.9375 11.2271 5.5625C10.7146 5.1875 10.1083 5 9.40831 5C8.69581 5 8.11781 5.1875 7.67431 5.5625C7.23081 5.9375 6.92131 6.3875 6.74581 6.9125L7.98331 7.4C8.04581 7.175 8.18656 6.93125 8.40556 6.66875C8.62456 6.40625 8.95881 6.275 9.40831 6.275C9.80831 6.275 10.1083 6.3845 10.3083 6.6035C10.5083 6.8225 10.6083 7.063 10.6083 7.325C10.6083 7.575 10.5333 7.8095 10.3833 8.0285C10.2333 8.2475 10.0458 8.4505 9.82081 8.6375C9.27081 9.125 8.93331 9.49375 8.80831 9.74375C8.68331 9.99375 8.62081 10.45 8.62081 11.1125ZM9.33331 17C8.29581 17 7.32081 16.8033 6.40831 16.4098C5.49581 16.0163 4.70206 15.4818 4.02706 14.8063C3.35206 14.1308 2.81781 13.337 2.42431 12.425C2.03081 11.513 1.83381 10.538 1.83331 9.5C1.83281 8.462 2.02981 7.487 2.42431 6.575C2.81881 5.663 3.35306 4.86925 4.02706 4.19375C4.70106 3.51825 5.49481 2.984 6.40831 2.591C7.32181 2.198 8.29681 2.001 9.33331 2C10.3698 1.999 11.3448 2.196 12.2583 2.591C13.1718 2.986 13.9656 3.52025 14.6396 4.19375C15.3136 4.86725 15.8481 5.661 16.2431 6.575C16.6381 7.489 16.8348 8.464 16.8333 9.5C16.8318 10.536 16.6348 11.511 16.2423 12.425C15.8498 13.339 15.3156 14.1328 14.6396 14.8063C13.9636 15.4798 13.1698 16.0143 12.2583 16.4098C11.3468 16.8053 10.3718 17.002 9.33331 17ZM9.33331 15.5C11.0083 15.5 12.4271 14.9188 13.5896 13.7563C14.7521 12.5938 15.3333 11.175 15.3333 9.5C15.3333 7.825 14.7521 6.40625 13.5896 5.24375C12.4271 4.08125 11.0083 3.5 9.33331 3.5C7.65831 3.5 6.23956 4.08125 5.07706 5.24375C3.91456 6.40625 3.33331 7.825 3.33331 9.5C3.33331 11.175 3.91456 12.5938 5.07706 13.7563C6.23956 14.9188 7.65831 15.5 9.33331 15.5Z"
+                              fill="#96A39C"
+                            />
+                          </svg>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -447,8 +457,8 @@ export function OngoingContests({ viewAll }: { viewAll?: boolean }) {
             key={contest.id}
             className="p-6 bg-white border-border-color shadow-none gap-5"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+              <div className="flex lg:items-center gap-2">
                 <h3 className="text-sm font-semibold text-gray-900">
                   {contest?.title.split("on")[0] + "on"}{" "}
                   <span className="text-primary">
@@ -468,13 +478,14 @@ export function OngoingContests({ viewAll }: { viewAll?: boolean }) {
                   />
                 </svg>
               </div>
+
               <div className="flex items-center gap-1 text-gray text-xs font-semibold">
                 <Clock className="w-4 h-4" />
                 Ends in {contest.timeLeft}
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <Image
                   src={contest.image}
@@ -498,7 +509,7 @@ export function OngoingContests({ viewAll }: { viewAll?: boolean }) {
 
               <div className="flex items-center gap-3">
                 <button
-                  className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg`}
+                  className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg text-nowrap`}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -514,8 +525,9 @@ export function OngoingContests({ viewAll }: { viewAll?: boolean }) {
                   </svg>
                   {contest.entries} Entries
                 </button>
+
                 <button
-                  className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg`}
+                  className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg text-nowrap`}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -540,9 +552,10 @@ export function OngoingContests({ viewAll }: { viewAll?: boolean }) {
       {/* Pagination */}
       <div className="flex items-center justify-between px-6">
         <div className="text-sm text-gray-500">
-          Showing {indexOfFirst + 1} to{" "}
+          <span className="hidden lg:block">Showing</span> {indexOfFirst + 1} to{" "}
           {indexOfLast > contestData.length ? contestData.length : indexOfLast}{" "}
-          of {contestData.length} contests
+          of {contestData.length}{" "}
+          <span className="hidden lg:block">contests</span>
         </div>
         <div className="flex items-center gap-2">
           <Button

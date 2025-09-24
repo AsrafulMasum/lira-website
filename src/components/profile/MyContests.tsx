@@ -13,7 +13,7 @@ const MyContests = () => {
   }, []);
 
   return (
-    <section className="mt-6 flex gap-6 mb-10">
+    <section className="mt-6 flex flex-col lg:flex-row gap-6">
       {/* Left div - natural content height */}
       <div
         className="flex-[2] bg-bg rounded-3xl p-2 h-fit"
