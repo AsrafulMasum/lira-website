@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { OngoingContests } from "./OngoingContests";
+import { OngoingContests } from "./ongoingContests/OngoingContests";
 import PastContests from "./PastContests";
 
 const MyContests = () => {

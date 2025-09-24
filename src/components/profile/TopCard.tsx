@@ -62,7 +62,7 @@ const TopCard = () => {
         </div>
 
         <button className="py-4 pl-5 pr-4 border border-border-color bg-white rounded-xl text-[#002913] text-sm font-bold flex justify-between items-center gap-5">
-          <span ref={textRef}>/firas123</span>
+          <span ref={textRef}>/firas420</span>
           <div
             onClick={handleCopy}
             className="bg-bg border border-border-color size-8 flex justify-center items-center rounded-lg cursor-pointer"
