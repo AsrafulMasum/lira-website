@@ -6,7 +6,6 @@ import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { X } from "lucide-react";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Bar, BarChart, ResponsiveContainer, XAxis, Cell } from "recharts";
 import { useMediaQuery } from "react-responsive";
@@ -21,7 +20,7 @@ const chartData = [
   { value: 3, amount: 124000, height: 40 },
 ];
 
-const RangeSheet = ({ onClose }: { onClose?: () => void }) => {
+const RangeSheet = () => {
   const [rangeStart, setRangeStart] = useState(118000);
   const [rangeEnd, setRangeEnd] = useState(120500);
   const [isDragging, setIsDragging] = useState<"start" | "end" | null>(null);
@@ -30,8 +29,8 @@ const RangeSheet = ({ onClose }: { onClose?: () => void }) => {
   const minValue = 118000;
   const maxValue = 124000;
 
-  const isDesktop = useMediaQuery({ minWidth: 1024 });
-  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
+  // const isDesktop = useMediaQuery({ minWidth: 1024 });
+  // const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
   // Calculate which bars are in the selected range

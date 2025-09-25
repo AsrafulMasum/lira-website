@@ -185,7 +185,7 @@ const PastContests = ({ viewAll }: { viewAll?: boolean }) => {
         </TabsList>
 
         <TabsContent value="all" className="mt-4 space-y-4">
-          {contestData.map((contest, index) => (
+          {contestData.map((contest) => (
             <div key={contest.id}>
               <Card className="border border-border-color rounded-lg shadow-none">
                 <CardContent className="">

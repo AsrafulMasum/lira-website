@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { X } from "lucide-react";
 
 interface StatesSelectionModalProps {
   selectedStates: string[];
@@ -91,10 +90,10 @@ const StatesSelectionModal: React.FC<StatesSelectionModalProps> = ({
     setIsOpen(false);
   };
 
-  const handleCancel = () => {
-    setTempSelectedStates(selectedStates);
-    setIsOpen(false);
-  };
+  // const handleCancel = () => {
+  //   setTempSelectedStates(selectedStates);
+  //   setIsOpen(false);
+  // };
 
   const handleSelectAll = () => {
     setTempSelectedStates([...US_STATES]);

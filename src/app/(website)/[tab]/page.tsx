@@ -1,9 +1,9 @@
 import CryptoContent from "@/components/website/marketplace/tabGroupContents/CryptoContent";
 import React from "react";
 
-interface PageProps {
-  params: { tab: string };
-}
+type PageProps = {
+  params: Promise<{ tab: string }>
+};
 
 export default async function TabPage({ params }: PageProps) {
   const { tab } = await params;

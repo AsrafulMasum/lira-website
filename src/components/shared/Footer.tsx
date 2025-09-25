@@ -118,7 +118,7 @@ export function Footer() {
               fees. You should carefully consider whether trading on Lira is
               appropriate for you in light of your investment experience and
               financial resources. Information is provided for convenience only
-              and "AS IS" basis. Past performance is not necessarily indicative
+              and &#34;AS IS&#34; basis. Past performance is not necessarily indicative
               of future results. Lira is subject to U.S. regulatory oversight by
               the CFTC.
             </p>

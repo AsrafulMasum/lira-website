@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import ContainerLayout from "@/layout/ContainerLayout";
-import { ListFilter, Search, X } from "lucide-react";
+import { ListFilter, Search } from "lucide-react";
 import React, { useState } from "react";
 import Contests from "../filterTabsContent/Contests";
 

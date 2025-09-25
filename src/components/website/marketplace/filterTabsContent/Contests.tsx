@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import ContestCountdown from "@/helpers/ContestCountdown";
 import { Clock, Users } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -38,7 +39,7 @@ const contests = [
       name: "Louis Vuitton Monogram Bag",
       price: 2500,
       image:
-        "https://tse2.mm.bing.net/th/id/OIP.gfdsddKcZSL2aoe4VWC-fAHaFj?pid=Api",
+        "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
     },
   },
   {
@@ -52,7 +53,7 @@ const contests = [
       name: "Titan Raga Deluxe Women’s Watch",
       price: 120,
       image:
-        "https://tse4.mm.bing.net/th/id/OIP.EBJXv29-7rHLHO_phSIyQgHaHa?pid=Api",
+        "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
     },
   },
   {
@@ -66,7 +67,7 @@ const contests = [
       name: "Designer Pink Tote Bag",
       price: 200,
       image:
-        "https://tse4.mm.bing.net/th/id/OIP.GBcxailhF-3q3MwxQ-T5HAHaFj?pid=Api",
+        "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
     },
   },
   {
@@ -80,7 +81,7 @@ const contests = [
       name: "Luxury Quilted White Handbag",
       price: 1800,
       image:
-        "https://tse4.mm.bing.net/th/id/OIP.GBcxailhF-3q3MwxQ-T5HAHaFj?pid=Api",
+        "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
     },
   },
   {
@@ -94,36 +95,9 @@ const contests = [
       name: "Rolex Submariner Green Bezel",
       price: 16500,
       image:
-        "https://tse2.mm.bing.net/th/id/OIP.KLKL-vm0h_7tqg8Cle02RAHaLU?pid=Api",
+        "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
     },
   },
-  // {
-  //   _id: "6dbd89a4-2a8d-4d84-84ac-02fb0c15c98e",
-  //   contestName: "Predict the Solana price on August 8 at 8:00 PM",
-  //   endsIn: "2025-08-08T20:00:00Z",
-  //   totalEntries: 140,
-  //   entryPrice: 4,
-  //   category: "Solana",
-  //   prize: {
-  //     name: "Apple iPhone 15 Pro",
-  //     price: 1199,
-  //     image:
-  //       "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-pro-model-select-202309?wid=940&hei=1112&fmt=png-alpha&.v=1692829091959",
-  //   },
-  // },
-  // {
-  //   _id: "db812fe0-5a4d-44bb-94e7-5ed7a1c453c1",
-  //   contestName: "Predict the Ethereum price on August 15 at 6:30 PM",
-  //   endsIn: "2025-08-15T18:30:00Z",
-  //   totalEntries: 330,
-  //   entryPrice: 7,
-  //   category: "Ethereum",
-  //   prize: {
-  //     name: "Sony WH-1000XM5 Headphones",
-  //     price: 400,
-  //     image: "https://m.media-amazon.com/images/I/71o8Q5XJS5L._AC_SL1500_.jpg",
-  //   },
-  // },
 ];
 
 const Contests = ({ type }: { type: string }) => {
@@ -146,7 +120,10 @@ const Contests = ({ type }: { type: string }) => {
                 <CardDescription className="flex items-center justify-between text-sm text-gray">
                   <p className="flex items-center gap-2">
                     <Clock size={16} /> Ends In:{" "}
-                    <ContestCountdown endDate={contest.endsIn} isMarketPlace={true} />
+                    <ContestCountdown
+                      endDate={contest.endsIn}
+                      isMarketPlace={true}
+                    />
                   </p>
                   <p className="flex items-center gap-2 text-gray-text">
                     <Users size={16} />
@@ -156,7 +133,9 @@ const Contests = ({ type }: { type: string }) => {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-3">
-                  <img
+                  <Image
+                    width={48}
+                    height={48}
                     src={contest.prize.image}
                     alt={contest.prize.name}
                     className="mt-2 size-12 object-cover rounded-lg"
