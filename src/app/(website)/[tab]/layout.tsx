@@ -21,23 +21,25 @@ export default async function Layout({ children, params }: LayoutProps) {
   return (
     <section>
       {/* Tabs */}
-      <ContainerLayout>
-        <div className="flex gap-8">
-          {tabs.map((tab) => (
-            <Link
-              key={tab.key}
-              href={`/${tab.key}`}
-              className={`pb-4 text-base font-bold border-b-2 transition-colors ${
-                activeTab === tab.key
-                  ? "border-dark-primary text-dark-primary"
-                  : "border-transparent text-gray hover:text-gray"
-              }`}
-            >
-              {tab.label}
-            </Link>
-          ))}
-        </div>
-      </ContainerLayout>
+      <div className="bg-[#FAFFFC] pt-5">
+        <ContainerLayout>
+          <div className="flex gap-8">
+            {tabs.map((tab) => (
+              <Link
+                key={tab.key}
+                href={`/${tab.key}`}
+                className={`pb-4 text-base font-bold border-b-2 transition-colors ${
+                  activeTab === tab.key
+                    ? "border-dark-primary text-dark-primary"
+                    : "border-transparent text-gray hover:text-gray"
+                }`}
+              >
+                {tab.label}
+              </Link>
+            ))}
+          </div>
+        </ContainerLayout>
+      </div>
 
       {/* Page content */}
       <div>{children}</div>

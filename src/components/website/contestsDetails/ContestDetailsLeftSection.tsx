@@ -6,6 +6,7 @@ import AddCustomValue from "./AddCustomValue";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import RangeSheet from "./RangeSheet";
 import ContestCountdown from "@/helpers/ContestCountdown";
+import SelectedValueSheet from "./SelectedValueSheet";
 
 const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
   return (
@@ -35,11 +36,16 @@ const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
               Select your predictions
             </h4>
             <div className="flex justify-center items-center gap-3">
-              <button
-                className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-border-color bg-bg`}
-              >
-                <Search size={16} /> Search
-              </button>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <button
+                    className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-border-color bg-bg`}
+                  >
+                    <Search size={16} /> Search
+                  </button>
+                </SheetTrigger>
+                <SelectedValueSheet />
+              </Sheet>
 
               <Sheet>
                 <SheetTrigger asChild>
