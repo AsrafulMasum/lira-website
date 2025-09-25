@@ -69,6 +69,191 @@ interface Category {
   contests: Contest[];
 }
 
+// Sortable Group Item Component
+const SortableGroupItem = ({ 
+  category, 
+  onEdit, 
+  onDelete 
+}: { 
+  category: Category; 
+  onEdit: (category: Category) => void;
+  onDelete: (categoryId: string) => void;
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: category.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`flex items-center justify-between p-3 bg-bg rounded-lg ${
+        isDragging ? 'shadow-lg z-10' : ''
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <div
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-200 rounded transition-colors"
+          title="Drag to reorder"
+        >
+          <GripVertical className="w-4 h-4 text-gray-400" />
+        </div>
+        <span className="font-medium text-gray-900">
+          {category.name}
+        </span>
+      </div>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => onEdit(category)}
+          className="p-2 hover:bg-gray-200 rounded-md transition-colors"
+          title="Edit group"
+        >
+          <Edit className="w-4 h-4 text-gray-600" />
+        </button>
+
+        <button
+          onClick={() => onDelete(category.id)}
+          className="p-2 hover:bg-red-100 rounded-md transition-colors cursor-pointer"
+          title="Delete group"
+        >
+          <Trash2 className="w-4 h-4 text-red-600" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Sortable Tab Item Component for Edit Groups Sheet
+const SortableTabItem = ({ 
+  tab, 
+  onEdit, 
+  onDelete 
+}: { 
+  tab: string; 
+  onEdit: (tab: string) => void;
+  onDelete: (tab: string) => void;
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: tab });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`flex items-center justify-between p-3 bg-bg rounded-lg ${
+        isDragging ? 'shadow-lg z-10' : ''
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <div
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-200 rounded transition-colors"
+          title="Drag to reorder"
+        >
+          <GripVertical className="w-4 h-4 text-gray-400" />
+        </div>
+        <span className="font-medium text-gray-900">
+          {tab}
+        </span>
+      </div>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => onEdit(tab)}
+          className="p-2 hover:bg-gray-200 rounded-md transition-colors"
+          title="Edit tab"
+        >
+          <Edit className="w-4 h-4 text-gray-600" />
+        </button>
+
+        <button
+          onClick={() => onDelete(tab)}
+          className="p-2 hover:bg-red-100 rounded-md transition-colors cursor-pointer"
+          title="Delete tab"
+        >
+          <Trash2 className="w-4 h-4 text-red-600" />
+        </button>
+      </div>
+    </div>
+  );
+};
+const SortableTab = ({ 
+  tab, 
+  isActive, 
+  onClick 
+}: { 
+  tab: string; 
+  isActive: boolean;
+  onClick: () => void;
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: tab });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`flex items-center gap-1 ${isDragging ? 'z-10' : ''}`}
+    >
+      <div
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 rounded transition-colors"
+        title="Drag to reorder tab"
+      >
+        <GripVertical className="w-3 h-3 text-gray-300 hover:text-gray-500" />
+      </div>
+      <button
+        onClick={onClick}
+        className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${
+          isActive
+            ? "border-green-600 text-green-600"
+            : "border-transparent text-gray-500 hover:text-gray-700"
+        }`}
+      >
+        {tab}
+      </button>
+    </div>
+  );
+};
+
 // Sample contest data organized by categories
 const initialCategories: Category[] = [
   {
@@ -380,6 +565,7 @@ const SortableContestGrid = ({ contests }: SortableContestGridProps) => {
 const OrganizeContestsPage = () => {
   const [activeTab, setActiveTab] = useState("Crypto Market");
   const [categories, setCategories] = useState(initialCategories);
+  const [tabs, setTabs] = useState(["Crypto Market", "Weather", "Stock Market"]);
 
   // Modal state management
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -494,7 +680,19 @@ const OrganizeContestsPage = () => {
     setCategories((prev) => prev.filter((cat) => cat.id !== categoryId));
   };
 
-  const tabs = ["Crypto Market", "Weather", "Stock Market"];
+  // Handle drag end for tabs in Edit Groups Sheet
+  const handleTabDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      setTabs((items) => {
+        const oldIndex = items.findIndex((item) => item === active.id);
+        const newIndex = items.findIndex((item) => item === over?.id);
+
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
 
   return (
     <div className="mt-10">
@@ -532,6 +730,7 @@ const OrganizeContestsPage = () => {
             <Edit className="w-4 h-4 text-gray-400 hover:text-gray-600" />
           </button>
         </div>
+        
         {tabs.map((tab) => (
           <button
             key={tab}
@@ -624,39 +823,35 @@ const OrganizeContestsPage = () => {
             <SheetTitle>Edit groups</SheetTitle>
           </SheetHeader>
 
-          <div className="flex-1 space-y-3 p-6 ">
-            {categories.map((category) => (
-              <div
-                key={category.id}
-                className="flex items-center justify-between p-3 bg-bg rounded-lg"
+          <div className="flex-1 space-y-3 p-6">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleTabDragEnd}
+            >
+              <SortableContext
+                items={tabs}
+                strategy={verticalListSortingStrategy}
               >
-                <span className="font-medium text-gray-900">
-                  {category.name}
-                </span>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      setSelectedCategory(category);
-                      setGroupName(category.name);
-                      setIsEditGroupsSheetOpen(false);
-                      setIsCreateModalOpen(true);
+                {tabs.map((tab) => (
+                  <SortableTabItem
+                    key={tab}
+                    tab={tab}
+                    onEdit={(tab) => {
+                      // Handle edit tab logic here
+                      console.log("Edit tab:", tab);
                     }}
-                    className="p-2 hover:bg-gray-200 rounded-md transition-colors"
-                    title="Edit group"
-                  >
-                    <Edit className="w-4 h-4 text-gray-600" />
-                  </button>
-
-                  <button
-                    onClick={() => handleDeleteGroup(category.id)}
-                    className="p-2 hover:bg-red-100 rounded-md transition-colors cursor-pointer"
-                    title="Delete group"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-600" />
-                  </button>
-                </div>
-              </div>
-            ))}
+                    onDelete={(tab) => {
+                      // Handle delete tab logic here
+                      setTabs(prev => prev.filter(t => t !== tab));
+                      if (activeTab === tab && tabs.length > 1) {
+                        setActiveTab(tabs.find(t => t !== tab) || tabs[0]);
+                      }
+                    }}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           </div>
 
           <SheetFooter className="flex flex-row gap-3">

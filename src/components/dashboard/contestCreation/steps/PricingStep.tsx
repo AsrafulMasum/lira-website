@@ -121,6 +121,7 @@ const PricingStep: React.FC<PricingStepProps> = ({ data, onUpdate }) => {
                   Min Value
                 </label>
                 <Input
+                  type="number"
                   placeholder="Placeholder"
                   value={tier.minValue || ""}
                   onChange={(e) =>
@@ -134,6 +135,7 @@ const PricingStep: React.FC<PricingStepProps> = ({ data, onUpdate }) => {
                   Max Value
                 </label>
                 <Input
+                  type="number"
                   placeholder="Placeholder"
                   value={tier.maxValue || ""}
                   onChange={(e) =>
@@ -147,6 +149,7 @@ const PricingStep: React.FC<PricingStepProps> = ({ data, onUpdate }) => {
                   Price Per Prediction ($)
                 </label>
                 <Input
+                  type="number"
                   placeholder="Placeholder"
                   value={tier.pricePerPrediction || ""}
                   onChange={(e) =>
@@ -208,6 +211,7 @@ const PricingStep: React.FC<PricingStepProps> = ({ data, onUpdate }) => {
                   From % (below current)
                 </label>
                 <Input
+                  type="number"
                   placeholder="Placeholder"
                   value={tier.fromPercent || ""}
                   onChange={(e) =>
@@ -221,6 +225,7 @@ const PricingStep: React.FC<PricingStepProps> = ({ data, onUpdate }) => {
                   To % (above current)
                 </label>
                 <Input
+                  type="number"
                   placeholder="Placeholder"
                   value={tier.toPercent || ""}
                   onChange={(e) =>
@@ -234,6 +239,7 @@ const PricingStep: React.FC<PricingStepProps> = ({ data, onUpdate }) => {
                   Price Per Prediction ($)
                 </label>
                 <Input
+                  type="number"
                   placeholder="Placeholder"
                   value={tier.pricePerPrediction || ""}
                   onChange={(e) =>
