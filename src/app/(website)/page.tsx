@@ -1,12 +1,9 @@
-import FilterSection from "@/components/website/marketplace/FilterSection";
-import React from "react";
+import { redirect } from "next/navigation";
 
-const page = () => {
-  return (
-    <>
-      <FilterSection />
-    </>
-  );
-};
+export default function MarketplacePage() {
+  // Option 1: Redirect to default tab (e.g., 'crypto')
+  redirect("/crypto");
+  // return <div>Loading...</div>;
+}
 
-export default page;
+
