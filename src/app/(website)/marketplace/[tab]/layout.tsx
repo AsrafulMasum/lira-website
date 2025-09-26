@@ -27,7 +27,7 @@ export default async function Layout({ children, params }: LayoutProps) {
             {tabs.map((tab) => (
               <Link
                 key={tab.key}
-                href={`/${tab.key}`}
+                href={`/marketplace/${tab.key}`}
                 className={`pb-4 text-base font-bold border-b-2 transition-colors text-nowrap ${
                   activeTab === tab.key
                     ? "border-dark-primary text-dark-primary"
