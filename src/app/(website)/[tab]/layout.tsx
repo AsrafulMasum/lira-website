@@ -23,12 +23,12 @@ export default async function Layout({ children, params }: LayoutProps) {
       {/* Tabs */}
       <div className="bg-[#FAFFFC] pt-5">
         <ContainerLayout>
-          <div className="flex gap-8">
+          <div className="flex gap-8 overflow-x-auto scrollbar-hide">
             {tabs.map((tab) => (
               <Link
                 key={tab.key}
                 href={`/${tab.key}`}
-                className={`pb-4 text-base font-bold border-b-2 transition-colors ${
+                className={`pb-4 text-base font-bold border-b-2 transition-colors text-nowrap ${
                   activeTab === tab.key
                     ? "border-dark-primary text-dark-primary"
                     : "border-transparent text-gray hover:text-gray"

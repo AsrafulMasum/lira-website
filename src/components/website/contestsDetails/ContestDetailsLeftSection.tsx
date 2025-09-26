@@ -4,9 +4,10 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Clock, Plus, Search, Users } from "lucide-react";
 import AddCustomValue from "./AddCustomValue";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
-import RangeSheet from "./RangeSheet";
+import RangeSheet from "./sheets/RangeSheet";
 import ContestCountdown from "@/helpers/ContestCountdown";
-import SelectedValueSheet from "./SelectedValueSheet";
+import SelectedValueSheet from "./sheets/SelectedValueSheet";
+import SearchSheet from "./sheets/SearchSheet";
 
 const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
   return (
@@ -44,7 +45,7 @@ const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
                     <Search size={16} /> Search
                   </button>
                 </SheetTrigger>
-                <SelectedValueSheet />
+                <SearchSheet />
               </Sheet>
 
               <Sheet>

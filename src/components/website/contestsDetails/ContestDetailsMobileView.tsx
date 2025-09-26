@@ -6,9 +6,11 @@ import { SelectPredictions } from "./SelectPredictions";
 import { LiveChart } from "./LiveChart";
 import LatestNews from "./LatestNews";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
-import RangeSheet from "./RangeSheet";
+import RangeSheet from "./sheets/RangeSheet";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import AddCustomValue from "./AddCustomValue";
+import SelectedValueSheet from "./sheets/SelectedValueSheet";
+import SearchSheet from "./sheets/SearchSheet";
 
 const ContestDetailsMobileView = ({ contest }: any) => {
   return (
@@ -67,11 +69,16 @@ const ContestDetailsMobileView = ({ contest }: any) => {
       </div>
 
       <div className="grid grid-cols-2 lg:flex justify-center items-center gap-3">
-        <button
-          className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg`}
-        >
-          <Search size={16} /> Search
-        </button>
+        <Sheet>
+          <SheetTrigger asChild>
+            <button
+              className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg`}
+            >
+              <Search size={16} /> Search
+            </button>
+          </SheetTrigger>
+          <SearchSheet />
+        </Sheet>
 
         <Sheet>
           <SheetTrigger asChild>

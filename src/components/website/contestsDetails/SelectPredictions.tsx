@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
-import SelectedValueSheet from "./SelectedValueSheet";
+import SelectedValueSheet from "./sheets/SelectedValueSheet";
 
 interface PriceRange {
   id: string;
