@@ -59,7 +59,10 @@ const SignUp = () => {
       });
       if (res?.success) {
         toast.success("Sign up successful", { id: "signUp" });
-        const params = new URLSearchParams({ email: payload.email });
+        const params = new URLSearchParams({
+          from: "register",
+          email: payload.email,
+        });
         router.push(`${redirect}?${params.toString()}`);
       }
     } catch (error) {
