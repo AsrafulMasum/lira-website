@@ -77,7 +77,7 @@ const SearchSheet = () => {
 
   return (
     <SheetContent
-      className="w-full h-[75%] lg:h-full sm:max-w-md px-6 rounded-t-2xl lg:rounded-t-none lg:rounded-l-2xl pt-10 bg-[#FAFFFC] flex flex-col"
+      className="w-full h-[75%] lg:h-full sm:max-w-md px-6 rounded-t-2xl lg:rounded-t-none lg:rounded-l-2xl pt-10 bg-[#FAFFFC] flex flex-col overflow-y-auto scrollbar-hide"
       side={isMobile ? "bottom" : "right"}
     >
       <SheetHeader className="space-y-0 p-0 pb-6">

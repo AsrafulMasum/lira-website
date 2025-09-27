@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Bar, BarChart, ResponsiveContainer, XAxis, Cell } from "recharts";
 import { useMediaQuery } from "react-responsive";
+import { Check, ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Sample data for the chart
 const chartData = [
@@ -23,6 +25,9 @@ const FilterSheet = () => {
   const [rangeEnd, setRangeEnd] = useState(120500);
   const [isDragging, setIsDragging] = useState<"start" | "end" | null>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
+  const [sortBy, setSortBy] = useState("Numbers of entries");
+  const [prizeType, setPrizeType] = useState("All");
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
 
   const minValue = 118000;
   const maxValue = 124000;
@@ -108,9 +113,17 @@ const FilterSheet = () => {
   const startPosition = getPositionFromValue(rangeStart);
   const endPosition = getPositionFromValue(rangeEnd);
 
+  const sortOptions = [
+    "Numbers of entries",
+    "Prize value",
+    "End date",
+    "Popularity",
+  ];
+  const prizeTypes = ["All", "Cash", "Product", "Other"];
+
   return (
     <SheetContent
-      className="w-full h-[75%] lg:h-full sm:max-w-md px-6 rounded-t-2xl lg:rounded-t-none lg:rounded-l-2xl pt-10 bg-[#FAFFFC]"
+      className="w-full h-[75%] lg:h-full sm:max-w-md px-6 rounded-t-2xl lg:rounded-t-none lg:rounded-l-2xl pt-10 bg-[#FAFFFC] overflow-y-auto scrollbar-hide"
       side={isMobile ? "bottom" : "right"}
     >
       <SheetHeader className="space-y-0 p-0 pb-6">
@@ -120,6 +133,77 @@ const FilterSheet = () => {
       </SheetHeader>
 
       <div className="space-y-6 h-full flex flex-col justify-between">
+        <div className="space-y-4 mb-6">
+          <h4 className="text-gray font-semibold">Sort by</h4>
+          <div className="relative">
+            <button
+              onClick={() => setShowSortDropdown(!showSortDropdown)}
+              className="w-full flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-white text-left"
+            >
+              <span className="text-[#0D7A3A] font-medium">{sortBy}</span>
+              <ChevronDown className="w-4 h-4 text-gray-500" />
+            </button>
+            {showSortDropdown && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                {sortOptions.map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => {
+                      setSortBy(option);
+                      setShowSortDropdown(false);
+                    }}
+                    className="w-full text-left p-3 hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg"
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-4 mb-6">
+          <h4 className="text-gray font-semibold">Type of prize</h4>
+          <div className="grid grid-cols-2 gap-3">
+            {prizeTypes.map((type) => {
+              const isSelected = prizeType === type;
+              const isAvailable = true;
+
+              return (
+                <button
+                  key={type}
+                  onClick={() => isAvailable && setPrizeType(type)}
+                  disabled={!isAvailable}
+                  className={cn(
+                    "relative h-12 transition-all duration-200 font-medium text-sm flex items-center justify-center cursor-pointer",
+                    isSelected && isAvailable
+                      ? "bg-primary text-white rounded-2xl px-4 gap-2"
+                      : isAvailable
+                      ? "bg-white text-primary rounded-2xl border border-gray-200 hover:border-gray-300"
+                      : "bg-gray-50 text-gray-400 rounded-2xl border border-gray-200 cursor-not-allowed"
+                  )}
+                >
+                  {!isSelected && isAvailable && (
+                    <div className="absolute left-4 w-5 h-5 border-2 border-gray-300 rounded-full" />
+                  )}
+
+                  {!isSelected && !isAvailable && (
+                    <div className="absolute left-4 w-5 h-5 bg-border-color rounded-full" />
+                  )}
+
+                  {isSelected && isAvailable && (
+                    <div className="absolute left-4 w-5 h-5 bg-white rounded-full flex justify-center items-center">
+                      <Check className="w-4 h-4 text-primary" />
+                    </div>
+                  )}
+
+                  <span>{type}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <div>
           {/*Prize Chart Section */}
           <div className="space-y-4">
