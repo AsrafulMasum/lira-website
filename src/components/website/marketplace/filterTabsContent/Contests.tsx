@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import ContestCountdown from "@/helpers/ContestCountdown";
+import ContestCountdown from "@/hooks/ContestCountdown";
 import { Clock, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

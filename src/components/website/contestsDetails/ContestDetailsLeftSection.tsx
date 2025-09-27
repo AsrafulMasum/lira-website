@@ -5,7 +5,7 @@ import { Clock, Plus, Search, Users } from "lucide-react";
 import AddCustomValue from "./AddCustomValue";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import RangeSheet from "./sheets/RangeSheet";
-import ContestCountdown from "@/helpers/ContestCountdown";
+import ContestCountdown from "@/hooks/ContestCountdown";
 import SelectedValueSheet from "./sheets/SelectedValueSheet";
 import SearchSheet from "./sheets/SearchSheet";
 

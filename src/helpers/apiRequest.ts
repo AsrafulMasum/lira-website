@@ -2,7 +2,7 @@
 "use server";
 
 import { getAccessToken } from "./getAccessToken";
-
+console.log(process.env.BASE_URL);
 
 export interface FetchResponse {
   success: boolean;

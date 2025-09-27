@@ -1,4 +1,4 @@
-import ContestCountdown from "@/helpers/ContestCountdown";
+import ContestCountdown from "@/hooks/ContestCountdown";
 import { CircleQuestionMark, Clock, Plus, Search, Users } from "lucide-react";
 import Image from "next/image";
 import React from "react";

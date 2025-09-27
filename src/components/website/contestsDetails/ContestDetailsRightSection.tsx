@@ -1,7 +1,7 @@
 import React from "react";
 import { LiveChart } from "./LiveChart";
 import LatestNews from "./LatestNews";
-import ContestCountdown from "@/helpers/ContestCountdown";
+import ContestCountdown from "@/hooks/ContestCountdown";
 import { CircleQuestionMark } from "lucide-react";
 import Image from "next/image";
 
