@@ -32,6 +32,7 @@ import {
   Search,
   BarChart3,
   Settings,
+  Upload,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -385,53 +386,87 @@ const ContestManagementPage = () => {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {contest.status === "Active" && (
+                    {contest.status === "Draft" && (
                       <>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
-                        >
-                          <Check className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
-
-                    {(contest.status === "Draft" ||
-                      contest.status === "Done") && (
-                      <>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0"
+                          className="h-8 w-8 p-0 bg-bg text-primary cursor-pointer"
+                          title="Edit"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0"
+                          className="h-8 w-8 p-0 bg-bg text-primary cursor-pointer"
+                          title="Upload"
+                        >
+                          <Upload className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 bg-bg text-primary cursor-pointer"
+                          title="Copy"
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0"
+                          className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-100 bg-red-50 cursor-pointer"
+                          title="Delete"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
+
+                    {contest.status === "Active" && (
+                      <>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-100 bg-red-50 cursor-pointer"
+                          title="Cancel"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-100 bg-bg cursor-pointer"
+                          title="Mark as Complete"
+                        >
+                          <Check className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 bg-bg text-primary cursor-pointer"
+                          title="Copy"
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
+
+                    {contest.status === "Done" && (
+                      <>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 bg-bg text-primary cursor-pointer"
+                          title="Copy"
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                          className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-100 bg-red-50 cursor-pointer"
+                          title="Delete"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -439,7 +474,12 @@ const ContestManagementPage = () => {
                     )}
 
                     {contest.status === "Deleted" && (
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 bg-bg text-primary cursor-pointer"
+                        title="Copy"
+                      >
                         <Copy className="h-4 w-4" />
                       </Button>
                     )}
