@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import Link from "next/link";
 import logo from "@/assets/logo.svg";
 import {
   InputOTP,
@@ -52,14 +51,15 @@ const VerifyEmail = () => {
         method: "POST",
         body: payload,
       });
-      console.log(res);
       if (res?.success) {
         toast.success("Verification successful", { id: "verify" });
         Cookies.set("accessToken", res?.data?.accessToken);
         router.push(
           from === "register"
             ? "/"
-            : `/change-password?email=${encodeURIComponent(email)}`
+            : `/change-password?token=${encodeURIComponent(
+                res?.data?.verifyToken
+              )}`
         );
       } else {
         toast.error(res?.message, { id: "verify" });
@@ -67,6 +67,25 @@ const VerifyEmail = () => {
     } catch (error) {
       toast.error("Verification failed", { id: "verify" });
       console.error("Error verifying email:", error);
+    }
+  };
+
+  const handleResend = async () => {
+    toast.loading("Sending code...", { id: "resend-code" });
+    try {
+      const res = await apiRequest("/auth/resend-otp", {
+        method: "POST",
+        body: { email },
+      });
+      if (res?.success) {
+        toast.success("Code sent successfully", { id: "resend-code" });
+      } else {
+        toast.error(res?.message || "Failed to send code", {
+          id: "resend-code",
+        });
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -118,18 +137,18 @@ const VerifyEmail = () => {
                   <Button type="submit" className="w-full h-10">
                     Verify Code
                   </Button>
-
-                  <div className="text-center text-sm mt-10">
-                    You have not received the email?{" "}
-                    <Link
-                      href="#"
-                      className="font-medium text-primary hover:underline underline-offset-4"
-                    >
-                      Resend
-                    </Link>
-                  </div>
                 </div>
               </form>
+
+              <div className="text-center text-sm mt-10">
+                You have not received the email?{" "}
+                <button
+                  onClick={handleResend}
+                  className="font-medium text-primary hover:underline underline-offset-4 cursor-pointer"
+                >
+                  Resend
+                </button>
+              </div>
             </CardContent>
           </Card>
         </div>

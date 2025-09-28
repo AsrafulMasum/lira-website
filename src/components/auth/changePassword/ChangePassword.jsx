@@ -17,6 +17,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import logo from "@/assets/logo.svg";
 import { toast } from "sonner";
+import { apiRequest } from "@/helpers/apiRequest";
 
 const ChangePassword = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -24,26 +25,33 @@ const ChangePassword = () => {
     useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get("email");
+  const token = searchParams.get("token");
   const redirect = useSearchParams().get("redirect");
-
+  console.log(token);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    toast.loading("Logging in...", {
-      id: "login",
+    toast.loading("Resetting password...", {
+      id: "reset",
     });
     const formData = new FormData(e.currentTarget);
     const payload = {
-      email: formData.get("email"),
-      password: formData.get("password"),
+      newPassword: formData.get("password"),
+      confirmPassword: formData.get("confirmPassword"),
     };
-    console.log(payload);
 
     try {
-      //! perform your api call here..
-
-      toast.success("Login successful", { id: "login" });
-      router.push(redirect || "/");
+      const res = await apiRequest("/auth/reset-password", {
+        method: "POST",
+        body: payload,
+        token: `${token}`,
+      });
+      
+      if (res?.success) {
+        toast.success("Password reset successful", { id: "reset" });
+        router.push(redirect || "/");
+      } else {
+        toast.error(res?.message, { id: "reset" });
+      }
     } catch (error) {
       console.log("Error fetching data:", error);
     }
@@ -56,9 +64,7 @@ const ChangePassword = () => {
       )}
     >
       <div className="lg:w-1/2 h-screen w-full p-6">
-        <div
-          className="h-full flex justify-center items-center rounded-xl"
-        >
+        <div className="h-full flex justify-center items-center rounded-xl">
           <Card className="py-16 w-full bg-transparent xl:px-[100px] shadow-none border-none">
             <CardHeader className="text-center">
               <figure className="flex justify-center mb-7">
