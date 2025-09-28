@@ -20,9 +20,9 @@ import { useEffect, useState } from "react";
 import logo from "@/assets/logo.svg";
 import { Separator } from "@/components/ui/separator";
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebookF } from "react-icons/fa";
 import { toast } from "sonner";
 import { apiRequest } from "@/helpers/apiRequest";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -54,7 +54,7 @@ const Login = () => {
         method: "POST",
         body: payload,
       });
-
+      console.log(res);
       if (res?.success) {
         if (remember) {
           localStorage.setItem("auth", JSON.stringify(payload));
@@ -62,9 +62,11 @@ const Login = () => {
           localStorage.removeItem("auth");
         }
         toast.success("Login successful", { id: "login" });
+        Cookies.set("accessToken", res?.data?.accessToken);
+        Cookies.set("refreshToken", res?.data?.refreshToken);
         router.push("/");
       } else {
-        toast.error(res?.message);
+        toast.error(res?.message, { id: "login" });
       }
     } catch (error) {
       console.log("Error fetching data:", error);
