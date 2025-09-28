@@ -199,24 +199,13 @@ const SignUp = () => {
                 </div>
 
                 {/* social button */}
-                <div className="flex justify-center items-center gap-4">
+                <div className="flex justify-center items-center gap-4 md:mt-10">
                   <Button
-                    className={`bg-transparent hover:bg-transparent h-10 px-5 shadow-none`}
-                    style={{
-                      boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.10)",
-                    }}
+                    className="bg-transparent hover:bg-transparent h-10 px-5 shadow-none"
+                    style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.10)" }}
                   >
                     <FcGoogle />
-                    <span className="text-[#606060]">Google</span>
-                  </Button>
-                  <Button
-                    className={`bg-[#1E90FF] hover:bg-[#1E90FF] h-10 px-5 shadow-none`}
-                    style={{
-                      boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.10)",
-                    }}
-                  >
-                    <FaFacebookF />
-                    <span className="text-[#F1F1F1]">Facebook</span>
+                    <span className="text-[#606060]">Continue with Google</span>
                   </Button>
                 </div>
 
