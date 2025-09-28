@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import logo from "@/assets/logo.svg";
 import { toast } from "sonner";
+import { apiRequest } from "@/helpers/apiRequest";
 
 const ForgotPassword = () => {
   const router = useRouter();
@@ -22,35 +23,22 @@ const ForgotPassword = () => {
     const email = formData.get("email");
 
     try {
-      // perform your api call here..
+      const res = await apiRequest("/auth/forget-password", {
+        method: "POST",
+        body: { email },
+      });
 
-      toast.success("Code sent", { id: "send-code" });
-      router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+      if (res?.success) {
+        toast.success("Code sent to your email.", { id: "send-code" });
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+      } else {
+        toast.error(res?.message);
+      }
     } catch (error) {
       console.log("Error fetching data:", error);
+      toast.error("Something went wrong. Please try again.");
     }
   };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   toast.loading("Logging in...", {
-  //     id: "login",
-  //   });
-  //   const formData = new FormData(e.currentTarget);
-  //   const payload = {
-  //     email: formData.get("email"),
-  //   };
-  //   console.log(payload);
-
-  //   try {
-  //     //! perform your api call here..
-
-  //     toast.success("Login successful", { id: "login" });
-  //     router.push(redirect);
-  //   } catch (error) {
-  //     console.log("Error fetching data:", error);
-  //   }
-  // };
 
   return (
     <div

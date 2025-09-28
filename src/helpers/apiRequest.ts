@@ -50,7 +50,7 @@ export const apiRequest = async (
     ...headers,
     ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-    ...(token ? { Authorization: `${token}` } : {}),
+    ...(token ? { token: `${token}` } : {}),
   };
 
   try {
