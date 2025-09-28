@@ -8,8 +8,7 @@ import getProfile from "@/helpers/getProfile";
 
 const Navbar = async () => {
   const profile = await getProfile();
-  console.log(profile);
-
+  
   return (
     <div className="bg-[#FAFFFC] sticky top-0 z-50">
       <ContainerLayout>

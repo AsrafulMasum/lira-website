@@ -144,7 +144,22 @@ const NewContestPage = () => {
   };
 
   const handleNext = () => {
-    if (!isLastStep && isCurrentStepValid()) {
+    if (isCurrentStepValid()) {
+      // Log current contest data to console
+      console.log('New Contest Data:', {
+        currentStep,
+        contestData,
+        completedSteps: [...completedSteps, currentStep],
+        isLastStep
+      });
+
+      if (isLastStep) {
+        // Final step - contest creation complete
+        console.log('Contest Creation Complete!', contestData);
+        // Here you would typically submit the contest data
+        return;
+      }
+
       // Mark current step as completed
       if (!completedSteps.includes(currentStep)) {
         setCompletedSteps((prev) => [...prev, currentStep]);

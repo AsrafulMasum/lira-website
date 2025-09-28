@@ -83,6 +83,7 @@ const PredictionsStep: React.FC<PredictionsStepProps> = ({
               Min Value
             </label>
             <Input
+              type="number"
               placeholder="Placeholder"
               value={data.minValue}
               onChange={(e) => handleInputChange("minValue", e.target.value)}
@@ -96,6 +97,7 @@ const PredictionsStep: React.FC<PredictionsStepProps> = ({
               Max Value
             </label>
             <Input
+              type="number"
               placeholder="Placeholder"
               value={data.maxValue}
               onChange={(e) => handleInputChange("maxValue", e.target.value)}
@@ -109,6 +111,7 @@ const PredictionsStep: React.FC<PredictionsStepProps> = ({
               Increment
             </label>
             <Input
+              type="number"
               placeholder="Placeholder"
               value={data.increment}
               onChange={(e) => handleInputChange("increment", e.target.value)}
