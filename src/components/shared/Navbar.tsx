@@ -7,7 +7,7 @@ import { ChevronRight } from "lucide-react";
 
 const Navbar = () => {
   return (
-    <div className="bg-[#FAFFFC]">
+    <div className="bg-[#FAFFFC] sticky top-0 z-50">
       <ContainerLayout>
         <nav className="w-full h-16 flex justify-between items-center">
           <Link href="/">

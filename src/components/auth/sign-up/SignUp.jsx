@@ -15,17 +15,19 @@ import { cn } from "@/lib/utils";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import logo from "@/assets/logo.svg";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebookF } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { apiRequest } from "@/helpers/apiRequest";
 
 const SignUp = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false);
   const router = useRouter();
   const redirect = "/verify-email";
 
@@ -35,29 +37,49 @@ const SignUp = () => {
       id: "signUp",
     });
     const formData = new FormData(e.currentTarget);
+    const terms = formData.get("terms");
+    const password = formData.get("password");
+    const confirmPassword = formData.get("confirmPassword");
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
     const payload = {
+      name: formData.get("userName"),
       email: formData.get("email"),
-      password: formData.get("password"),
+      password,
+      agreeWithTerms: terms === "on" ? true : false,
     };
-    console.log(payload);
 
     try {
-      //! perform your api call here..
-
-      toast.success("Sign up successful", { id: "signUp" });
-      const params = new URLSearchParams({ email: payload.email });
-      router.push(`${redirect}?${params.toString()}`);
+      const res = await apiRequest("/users/register", {
+        method: "POST",
+        body: payload,
+      });
+      if (res?.success) {
+        toast.success("Sign up successful", { id: "signUp" });
+        const params = new URLSearchParams({
+          from: "register",
+          email: payload.email,
+        });
+        router.push(`${redirect}?${params.toString()}`);
+      } else {
+        toast.error(res?.message, { id: "signUp" });
+      }
     } catch (error) {
       console.log("Error fetching data:", error);
+      toast.error("Sign up failed", { id: "signUp" });
     }
   };
 
   return (
-    <div className={cn("max-h-screen flex items-center justify-center lg:overflow-hidden")}>
+    <div
+      className={cn(
+        "max-h-screen flex items-center justify-center lg:overflow-hidden"
+      )}
+    >
       <div className="w-full lg:w-1/2 min-h-screen p-6">
-        <Card
-          className="h-full py-10 xl:px-[100px] shadow-none border-none"
-        >
+        <Card className="h-full py-10 xl:px-[100px] shadow-none border-none">
           <CardHeader className="text-center">
             <figure className="flex justify-center mb-7">
               <Image src={logo} alt="logo" height={85} />
@@ -130,16 +152,24 @@ const SignUp = () => {
                       <Input
                         id="confirmPassword"
                         name="confirmPassword"
-                        type={`${isConfirmPasswordVisible ? "text" : "password"}`}
+                        type={`${
+                          isConfirmPasswordVisible ? "text" : "password"
+                        }`}
                         placeholder="Enter password"
                         required
                         className="bg-white shadow-none h-10"
                       />
                       <span
-                        onClick={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
+                        onClick={() =>
+                          setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
+                        }
                         className="text-slate-400 absolute right-5 top-1.5 cursor-pointer"
                       >
-                        {!isConfirmPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
+                        {!isConfirmPasswordVisible ? (
+                          <EyeOffIcon />
+                        ) : (
+                          <EyeIcon />
+                        )}
                       </span>
                     </div>
                   </div>
@@ -147,7 +177,12 @@ const SignUp = () => {
                   {/* remember checkbox */}
                   <div className="flex flex-col md:flex-row justify-between gap-2 items-center">
                     <div className="flex items-center space-x-2">
-                      <Checkbox required id="terms" className="size-5 border-primary" />
+                      <Checkbox
+                        required
+                        name="terms"
+                        id="terms"
+                        className="size-5 border-primary"
+                      />
                       <label
                         htmlFor="terms"
                         className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

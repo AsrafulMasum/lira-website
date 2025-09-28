@@ -20,31 +20,53 @@ import {
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { useState } from "react";
+import { apiRequest } from "@/helpers/apiRequest";
+import Cookies from "js-cookie";
 
 const VerifyEmail = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
+  const from = searchParams.get("from");
+
+  const [otp, setOtp] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    toast.loading("Logging in...", {
-      id: "login",
-    });
-    const formData = new FormData(e.currentTarget);
-    const payload = {
-      email: formData.get("email"),
-      password: formData.get("password"),
-    };
-    console.log(payload);
+
+    if (otp.length !== 4) {
+      toast.error("Please enter 4 digit code");
+      return;
+    }
+
+    toast.loading("Verifying code...", { id: "verify" });
 
     try {
-      //! perform your api call here..
+      const payload = {
+        email,
+        oneTimeCode: Number(otp),
+      };
 
-      toast.success("Login successful", { id: "login" });
-      router.push(`/change-password?email=${encodeURIComponent(email)}`);
+      const res = await apiRequest("/auth/verify-email", {
+        method: "POST",
+        body: payload,
+      });
+      console.log(res);
+      if (res?.success) {
+        toast.success("Verification successful", { id: "verify" });
+        Cookies.set("accessToken", res?.data?.accessToken);
+        router.push(
+          from === "register"
+            ? "/"
+            : `/change-password?email=${encodeURIComponent(email)}`
+        );
+      } else {
+        toast.error(res?.message, { id: "verify" });
+      }
     } catch (error) {
-      console.log("Error fetching data:", error);
+      toast.error("Verification failed", { id: "verify" });
+      console.error("Error verifying email:", error);
     }
   };
 
@@ -55,9 +77,7 @@ const VerifyEmail = () => {
       )}
     >
       <div className="w-full lg:w-1/2 h-screen p-6">
-        <div
-          className="h-full flex justify-center items-center rounded-xl"
-        >
+        <div className="h-full flex justify-center items-center rounded-xl">
           <Card className="py-16 bg-transparent xl:px-[100px] shadow-none border-none">
             <CardHeader className="text-center mb-10">
               <figure className="flex justify-center mb-7">
@@ -65,68 +85,40 @@ const VerifyEmail = () => {
               </figure>
               <CardTitle className="text-2xl">Verification code</CardTitle>
               <CardDescription className="pt-4 text-[#5C5C5C]">
-                We sent a reset link to {email} enter 5 digit code that is
-                mentioned in the email
+                We sent an email to {email}. Please enter the 4 digit code that
+                is mentioned in the email.
               </CardDescription>
             </CardHeader>
 
             <CardContent>
               <form onSubmit={handleSubmit}>
                 <div className="grid gap-4">
-                  <div className="grid gap-6">
-                    <div className="flex flex-col items-center justify-center gap-1 mb-10">
-                      <InputOTP
-                        maxLength={5}
-                        pattern={REGEXP_ONLY_DIGITS}
-                        //   {...field}
-                      >
-                        <InputOTPGroup className="w-full justify-center gap-2 md:gap-6">
+                  <div className="flex flex-col items-center justify-center gap-1 mb-10">
+                    <InputOTP
+                      maxLength={4}
+                      pattern={REGEXP_ONLY_DIGITS}
+                      value={otp}
+                      onChange={setOtp}
+                    >
+                      <InputOTPGroup className="w-full justify-center gap-2 md:gap-6">
+                        {[0, 1, 2, 3].map((i) => (
                           <InputOTPSlot
-                            className={`shadow-none border w-[55px] h-[50px] rounded-md`}
+                            key={i}
+                            index={i}
+                            className="shadow-none border w-[55px] h-[50px] rounded-md"
                             style={{
                               boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
                             }}
-                            index={0}
                           />
-                          <InputOTPSlot
-                            className={`shadow-none border w-[55px] h-[50px] rounded-md`}
-                            style={{
-                              boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
-                            }}
-                            index={1}
-                          />
-                          <InputOTPSlot
-                            className={`shadow-none border w-[55px] h-[50px] rounded-md`}
-                            style={{
-                              boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
-                            }}
-                            index={2}
-                          />
-                          <InputOTPSlot
-                            className={`shadow-none border w-[55px] h-[50px] rounded-md`}
-                            style={{
-                              boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
-                            }}
-                            index={3}
-                          />
-                          <InputOTPSlot
-                            className={`shadow-none border w-[55px] h-[50px] rounded-md`}
-                            style={{
-                              boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
-                            }}
-                            index={4}
-                          />
-                        </InputOTPGroup>
-                      </InputOTP>
-                    </div>
-
-                    {/* submit button */}
-                    <Button type="submit" className="w-full h-10">
-                      Verify Code
-                    </Button>
+                        ))}
+                      </InputOTPGroup>
+                    </InputOTP>
                   </div>
 
-                  {/* resend otp */}
+                  <Button type="submit" className="w-full h-10">
+                    Verify Code
+                  </Button>
+
                   <div className="text-center text-sm mt-10">
                     You have not received the email?{" "}
                     <Link

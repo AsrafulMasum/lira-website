@@ -9,9 +9,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import ContainerLayout from "@/layout/ContainerLayout";
-import { ListFilter, Search, X } from "lucide-react";
+import { ListFilter, Search } from "lucide-react";
 import React, { useState } from "react";
 import Contests from "../filterTabsContent/Contests";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
+import FilterSheet from "../sheets/FilterSheet";
 
 const CryptoContent = () => {
   const [value, setValue] = useState("");
@@ -53,21 +55,14 @@ const CryptoContent = () => {
               )}
             </div>
             <div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex justify-center items-center gap-2 bg-[#FAFFFC] w-12 h-12 text-sm font-medium text-primary rounded-2xl border border-border-color">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <button className="flex justify-center items-center gap-2 bg-[#FAFFFC] w-12 h-12 text-sm font-medium text-primary rounded-2xl border border-border-color cursor-pointer">
                     <ListFilter className="size-4" />
                   </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>Billing</DropdownMenuItem>
-                  <DropdownMenuItem>Team</DropdownMenuItem>
-                  <DropdownMenuItem>Subscription</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                </SheetTrigger>
+                <FilterSheet />
+              </Sheet>
             </div>
           </div>
 

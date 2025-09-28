@@ -16,35 +16,56 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "@/assets/logo.svg";
 import { Separator } from "@/components/ui/separator";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebookF } from "react-icons/fa";
 import { toast } from "sonner";
+import { apiRequest } from "@/helpers/apiRequest";
 
 const Login = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
   const router = useRouter();
+
+  // Load saved data on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const auth = JSON.parse(localStorage.getItem("auth") || "{}");
+      if (auth?.email && auth?.password) {
+        setEmail(auth.email);
+        setPassword(auth.password);
+        setRemember(true);
+      }
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    toast.loading("Logging in...", {
-      id: "login",
-    });
-    const formData = new FormData(e.currentTarget);
-    const payload = {
-      email: formData.get("email"),
-      password: formData.get("password"),
-    };
-    localStorage.setItem("email", payload?.email);
-    console.log(payload);
+    toast.loading("Logging in...", { id: "login" });
+
+    const payload = { email, password };
 
     try {
-      // perform your api call here..
+      const res = await apiRequest("/auth/login", {
+        method: "POST",
+        body: payload,
+      });
 
-      toast.success("Login successful", { id: "login" });
-      router.push("/");
+      if (res?.success) {
+        if (remember) {
+          localStorage.setItem("auth", JSON.stringify(payload));
+        } else {
+          localStorage.removeItem("auth");
+        }
+        toast.success("Login successful", { id: "login" });
+        router.push("/");
+      } else {
+        toast.error(res?.message);
+      }
     } catch (error) {
       console.log("Error fetching data:", error);
     }
@@ -56,10 +77,8 @@ const Login = () => {
         "max-h-screen flex items-center justify-center overflow-hidden"
       )}
     >
-      <div className="lg:w-1/2 h-screen p-6 ">
-        <Card
-          className="h-full xl:py-16 xl:px-[100px] shadow-none border-none"
-        >
+      <div className="lg:w-1/2 h-screen p-6">
+        <Card className="h-full xl:py-16 xl:px-[100px] shadow-none border-none">
           <CardHeader className="text-center">
             <figure className="flex justify-center mb-7">
               <Image src={logo} alt="logo" height={85} />
@@ -72,84 +91,88 @@ const Login = () => {
           <CardContent>
             <form onSubmit={handleSubmit}>
               <div className="grid gap-6">
-                <div className="grid gap-6">
-                  {/* email */}
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="me@example.com"
-                      required
-                      className="bg-white shadow-none h-10"
-                    />
-                  </div>
-
-                  {/* password */}
-                  <div className="grid gap-2">
-                    <div className="flex items-center">
-                      <Label htmlFor="password">Password</Label>
-                    </div>
-                    <div className="relative">
-                      <Input
-                        id="password"
-                        name="password"
-                        type={`${isPasswordVisible ? "text" : "password"}`}
-                        placeholder="Enter password"
-                        required
-                        className="bg-white shadow-none h-10"
-                      />
-                      <span
-                        onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-                        className="text-slate-400 absolute right-5 top-1.5 cursor-pointer"
-                      >
-                        {!isPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* remember checkbox */}
-                  <div className="flex justify-between gap-2 items-center">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="terms" className="size-5 border-primary" />
-                      <label
-                        htmlFor="terms"
-                        className="text-xs md:text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        Remember Password
-                      </label>
-                    </div>
-                    <Link
-                      href="forgot-password"
-                      className="text-xs md:text-sm text-[#FF4040] font-medium underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </Link>
-                  </div>
-
-                  {/* submit button */}
-                  <Button type="submit" className="w-full mt-5 h-10">
-                    Log In
-                  </Button>
+                {/* email */}
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="me@example.com"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-white shadow-none h-10"
+                  />
                 </div>
 
-                {/* social button */}
+                {/* password */}
+                <div className="grid gap-2">
+                  <div className="flex items-center">
+                    <Label htmlFor="password">Password</Label>
+                  </div>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      name="password"
+                      type={isPasswordVisible ? "text" : "password"}
+                      placeholder="Enter password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="bg-white shadow-none h-10"
+                    />
+                    <span
+                      onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                      className="text-slate-400 absolute right-5 top-1.5 cursor-pointer"
+                    >
+                      {!isPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
+                    </span>
+                  </div>
+                </div>
+
+                {/* remember checkbox */}
+                <div className="flex justify-between gap-2 items-center">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="remember"
+                      name="remember"
+                      checked={remember}
+                      onCheckedChange={(val) => setRemember(val)}
+                      className="size-5 border-primary"
+                    />
+                    <label
+                      htmlFor="remember"
+                      className="text-xs md:text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Remember Password
+                    </label>
+                  </div>
+                  <Link
+                    href="forgot-password"
+                    className="text-xs md:text-sm text-[#FF4040] font-medium underline-offset-4 hover:underline"
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
+
+                {/* submit button */}
+                <Button type="submit" className="w-full mt-5 h-10">
+                  Log In
+                </Button>
+
+                {/* social buttons */}
                 <div className="flex justify-center items-center gap-4 md:mt-10">
                   <Button
-                    className={`bg-transparent hover:bg-transparent h-10 px-5 shadow-none`}
-                    style={{
-                      boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.10)",
-                    }}
+                    className="bg-transparent hover:bg-transparent h-10 px-5 shadow-none"
+                    style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.10)" }}
                   >
                     <FcGoogle />
                     <span className="text-[#606060]">Google</span>
                   </Button>
                   <Button
-                    className={`bg-[#1E90FF] hover:bg-[#1E90FF] h-10 px-5 shadow-none`}
-                    style={{
-                      boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.10)",
-                    }}
+                    className="bg-[#1E90FF] hover:bg-[#1E90FF] h-10 px-5 shadow-none"
+                    style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.10)" }}
                   >
                     <FaFacebookF />
                     <span className="text-[#F1F1F1]">Facebook</span>
@@ -157,9 +180,9 @@ const Login = () => {
                 </div>
 
                 <div className="flex justify-center items-center gap-3 md:mt-10">
-                  <Separator className={`!w-[145px]`} />
+                  <Separator className="!w-[145px]" />
                   <p>OR</p>
-                  <Separator className={`!w-[145px]`} />
+                  <Separator className="!w-[145px]" />
                 </div>
 
                 {/* link to sign up */}

@@ -1,4 +1,4 @@
-import { OngoingContests } from "@/components/profile/OngoingContests";
+import { OngoingContests } from "@/components/profile/ongoingContests/OngoingContests";
 import ContainerLayout from "@/layout/ContainerLayout";
 import React from "react";
 

@@ -4,8 +4,10 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Clock, Plus, Search, Users } from "lucide-react";
 import AddCustomValue from "./AddCustomValue";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
-import RangeSheet from "./RangeSheet";
-import ContestCountdown from "@/helpers/ContestCountdown";
+import RangeSheet from "./sheets/RangeSheet";
+import ContestCountdown from "@/hooks/ContestCountdown";
+import SelectedValueSheet from "./sheets/SelectedValueSheet";
+import SearchSheet from "./sheets/SearchSheet";
 
 const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
   return (
@@ -35,11 +37,16 @@ const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
               Select your predictions
             </h4>
             <div className="flex justify-center items-center gap-3">
-              <button
-                className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-border-color bg-bg`}
-              >
-                <Search size={16} /> Search
-              </button>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <button
+                    className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-border-color bg-bg`}
+                  >
+                    <Search size={16} /> Search
+                  </button>
+                </SheetTrigger>
+                <SearchSheet />
+              </Sheet>
 
               <Sheet>
                 <SheetTrigger asChild>
