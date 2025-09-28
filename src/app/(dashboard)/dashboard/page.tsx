@@ -3,9 +3,11 @@ import ContainerLayout from "@/layout/ContainerLayout";
 
 const DashboardMain = () => {
   return (
-    <ContainerLayout>
-      <ContestManagementPage />
-    </ContainerLayout>
+    <div className="my-10">
+      <ContainerLayout>
+        <ContestManagementPage />
+      </ContainerLayout>
+    </div>
   );
 };
 
