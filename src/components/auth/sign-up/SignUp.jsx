@@ -38,7 +38,6 @@ const SignUp = () => {
     });
     const formData = new FormData(e.currentTarget);
     const terms = formData.get("terms");
-    console.log(terms);
     const password = formData.get("password");
     const confirmPassword = formData.get("confirmPassword");
     if (password !== confirmPassword) {
@@ -48,7 +47,7 @@ const SignUp = () => {
     const payload = {
       name: formData.get("userName"),
       email: formData.get("email"),
-      password: formData.get("password"),
+      password,
       agreeWithTerms: terms === "on" ? true : false,
     };
 
@@ -64,6 +63,8 @@ const SignUp = () => {
           email: payload.email,
         });
         router.push(`${redirect}?${params.toString()}`);
+      } else {
+        toast.error(res?.message, { id: "signUp" });
       }
     } catch (error) {
       console.log("Error fetching data:", error);

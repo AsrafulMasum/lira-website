@@ -22,6 +22,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useState } from "react";
 import { apiRequest } from "@/helpers/apiRequest";
+import Cookies from "js-cookie";
 
 const VerifyEmail = () => {
   const router = useRouter();
@@ -44,7 +45,7 @@ const VerifyEmail = () => {
     try {
       const payload = {
         email,
-        code: otp,
+        oneTimeCode: Number(otp),
       };
 
       const res = await apiRequest("/auth/verify-email", {
@@ -52,14 +53,17 @@ const VerifyEmail = () => {
         body: payload,
       });
       console.log(res);
-
-      toast.success("Verification successful", { id: "verify" });
-
-      router.push(
-        from === "register"
-          ? "/"
-          : `/change-password?email=${encodeURIComponent(email)}`
-      );
+      if (res?.success) {
+        toast.success("Verification successful", { id: "verify" });
+        Cookies.set("accessToken", res?.data?.accessToken);
+        router.push(
+          from === "register"
+            ? "/"
+            : `/change-password?email=${encodeURIComponent(email)}`
+        );
+      } else {
+        toast.error(res?.message, { id: "verify" });
+      }
     } catch (error) {
       toast.error("Verification failed", { id: "verify" });
       console.error("Error verifying email:", error);
