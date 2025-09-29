@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import DetailsStep from "./steps/DetailsStep";
 import TimingStep from "./steps/TimingStep";
 import ContestTimeline from "./ContestTimeline";
 import PredictionsStep from "./steps/PredictionsStep";
 import PricingStep from "./steps/PricingStep";
+import { useCreateContestMutation } from "@/redux/apiSlices/contestSlice";
+import { toast } from "sonner";
 
 type Step = "details" | "predictions" | "pricing" | "timing";
 
@@ -31,6 +33,7 @@ interface ContestData {
   statesAllowed: string[];
   prizeTitle: string;
   prizeType: string;
+  prizePool: number;
   prizeImage?: File;
 
   // Predictions step
@@ -63,6 +66,9 @@ const NewContestPage = () => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<Step>("details");
   const [completedSteps, setCompletedSteps] = useState<Step[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [createContest, { isLoading }] = useCreateContestMutation();
   const [contestData, setContestData] = useState<ContestData>({
     category: "",
     name: "",
@@ -70,6 +76,7 @@ const NewContestPage = () => {
     statesAllowed: [],
     prizeTitle: "",
     prizeType: "Cash",
+    prizePool: 0,
     minValue: "",
     maxValue: "",
     increment: "",
@@ -78,18 +85,25 @@ const NewContestPage = () => {
     placePercentages: [100],
     pricingModel: "flat",
     flatPrice: "",
-    tiers: [{
-      id: "tier-1",
-      minValue: "",
-      maxValue: "",
-      fromPercent: "",
-      toPercent: "",
-      pricePerPrediction: ""
-    }],
+    tiers: [
+      {
+        id: "tier-1",
+        minValue: "",
+        maxValue: "",
+        fromPercent: "",
+        toPercent: "",
+        pricePerPrediction: "",
+      },
+    ],
     predictionEventDate: "",
     predictionEventTime: "",
     endOffset: "",
   });
+  
+  // Force client-side rendering
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const currentStepIndex = steps.findIndex((step) => step.id === currentStep);
   const isFirstStep = currentStepIndex === 0;
@@ -116,7 +130,7 @@ const NewContestPage = () => {
     if (contestData.pricingModel === "flat") {
       return contestData.flatPrice !== "";
     } else {
-      return contestData.tiers.some(tier => tier.pricePerPrediction !== "");
+      return contestData.tiers.some((tier) => tier.pricePerPrediction !== "");
     }
   };
 
@@ -143,20 +157,116 @@ const NewContestPage = () => {
     }
   };
 
-  const handleNext = () => {
+  // Transform contest data to API format
+  const transformContestData = () => {
+    // Create place percentages object from array
+    const placePercentages = {};
+    contestData.placePercentages.forEach((percentage, index) => {
+      (placePercentages as Record<number, number>)[index + 1] = percentage;
+    });
+
+    // Determine pricing type
+    let predictionType = "";
+    if (contestData.pricingModel === "flat") {
+      predictionType = "priceOnly";
+    } else if (contestData.pricingModel === "tiered") {
+      predictionType = "tier";
+    } else if (contestData.pricingModel === "tiered-percent") {
+      predictionType = "percentage";
+    }
+
+    // Format tiers data
+    const tiers = contestData.tiers.map((tier, index) => ({
+      name: `Tier ${index + 1}`,
+      min: Number(tier.minValue) || 0,
+      max: Number(tier.maxValue) || 0,
+      pricePerPrediction: Number(tier.pricePerPrediction) || 0,
+      isActive: true,
+    }));
+
+    // Combine event date and time
+    const eventDateTime = `${contestData.predictionEventDate}T${contestData.predictionEventTime}:00Z`;
+
+    // Calculate end time based on offset (simplified for now)
+    const endOffsetTime = eventDateTime; // This should be calculated properly in a real implementation
+
+    // Get category name from the category ID
+    // In a real implementation, you would fetch this from your categories data
+    // For now, we'll use a placeholder that will be replaced by the backend
+    return {
+      name: contestData.name.trim(),
+      category: "Category Name", // The API requires a category name
+      categoryId: contestData.category, // The category field already contains the categoryId from the DetailsStep
+      description: contestData.description.trim(),
+      state: contestData.statesAllowed,
+      prize: {
+        title: contestData.prizeTitle,
+        type: contestData.prizeType,
+        prizePool: Number(contestData.prizePool) || 0,
+      },
+      predictions: {
+        minPrediction: Number(contestData.minValue) || 0,
+        maxPrediction: Number(contestData.maxValue) || 0,
+        increment: Number(contestData.increment) || 0,
+        unit: contestData.unit, // Extract just the unit name without any ID
+        numberOfEntriesPerPrediction: contestData.entriesPerPrediction,
+        placePercentages,
+        generatedPredictions: [],
+      },
+      pricing: {
+        predictionType,
+        flatPrice: Number(contestData.flatPrice) || 0,
+        tiers,
+      },
+      startTime: new Date().toISOString(), // Current time as start time
+      endTime: eventDateTime,
+      endOffsetTime,
+    };
+  };
+
+  const handleNext = async () => {
     if (isCurrentStepValid()) {
       // Log current contest data to console
-      console.log('New Contest Data:', {
+      console.log("New Contest Data:", {
         currentStep,
         contestData,
         completedSteps: [...completedSteps, currentStep],
-        isLastStep
+        isLastStep,
       });
 
       if (isLastStep) {
-        // Final step - contest creation complete
-        console.log('Contest Creation Complete!', contestData);
-        // Here you would typically submit the contest data
+        try {
+          setIsSubmitting(true);
+
+          // Create FormData object
+          const formData = new FormData();
+
+          // Add image if available
+          if (contestData.prizeImage) {
+            formData.append("image", contestData.prizeImage);
+          }
+
+          // Transform and add JSON data
+          const apiData = transformContestData();
+          formData.append("data", JSON.stringify(apiData));
+
+          // Submit the contest data
+          const res = await createContest(formData).unwrap();
+
+          if (res.success) {
+            toast.success(res.message || "Contest created successfully!");
+            router.push("/dashboard");
+          } else {
+            toast.error(
+              res.message || "Failed to create contest. Please try again."
+            );
+          }
+        } catch (error) {
+          console.error("Error creating contest:", error);
+          toast.error("Failed to create contest. Please try again.");
+        } finally {
+          setIsSubmitting(false);
+        }
         return;
       }
 
@@ -198,7 +308,7 @@ const NewContestPage = () => {
         return (
           <PredictionsStep data={contestData} onUpdate={updateContestData} />
         );
-   case "pricing":
+      case "pricing":
         return <PricingStep data={contestData} onUpdate={updateContestData} />;
       case "timing":
         return <TimingStep data={contestData} onUpdate={updateContestData} />;
@@ -206,6 +316,15 @@ const NewContestPage = () => {
         return null;
     }
   };
+
+  // If not client-side yet, show minimal loading state
+  if (!isClient) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-20">
@@ -244,14 +363,23 @@ const NewContestPage = () => {
 
           <Button
             onClick={handleNext}
-            disabled={!isCurrentStepValid()}
+            disabled={!isCurrentStepValid() || isSubmitting || isLoading}
             className={`text-white ${
-              isCurrentStepValid()
+              isCurrentStepValid() && !isSubmitting && !isLoading
                 ? "bg-green-600 hover:bg-green-700"
                 : "bg-gray-400 cursor-not-allowed"
             }`}
           >
-            {isLastStep ? "Finish" : "Next"}
+            {isSubmitting || (isLastStep && isLoading) ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {isLastStep ? "Creating..." : "Processing..."}
+              </>
+            ) : isLastStep ? (
+              "Finish"
+            ) : (
+              "Next"
+            )}
           </Button>
         </div>
       </div>

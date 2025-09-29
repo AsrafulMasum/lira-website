@@ -9,6 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useGetAllUnitOrTypeQuery } from "@/redux/apiSlices/categoryUnitTypeSlice";
+import Loading from "@/app/loading";
 
 interface ContestData {
   minValue: string;
@@ -34,6 +36,22 @@ const PredictionsStep: React.FC<PredictionsStepProps> = ({
   ) => {
     onUpdate({ [field]: value });
   };
+
+  const { data: getAllUnit, isLoading: isLoadingUnits } =
+    useGetAllUnitOrTypeQuery("unit");
+
+  if (isLoadingUnits) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+  }
+
+  const unitOptions = getAllUnit?.data?.map((unit: any) => ({
+    value: unit.content,
+    label: unit.content,
+  }));
 
   const handleEntriesPerPredictionChange = (value: number) => {
     const equalPercentage = Math.floor(100 / value);
@@ -106,7 +124,7 @@ const PredictionsStep: React.FC<PredictionsStepProps> = ({
           </div>
 
           {/* Increment */}
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">
               Increment
             </label>
@@ -117,7 +135,7 @@ const PredictionsStep: React.FC<PredictionsStepProps> = ({
               onChange={(e) => handleInputChange("increment", e.target.value)}
               className="w-full mt-2"
             />
-          </div>
+          </div> */}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -147,10 +165,11 @@ const PredictionsStep: React.FC<PredictionsStepProps> = ({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Percentage %">Percentage %</SelectItem>
-                <SelectItem value="Dollar $">Dollar $</SelectItem>
-                <SelectItem value="Points">Points</SelectItem>
-                <SelectItem value="Units">Units</SelectItem>
+                {unitOptions?.map((option: any) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

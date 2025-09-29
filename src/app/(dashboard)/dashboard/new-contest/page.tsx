@@ -1,12 +1,11 @@
-import ContainerLayout from "@/layout/ContainerLayout";
+"use client";
+
 import NewContestPage from "@/components/dashboard/contestCreation/NewContestPage";
 
 const NewContest = () => {
   return (
-    <div className="bg-bg">
-      <ContainerLayout>
-        <NewContestPage />
-      </ContainerLayout>
+    <div className="bg-bg p-4">
+      <NewContestPage />
     </div>
   );
 };

@@ -1,15 +1,9 @@
-import { Footer } from "@/components/shared/Footer";
-import Navbar from "@/components/shared/Navbar";
-import CustomProvider from "@/lib/CustomProvider";
+import DashboardWrapper from "@/components/dashboard/DashboardWrapper";
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div>
-      <Navbar />
-      <CustomProvider>{children}</CustomProvider>
-      <Footer />
-    </div>
-  );
-};
-
-export default DashboardLayout;
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <DashboardWrapper>{children}</DashboardWrapper>;
+}
