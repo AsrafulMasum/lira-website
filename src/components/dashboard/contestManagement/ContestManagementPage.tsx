@@ -21,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import moment from "moment";
 import {
   Plus,
   Edit,
@@ -35,6 +35,8 @@ import {
   Upload,
 } from "lucide-react";
 import Link from "next/link";
+import { useGetContestsQuery } from "@/redux/apiSlices/contestSlice";
+import Loading from "@/app/loading";
 
 // Sample contest data
 const contests = [
@@ -225,19 +227,19 @@ const getStatusBadge = (status: string) => {
 
 const ContestManagementPage = () => {
   const router = useRouter();
-  const [contestsData, setContestsData] = useState(contests);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const handleFeaturedToggle = (contestId: number) => {
-    setContestsData((prevContests) =>
-      prevContests.map((contest) =>
-        contest.id === contestId
-          ? { ...contest, featured: !contest.featured }
-          : contest
-      )
-    );
-  };
+  const { data: getAllContestsData, isLoading } =
+    useGetContestsQuery(undefined);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  const contestsData = getAllContestsData?.data || [];
+
+  const handleFeaturedToggle = (contestId: number) => {};
 
   // Pagination logic
   const totalItems = contestsData.length;
@@ -359,24 +361,28 @@ const ContestManagementPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentContests.map((contest) => (
-              <TableRow key={contest.id}>
+            {currentContests?.map((contest: any) => (
+              <TableRow key={contest._id}>
                 <TableCell className="font-medium">{contest.name}</TableCell>
-                <TableCell>{contest.category}</TableCell>
+                <TableCell>{contest?.categoryId?.name}</TableCell>
                 <TableCell>{getStatusBadge(contest.status)}</TableCell>
-                <TableCell>{contest.entriesSold.toLocaleString()}</TableCell>
+                <TableCell>
+                  {contest.entriesSold
+                    ? contest.entriesSold.toLocaleString()
+                    : "0"}
+                </TableCell>
                 <TableCell>
                   <div>
                     <div>{contest.entryPrice}</div>
-                    {contest.entryTiers && (
+                    {contest?.pricing?.tiers?.length && (
                       <div className="text-xs text-gray-500">
-                        {contest.entryTiers}
+                        {contest.pricing?.tiers?.length} tiers
                       </div>
                     )}
                   </div>
                 </TableCell>
-                <TableCell>{contest.endDate}</TableCell>
-                <TableCell>{contest.prizeType}</TableCell>
+                <TableCell>{moment(contest.endDate).format("lll")}</TableCell>
+                <TableCell>{contest?.prize?.type}</TableCell>
                 <TableCell>
                   <Switch
                     className="w-8 h-5"
