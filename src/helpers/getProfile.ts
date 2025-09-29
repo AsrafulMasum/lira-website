@@ -15,8 +15,8 @@ const getProfile = async () => {
         "Content-Type": "application/json",
       },
     });
-    const resData = await res?.json();
-    return resData;
+    const { data } = await res?.json();
+    return data;
   } catch (error) {
     console.log("Error fetching data:", error);
     return error;

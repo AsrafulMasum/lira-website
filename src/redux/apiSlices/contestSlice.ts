@@ -19,7 +19,7 @@ const contestApi = api.injectEndpoints({
 
     deleteContest: builder.mutation({
       query: (id) => ({
-        url: `/contest/delete/${id}`,
+        url: `contest/${id}`,
         method: "DELETE",
       }),
     }),

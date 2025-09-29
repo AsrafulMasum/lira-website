@@ -15,6 +15,11 @@ import { Upload } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import StatesSelectionModal from "../StatesSelectionModal";
 import Image from "next/image";
+import {
+  useGetAllCategoryQuery,
+  useGetAllUnitOrTypeQuery,
+} from "@/redux/apiSlices/categoryUnitTypeSlice";
+import Loading from "@/app/loading";
 
 interface ContestData {
   category: string;
@@ -23,6 +28,7 @@ interface ContestData {
   statesAllowed: string[];
   prizeTitle: string;
   prizeType: string;
+  prizePool: number;
   prizeImage?: File;
 }
 
@@ -35,6 +41,30 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ data, onUpdate }) => {
   const handleInputChange = (field: keyof ContestData, value: string) => {
     onUpdate({ [field]: value });
   };
+
+  const { data: categories, isLoading: isLoadingCategories } =
+    useGetAllCategoryQuery(undefined);
+
+  const { data: getAllType, isLoading: isLoadingTypes } =
+    useGetAllUnitOrTypeQuery("type");
+
+  if (isLoadingCategories || isLoadingTypes) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+  }
+
+  const categoryOptions = categories?.data?.map((category: any) => ({
+    value: category._id,
+    label: category.name,
+  }));
+
+  const typeOptions = getAllType?.data?.map((type: any) => ({
+    value: type.content,
+    label: type.content,
+  }));
 
   const handleStatesChange = (states: string[]) => {
     onUpdate({ statesAllowed: states });
@@ -82,13 +112,14 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ data, onUpdate }) => {
             onValueChange={(value) => handleInputChange("category", value)}
           >
             <SelectTrigger className="w-full mt-2 py-6">
-              <SelectValue placeholder="Search the category" />
+              <SelectValue placeholder="Select the category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="btc-price">BTC Price</SelectItem>
-              <SelectItem value="weather">Weather</SelectItem>
-              <SelectItem value="sports">Sports</SelectItem>
-              <SelectItem value="stocks">Stocks</SelectItem>
+              {categoryOptions?.map((option: any) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -126,11 +157,13 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ data, onUpdate }) => {
             <span className="text-sm font-medium text-green-600">
               States allowed
             </span>
-            <span className={`text-sm font-medium ${
-              !data.statesAllowed || data.statesAllowed.length === 0 
-                ? 'text-gray-400' 
-                : 'text-green-600'
-            }`}>
+            <span
+              className={`text-sm font-medium ${
+                !data.statesAllowed || data.statesAllowed.length === 0
+                  ? "text-gray-400"
+                  : "text-green-600"
+              }`}
+            >
               {getStatesDisplayText()}
             </span>
           </div>
@@ -161,15 +194,29 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ data, onUpdate }) => {
               onValueChange={(value) => handleInputChange("prizeType", value)}
             >
               <SelectTrigger className="w-full mt-2 py-[22px]">
-                <SelectValue />
+                <SelectValue placeholder="Select The Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Cash">Cash</SelectItem>
-                <SelectItem value="Product">Product</SelectItem>
-                <SelectItem value="Gift Card">Gift Card</SelectItem>
+                {typeOptions?.map((option: any) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
+        </div>
+        
+        {/* Prize Pool */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Prize Pool</label>
+          <Input
+            type="number"
+            placeholder="Enter prize pool amount"
+            value={data.prizePool || ""}
+            onChange={(e) => onUpdate({ prizePool: parseFloat(e.target.value) || 0 })}
+            className="w-full mt-2"
+          />
         </div>
 
         {/* File Upload */}

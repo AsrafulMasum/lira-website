@@ -21,6 +21,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import moment from "moment";
 import {
   Plus,
@@ -35,168 +43,13 @@ import {
   Upload,
 } from "lucide-react";
 import Link from "next/link";
-import { useGetContestsQuery } from "@/redux/apiSlices/contestSlice";
+import {
+  useDeleteContestMutation,
+  useGetContestsQuery,
+} from "@/redux/apiSlices/contestSlice";
 import Loading from "@/app/loading";
-
-// Sample contest data
-const contests = [
-  {
-    id: 1,
-    name: "Rolex Daytona",
-    category: "BTC Price",
-    status: "Draft",
-    entriesSold: 1254,
-    entryPrice: "$2 - $6",
-    entryTiers: "3 tiers",
-    endDate: "01/07/25, 3:00 PM",
-    prizeType: "Cash",
-    featured: false,
-  },
-  {
-    id: 2,
-    name: "Cartier Love Bracelet",
-    category: "Weather",
-    status: "Active",
-    entriesSold: 1254,
-    entryPrice: "$2",
-    entryTiers: "",
-    endDate: "01/07/25, 3:00 PM",
-    prizeType: "Cash",
-    featured: true,
-  },
-  {
-    id: 3,
-    name: "Bulgari Necklace",
-    category: "BTC Price",
-    status: "Draft",
-    entriesSold: 1254,
-    entryPrice: "$2 - $12",
-    entryTiers: "5 tiers",
-    endDate: "01/07/25, 3:00 PM",
-    prizeType: "Cash",
-    featured: false,
-  },
-  {
-    id: 4,
-    name: "Diamond Studs",
-    category: "BTC Price",
-    status: "Done",
-    entriesSold: 1254,
-    entryPrice: "$2 - $12",
-    entryTiers: "6 tiers",
-    endDate: "01/07/25, 3:00 PM",
-    prizeType: "Cash",
-    featured: false,
-  },
-  {
-    id: 5,
-    name: "AP Royal Oak",
-    category: "Weather",
-    status: "Active",
-    entriesSold: 1254,
-    entryPrice: "$2",
-    entryTiers: "",
-    endDate: "01/07/25, 3:00 PM",
-    prizeType: "Cash",
-    featured: true,
-  },
-  {
-    id: 6,
-    name: "Patek Philippe Aquanaut",
-    category: "BTC Price",
-    status: "Deleted",
-    entriesSold: 1254,
-    entryPrice: "$2 - $12",
-    entryTiers: "6 tiers",
-    endDate: "01/07/25, 3:00 PM",
-    prizeType: "Cash",
-    featured: false,
-  },
-  {
-    id: 7,
-    name: "Omega Speedmaster",
-    category: "BTC Price",
-    status: "Draft",
-    entriesSold: 1254,
-    entryPrice: "$2 - $6",
-    entryTiers: "3 tiers",
-    endDate: "01/07/25, 3:00 PM",
-    prizeType: "Cash",
-    featured: false,
-  },
-  {
-    id: 8,
-    name: "Tiffany Ring",
-    category: "Weather",
-    status: "Active",
-    entriesSold: 1254,
-    entryPrice: "$2",
-    entryTiers: "",
-    endDate: "01/07/25, 3:00 PM",
-    prizeType: "Cash",
-    featured: true,
-  },
-  {
-    id: 9,
-    name: "Hermès Birkin",
-    category: "BTC Price",
-    status: "Draft",
-    entriesSold: 1254,
-    entryPrice: "$2 - $12",
-    entryTiers: "6 tiers",
-    endDate: "01/07/25, 3:00 PM",
-    prizeType: "Cash",
-    featured: false,
-  },
-  {
-    id: 10,
-    name: "Dior Lady Dior",
-    category: "BTC Price",
-    status: "Done",
-    entriesSold: 1254,
-    entryPrice: "$2 - $12",
-    entryTiers: "6 tiers",
-    endDate: "01/07/25, 3:00 PM",
-    prizeType: "Cash",
-    featured: false,
-  },
-  {
-    id: 11,
-    name: "Tiffany Ring",
-    category: "Weather",
-    status: "Active",
-    entriesSold: 1254,
-    entryPrice: "$2",
-    entryTiers: "",
-    endDate: "01/07/25, 3:00 PM",
-    prizeType: "Cash",
-    featured: true,
-  },
-  {
-    id: 12,
-    name: "Hermès Birkin",
-    category: "BTC Price",
-    status: "Draft",
-    entriesSold: 1254,
-    entryPrice: "$2 - $12",
-    entryTiers: "6 tiers",
-    endDate: "01/07/25, 3:00 PM",
-    prizeType: "Cash",
-    featured: false,
-  },
-  {
-    id: 13,
-    name: "Dior Lady Dior",
-    category: "BTC Price",
-    status: "Done",
-    entriesSold: 1254,
-    entryPrice: "$2 - $12",
-    entryTiers: "6 tiers",
-    endDate: "01/07/25, 3:00 PM",
-    prizeType: "Cash",
-    featured: false,
-  },
-];
+import { toast } from "sonner";
+import { useGetAllCategoryQuery } from "@/redux/apiSlices/categoryUnitTypeSlice";
 
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -229,17 +82,48 @@ const ContestManagementPage = () => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [contestToDelete, setContestToDelete] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { data: getAllContestsData, isLoading } =
     useGetContestsQuery(undefined);
+  const { data: getAllCategoriesData, isLoading: isLoadingCategories } =
+    useGetAllCategoryQuery(undefined);
+  const [deleteContest] = useDeleteContestMutation();
 
-  if (isLoading) {
+  if (isLoading || isLoadingCategories) {
     return <Loading />;
   }
 
   const contestsData = getAllContestsData?.data || [];
+  const categoriesData = getAllCategoriesData?.data || [];
 
-  const handleFeaturedToggle = (contestId: number) => {};
+  const handleFeaturedToggle = (contestId: number) => {
+    console.log(contestId);
+  };
+
+  const handleDeleteClick = (contest: any) => {
+    setContestToDelete(contest);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!contestToDelete) return;
+
+    try {
+      setIsDeleting(true);
+      await deleteContest(contestToDelete._id).unwrap();
+      toast.success("Contest deleted successfully");
+      setDeleteDialogOpen(false);
+      setContestToDelete(null);
+    } catch (error) {
+      toast.error("Failed to delete contest");
+      console.error("Delete error:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   // Pagination logic
   const totalItems = contestsData.length;
@@ -277,6 +161,37 @@ const ContestManagementPage = () => {
           <Plus className="w-4 h-4 mr-2" /> New Contest
         </Button>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md p-6 rounded-xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-[#002913]">
+              Delete Contest
+            </DialogTitle>
+            <DialogDescription className="text-gray-600">
+              Are you sure you want to delete &quot;{contestToDelete?.name}
+              &quot;? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-end gap-3 mt-6">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}
+              className="bg-bg border-border-color hover:bg-bg text-dark-primary"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmDelete}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {isDeleting ? "Deleting..." : "Delete Contest"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Filters and Controls */}
       <div className="flex items-center justify-between gap-4 p-3 rounded-t-2xl border-x border-t">
@@ -316,9 +231,11 @@ const ContestManagementPage = () => {
               />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="btc-price">BTC Price</SelectItem>
-              <SelectItem value="weather">Weather</SelectItem>
+              {categoriesData?.map((category: any) => (
+                <SelectItem key={category._id} value={category._id}>
+                  {category.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -363,7 +280,9 @@ const ContestManagementPage = () => {
           <TableBody>
             {currentContests?.map((contest: any) => (
               <TableRow key={contest._id}>
-                <TableCell className="font-medium">{contest.name}</TableCell>
+                <TableCell>{`${contest.name?.slice(0, 40)}${
+                  contest.name?.length > 40 ? "..." : ""
+                }`}</TableCell>
                 <TableCell>{contest?.categoryId?.name}</TableCell>
                 <TableCell>{getStatusBadge(contest.status)}</TableCell>
                 <TableCell>
@@ -372,8 +291,11 @@ const ContestManagementPage = () => {
                     : "0"}
                 </TableCell>
                 <TableCell>
-                  <div>
-                    <div>{contest.entryPrice}</div>
+                  <div className="flex flex-col items-center justify-center">
+                    <div>
+                      ${contest?.pricing?.minTierPrice} - $
+                      {contest?.pricing?.maxTierPrice}
+                    </div>
                     {contest?.pricing?.tiers?.length && (
                       <div className="text-xs text-gray-500">
                         {contest.pricing?.tiers?.length} tiers
@@ -423,6 +345,7 @@ const ContestManagementPage = () => {
                           size="sm"
                           className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-100 bg-red-50 cursor-pointer"
                           title="Delete"
+                          onClick={() => handleDeleteClick(contest)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

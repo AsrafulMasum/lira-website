@@ -9,7 +9,6 @@ import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import RangeSheet from "./sheets/RangeSheet";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import AddCustomValue from "./AddCustomValue";
-import SelectedValueSheet from "./sheets/SelectedValueSheet";
 import SearchSheet from "./sheets/SearchSheet";
 
 const ContestDetailsMobileView = ({ contest }: any) => {
