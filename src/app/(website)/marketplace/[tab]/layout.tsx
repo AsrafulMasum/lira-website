@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ContainerLayout from "@/layout/ContainerLayout";
 import React, { ReactNode } from "react";
+import { apiRequest } from "@/helpers/apiRequest";
 
 const tabs = [
   { key: "all", label: "All" },
@@ -14,9 +15,15 @@ interface LayoutProps {
   params: Promise<{ tab?: string }>; // 👈 params is async
 }
 
+type Group = {
+  _id: string;
+  name: string;
+};
+
 export default async function Layout({ children, params }: LayoutProps) {
-  const resolvedParams = await params; // ✅ must await
-  const activeTab = resolvedParams.tab ?? "crypto";
+  const { data: groups } = await apiRequest("/groups", { method: "GET" });
+  const resolvedParams = await params;
+  const activeTab = resolvedParams.tab ?? groups[0]?._id;
 
   return (
     <section>
@@ -24,17 +31,17 @@ export default async function Layout({ children, params }: LayoutProps) {
       <div className="bg-[#FAFFFC] pt-5">
         <ContainerLayout>
           <div className="flex gap-8 overflow-x-auto scrollbar-hide">
-            {tabs.map((tab) => (
+            {groups?.map((tab: Group) => (
               <Link
-                key={tab.key}
-                href={`/marketplace/${tab.key}`}
-                className={`pb-4 text-base font-bold border-b-2 transition-colors text-nowrap ${
-                  activeTab === tab.key
+                key={tab?._id}
+                href={`/marketplace/${tab?._id}`}
+                className={`pb-2 text-base font-bold border-b-2 transition-colors text-nowrap ${
+                  activeTab === tab?._id
                     ? "border-dark-primary text-dark-primary"
                     : "border-transparent text-gray hover:text-gray"
                 }`}
               >
-                {tab.label}
+                {tab?.name}
               </Link>
             ))}
           </div>

@@ -100,7 +100,7 @@ const contests = [
   },
 ];
 
-const Contests = ({ type }: { type: string }) => {
+const Contests = ({ data, type }: { data: any; type: string }) => {
   return (
     <section>
       <h4 className="text-2xl font-semibold text-[#4B524E] capitalize mt-10 mb-3 px-1">

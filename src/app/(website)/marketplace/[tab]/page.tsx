@@ -1,23 +1,18 @@
 import CryptoContent from "@/components/website/marketplace/tabGroupContents/CryptoContent";
+import { apiRequest } from "@/helpers/apiRequest";
 import React from "react";
 
 type PageProps = {
-  params: Promise<{ tab: string }>
+  params: Promise<{ tab: string }>;
+  searchParams: { tab: string };
 };
 
-export default async function TabPage({ params }: PageProps) {
+export default async function TabPage({ params, searchParams }: PageProps) {
   const { tab } = await params;
 
-  switch (tab) {
-    case "all":
-      return <CryptoContent />;
-    case "crypto":
-      return <CryptoContent />;
-    case "weather":
-      return <CryptoContent />;
-    case "stock":
-      return <CryptoContent />;
-    default:
-      return <CryptoContent />;
-  }
+  const { data: tabs } = await apiRequest(`/categories/?groupId=${tab}`, {
+    method: "GET",
+  });
+
+  return <CryptoContent tabs={tabs} searchParams={searchParams} />;
 }
