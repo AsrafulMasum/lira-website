@@ -1,10 +1,9 @@
 import CryptoContent from "@/components/website/marketplace/tabGroupContents/CryptoContent";
 import { apiRequest } from "@/helpers/apiRequest";
-import React from "react";
 
 type PageProps = {
   params: Promise<{ tab: string }>;
-  searchParams: { tab: string };
+  searchParams: Promise<{ tab?: string }>;
 };
 
 export default async function TabPage({ params, searchParams }: PageProps) {

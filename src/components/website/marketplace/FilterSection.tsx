@@ -77,12 +77,12 @@ const FilterSection = ({ searchParams = {} }: FilterSectionProps) => {
       </ContainerLayout>
 
       {/* Tab Contents */}
-      <div>
+      {/* <div>
         {activeTab === "all" && <CryptoContent />}
         {activeTab === "crypto" && <CryptoContent />}
         {activeTab === "weather" && <CryptoContent />}
         {activeTab === "stock" && <CryptoContent />}
-      </div>
+      </div> */}
     </section>
   );
 };

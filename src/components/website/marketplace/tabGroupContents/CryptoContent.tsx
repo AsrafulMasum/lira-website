@@ -1,5 +1,5 @@
 import ContainerLayout from "@/layout/ContainerLayout";
-import { ListFilter, Search } from "lucide-react";
+import { ListFilter } from "lucide-react";
 import Contests from "../filterTabsContent/Contests";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import FilterSheet from "../sheets/FilterSheet";
