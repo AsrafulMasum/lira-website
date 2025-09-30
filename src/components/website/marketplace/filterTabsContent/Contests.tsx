@@ -9,125 +9,64 @@ import {
 } from "@/components/ui/card";
 import ContestCountdown from "@/hooks/ContestCountdown";
 import { Clock, Users } from "lucide-react";
+import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const contests = [
-  {
-    _id: "c1a7f2e9-8b91-4a23-9f3c-1f9e12d92b10",
-    contestName: "Predict the BTC price on July 1 at 9:00 PM",
-    endsIn: "2025-11-01T21:00:00Z",
-    totalEntries: 325,
-    entryPrice: 10,
-    category: "BTC",
-    prize: {
-      name: "Rolex Submariner Black Dial",
-      price: 12000,
-      image:
-        "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-    },
-  },
-  {
-    _id: "4b92d6a3-f1e0-4631-bac7-21af76a4cb54",
-    contestName: "Predict the Ethereum price on July 5 at 6:00 PM",
-    endsIn: "2025-07-05T18:00:00Z",
-    totalEntries: 210,
-    entryPrice: 5,
-    category: "Ethereum",
-    prize: {
-      name: "Louis Vuitton Monogram Bag",
-      price: 2500,
-      image:
-        "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-    },
-  },
-  {
-    _id: "8a5f37dd-0f93-4c4f-b36e-29c118ebaf11",
-    contestName: "Predict the Solana price on July 10 at 8:30 PM",
-    endsIn: "2025-07-10T20:30:00Z",
-    totalEntries: 155,
-    entryPrice: 3,
-    category: "Solana",
-    prize: {
-      name: "Titan Raga Deluxe Women’s Watch",
-      price: 120,
-      image:
-        "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-    },
-  },
-  {
-    _id: "d90d2238-78a4-4694-b9ec-13e8b64cfa19",
-    contestName: "Predict the BTC price on July 15 at 9:00 PM",
-    endsIn: "2025-07-15T21:00:00Z",
-    totalEntries: 480,
-    entryPrice: 15,
-    category: "BTC",
-    prize: {
-      name: "Designer Pink Tote Bag",
-      price: 200,
-      image:
-        "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-    },
-  },
-  {
-    _id: "af24cc2c-d41c-41f6-9df7-2cbdfc5e45c7",
-    contestName: "Predict the Ethereum price on July 20 at 7:00 PM",
-    endsIn: "2025-07-20T19:00:00Z",
-    totalEntries: 275,
-    entryPrice: 8,
-    category: "Ethereum",
-    prize: {
-      name: "Luxury Quilted White Handbag",
-      price: 1800,
-      image:
-        "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-    },
-  },
-  {
-    _id: "f7b2b3ef-414f-46a7-9d2b-91d73cbf4456",
-    contestName: "Predict the BTC price on August 1 at 10:00 PM",
-    endsIn: "2025-08-01T22:00:00Z",
-    totalEntries: 500,
-    entryPrice: 20,
-    category: "BTC",
-    prize: {
-      name: "Rolex Submariner Green Bezel",
-      price: 16500,
-      image:
-        "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-    },
-  },
-];
+type contest = {
+  _id: string;
+  name: string;
+  startTime: string;
+  endTime: string;
+  totalEntries: number;
+  endOffsetTime: string;
+  image: string;
+  isPrivate: boolean;
+  prize: {
+    title: string;
+    prizePool: string;
+    image: string;
+  };
+  pricing: {
+    predictionType: string;
+    flatPrice: string;
+  }
+  predictions: {
+    minPrediction: number;
+  }
+  category: string;
+};
 
-const Contests = ({ data, type }: { data: any; type: string }) => {
+const Contests = ({ data, category }: { data: any; category: string }) => {
+
   return (
     <section>
       <h4 className="text-2xl font-semibold text-[#4B524E] capitalize mt-10 mb-3 px-1">
-        {type}
+        {category}
       </h4>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
-        {contests?.map((contest) => (
+        {data?.map((contest: contest) => (
           <Link key={contest._id} href={`/contests/${contest._id}`}>
             <Card className="w-[390px] lg:w-auto shadow-none">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-[#002913] leading-[132%]">
-                  {contest?.contestName.split("on")[0] + "on"}{" "}
+                  {contest?.name} on{" "}
                   <span className="text-primary">
-                    {contest?.contestName.split("on")[1]}
-                  </span>{" "}
+                    {moment(contest?.endTime).format("MMMM D [at] h:mm A")}
+                  </span>
                 </CardTitle>
                 <CardDescription className="flex items-center justify-between text-sm text-gray">
                   <p className="flex items-center gap-2">
                     <Clock size={16} /> Ends In:{" "}
                     <ContestCountdown
-                      endDate={contest.endsIn}
+                      endDate={contest?.endOffsetTime}
                       isMarketPlace={true}
                     />
                   </p>
                   <p className="flex items-center gap-2 text-gray-text">
                     <Users size={16} />
-                    {contest.totalEntries} entries
+                    {contest?.totalEntries} entries
                   </p>
                 </CardDescription>
               </CardHeader>
@@ -136,16 +75,16 @@ const Contests = ({ data, type }: { data: any; type: string }) => {
                   <Image
                     width={48}
                     height={48}
-                    src={contest.prize.image}
-                    alt={contest.prize.name}
+                    src={`${process.env.IMAGE_BASE_URL}${contest?.image}`}
+                    alt={contest?.prize?.title}
                     className="mt-2 size-12 object-cover rounded-lg"
                   />
                   <div>
                     <p className="text-dark-primary font-semibold leading-[124%] my-2">
-                      {contest.prize.name}
+                      {contest?.prize?.title}
                     </p>
                     <p className="text-primary text-sm font-semibold">
-                      $ {contest.prize.price}{" "}
+                      $ {contest?.prize?.prizePool}{" "}
                       <span className="text-gray-text font-normal pl-1.5">
                         Prize pool
                       </span>
@@ -159,8 +98,10 @@ const Contests = ({ data, type }: { data: any; type: string }) => {
                 </p>
                 <CardAction>
                   <p className="bg-primary py-2 px-3 rounded-lg font-semibold text-white">
-                    <span className="text-sm font-normal">From</span> $
-                    {contest.entryPrice}
+                    <span className="text-sm font-normal">From</span> $ {" "}
+                    {contest?.pricing?.predictionType === "priceOnly"
+                      ? `${contest?.pricing?.flatPrice}`
+                      : `${contest?.predictions?.minPrediction}`}
                   </p>
                 </CardAction>
               </CardFooter>

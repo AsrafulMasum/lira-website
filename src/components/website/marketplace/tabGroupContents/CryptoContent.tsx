@@ -72,7 +72,7 @@ const CryptoContent: React.FC<CryptoContentProps> = async ({
 
         {/* Tab Content */}
         <div className="">
-          <Contests data={data} type={tabName ?? ""} />
+          <Contests data={data} category={tabName ?? ""} />
         </div>
       </ContainerLayout>
     </section>

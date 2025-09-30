@@ -54,7 +54,18 @@ const allItems: SelectableItem[] = [
   { id: "21", price: "118.95k", value: 118950, available: true },
 ];
 
-export function SelectPredictions() {
+type Tier = {
+  name: string;
+  min: number;
+  max: number;
+  pricePerPrediction: number;
+  isActive: boolean;
+  _id: string;
+};
+
+export function SelectPredictions({ tiers, contestId }: { tiers?: Tier[], contestId?: string }) {
+  console.log(tiers, contestId);
+
   const [activeRange, setActiveRange] = useState("range1");
   const [selectedItems, setSelectedItems] = useState<Set<string>>(
     new Set(["2", "5", "11", "16", "19"])
@@ -91,18 +102,18 @@ export function SelectPredictions() {
         <Card className="w-full min-w-3xl max-w-4xl mx-auto pt-6 pb-0 border border-border-color shadow-none rounded-3xl gap-0">
           {/* Price Range Tabs */}
           <div className="flex gap-1 px-6 border-b">
-            {priceRanges.map((range) => (
+            {tiers?.map((range) => (
               <button
-                key={range.id}
-                onClick={() => setActiveRange(range.id)}
+                key={range?._id}
+                onClick={() => setActiveRange(range._id)}
                 className={cn(
                   "mx-4 py-2 text-base font-semibold border-b-2 transition-colors cursor-pointer",
-                  activeRange === range.id
+                  activeRange === range._id
                     ? "border-primary text-primary"
                     : "border-transparent text-muted-foreground hover:text-foreground"
                 )}
               >
-                {range.label}
+                {range?.name}
               </button>
             ))}
           </div>
@@ -179,9 +190,7 @@ export function SelectPredictions() {
 
               <Sheet>
                 <SheetTrigger asChild>
-                  <button
-                    className="cursor-pointer"
-                  >
+                  <button className="cursor-pointer">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="18"
@@ -220,9 +229,7 @@ export function SelectPredictions() {
 
           <Sheet>
             <SheetTrigger asChild>
-              <button
-                className="cursor-pointer"
-              >
+              <button className="cursor-pointer">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="18"

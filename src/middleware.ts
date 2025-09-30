@@ -23,5 +23,5 @@ export async function middleware(request: NextRequest) {
 
 // Configure which routes run through this middleware
 export const config = {
-  matcher: ["/"], // only runs on root
+  matcher: ["/"], 
 };
