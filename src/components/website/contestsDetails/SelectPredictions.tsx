@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -8,6 +8,8 @@ import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import SelectedValueSheet from "./sheets/SelectedValueSheet";
+import { useRouter, useSearchParams } from "next/navigation";
+import { apiRequest } from "@/helpers/apiRequest";
 
 interface PriceRange {
   id: string;
@@ -17,92 +19,119 @@ interface PriceRange {
 }
 
 interface SelectableItem {
-  id: string;
+  _id: string;
   price: string;
   value: number;
-  available: boolean;
+  isAvailable: boolean;
 }
 
-const priceRanges: PriceRange[] = [
-  { id: "range1", label: "118k - 118.5k", min: 118000, max: 118500 },
-  { id: "range2", label: "118.5k - 119k", min: 118500, max: 119000 },
-  { id: "range3", label: "119k - 199.5k", min: 119000, max: 199500 },
-  { id: "range4", label: "751 - 1000", min: 751, max: 1000 },
-];
+// const priceRanges: PriceRange[] = [
+//   { id: "range1", label: "118k - 118.5k", min: 118000, max: 118500 },
+//   { id: "range2", label: "118.5k - 119k", min: 118500, max: 119000 },
+//   { id: "range3", label: "119k - 199.5k", min: 119000, max: 199500 },
+//   { id: "range4", label: "751 - 1000", min: 751, max: 1000 },
+// ];
 
-const allItems: SelectableItem[] = [
-  { id: "1", price: "118k", value: 118000, available: true },
-  { id: "2", price: "118.1k", value: 118100, available: true },
-  { id: "3", price: "118.15k", value: 118150, available: false },
-  { id: "4", price: "118.2k", value: 118200, available: true },
-  { id: "5", price: "118.3k", value: 118300, available: true },
-  { id: "6", price: "118.2k", value: 118200, available: true },
-  { id: "7", price: "118.25k", value: 118250, available: false },
-  { id: "8", price: "118.3k", value: 118300, available: true },
-  { id: "9", price: "118.3k", value: 118300, available: true },
-  { id: "10", price: "118.4k", value: 118400, available: true },
-  { id: "11", price: "118.45k", value: 118450, available: true },
-  { id: "12", price: "118.5k", value: 118500, available: false },
-  { id: "13", price: "118.55k", value: 118550, available: true },
-  { id: "14", price: "118.6k", value: 118600, available: true },
-  { id: "15", price: "118.65k", value: 118650, available: false },
-  { id: "16", price: "118.7k", value: 118700, available: true },
-  { id: "17", price: "118.75k", value: 118750, available: true },
-  { id: "18", price: "118.8k", value: 118800, available: true },
-  { id: "19", price: "118.85k", value: 118850, available: true },
-  { id: "20", price: "118.9k", value: 118900, available: false },
-  { id: "21", price: "118.95k", value: 118950, available: true },
-];
+interface TierItem {
+  name: string;
+  min: number;
+  max: number;
+  pricePerPrediction: number;
+  isActive: boolean;
+  _id: string;
+}
 
-export function SelectPredictions() {
-  const [activeRange, setActiveRange] = useState("range1");
-  const [selectedItems, setSelectedItems] = useState<Set<string>>(
-    new Set(["2", "5", "11", "16", "19"])
-  );
+interface Tier {
+  tiers: TierItem[];
+}
 
-  const filteredItems = allItems.filter((item) => {
-    const range = priceRanges.find((r) => r.id === activeRange);
-    if (!range) return false;
-    return item.value >= range.min && item.value <= range.max;
-  });
+export function SelectPredictions({
+  tiers,
+  contestId,
+}: {
+  tiers?: Tier;
+  contestId?: string;
+}) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  const toggleItem = (itemId: string) => {
-    const newSelected = new Set(selectedItems);
-    if (newSelected.has(itemId)) {
-      newSelected.delete(itemId);
-    } else {
-      newSelected.add(itemId);
+  const tiersArr = tiers?.tiers || [];
+
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+
+  const activeRange = searchParams.get("range") || tiers?.tiers[0]._id;
+  const activeTier = tiersArr?.find((tier) => tier._id === activeRange);
+
+  const [apiResult, setApiResult] = useState<any>(null);
+
+  // Fetch data on mount or when contestId/activeRange changes
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await apiRequest(
+          `/contest/contest/prediction/${contestId}/tiers/${activeRange}`,
+          {
+            method: "GET",
+          }
+        );
+        setApiResult(response.data);
+      } catch (error) {
+        console.error("Failed to fetch prediction data:", error);
+      }
+    };
+
+    if (contestId && activeRange) {
+      fetchData();
     }
+  }, [contestId, activeRange]);
+
+  const toggleItem = (item: { _id: string; price: string }) => {
+    const newSelected = new Set(selectedItems);
+    const key = JSON.stringify({ _id: item._id, price: Number(item.price) });
+
+    if (newSelected.has(key)) {
+      newSelected.delete(key);
+    } else {
+      newSelected.add(key);
+    }
+
     setSelectedItems(newSelected);
   };
 
-  const totalPrice = Array.from(selectedItems).reduce((sum, itemId) => {
-    const item = allItems.find((i) => i.id === itemId);
-    return sum + (item ? 3 : 0);
+  const totalPrice = Array.from(selectedItems).reduce((sum, str) => {
+    const { price } = JSON.parse(str);
+    return sum + price;
   }, 0);
 
   const takenPercentage = Math.round(
-    (selectedItems.size / allItems.length) * 100
+    (selectedItems.size / apiResult?.length) * 100
   );
 
+  const handleClick = (id: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("range", id);
+    router.push(`?${params.toString()}`);
+  };
+
+  console.log(selectedItems);
   return (
     <div className="w-full">
       <div className="w-full overflow-x-auto scrollbar-hide">
         <Card className="w-full min-w-3xl max-w-4xl mx-auto pt-6 pb-0 border border-border-color shadow-none rounded-3xl gap-0">
           {/* Price Range Tabs */}
           <div className="flex gap-1 px-6 border-b">
-            {priceRanges.map((range) => (
+            {tiersArr?.map((range: { _id: string; name: string }) => (
               <button
-                key={range.id}
-                onClick={() => setActiveRange(range.id)}
+                key={range?._id}
+                onClick={() => handleClick(range?._id)}
                 className={cn(
                   "mx-4 py-2 text-base font-semibold border-b-2 transition-colors cursor-pointer",
-                  activeRange === range.id
+                  activeRange === range?._id
                     ? "border-primary text-primary"
                     : "border-transparent text-muted-foreground hover:text-foreground"
                 )}
               >
-                {range.label}
+                {range.name}
               </button>
             ))}
           </div>
@@ -113,7 +142,11 @@ export function SelectPredictions() {
               variant="secondary"
               className="bg-border-color h-8 px-3 text-sm text-gray rounded-xl"
             >
-              <span className="text-primary text-base">$3</span> Each
+              <span className="text-primary text-base">
+                {" "}
+                ${activeTier?.pricePerPrediction ?? 0}
+              </span>{" "}
+              Each
             </Badge>
             <Badge
               variant="secondary"
@@ -125,20 +158,26 @@ export function SelectPredictions() {
               variant="secondary"
               className="bg-border-color h-8 px-3 text-sm text-gray rounded-xl"
             >
-              {filteredItems.length} Entries
+              {apiResult?.length} Entries
             </Badge>
           </div>
 
           {/* Selection Grid */}
           <div className="grid grid-cols-5 gap-3 px-6 pb-3 bg-bg">
-            {filteredItems.map((item) => {
-              const isSelected = selectedItems.has(item.id);
-              const isAvailable = item.available;
+            {apiResult?.map((item: SelectableItem) => {
+              const isSelected: boolean = Array.from(selectedItems).some(
+                (str) => {
+                  const parsed = JSON.parse(str);
+                  return parsed._id === item._id;
+                }
+              );
+
+              const isAvailable: boolean = item?.isAvailable;
 
               return (
                 <button
-                  key={item.id}
-                  onClick={() => isAvailable && toggleItem(item.id)}
+                  key={item._id}
+                  onClick={() => isAvailable && toggleItem(item)}
                   disabled={!isAvailable}
                   className={cn(
                     "relative h-12 transition-all duration-200 font-medium text-sm flex items-center justify-center cursor-pointer",
@@ -163,7 +202,7 @@ export function SelectPredictions() {
                     </div>
                   )}
 
-                  <span>{item.price}</span>
+                  <span>{item?.value}</span>
                 </button>
               );
             })}
@@ -179,9 +218,7 @@ export function SelectPredictions() {
 
               <Sheet>
                 <SheetTrigger asChild>
-                  <button
-                    className="cursor-pointer"
-                  >
+                  <button className="cursor-pointer">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="18"
@@ -201,7 +238,7 @@ export function SelectPredictions() {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-2xl font-semibold text-primary">
-                ${totalPrice}
+                {"$" + totalPrice}
               </span>
               <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer">
                 Continue
@@ -220,9 +257,7 @@ export function SelectPredictions() {
 
           <Sheet>
             <SheetTrigger asChild>
-              <button
-                className="cursor-pointer"
-              >
+              <button className="cursor-pointer">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="18"
@@ -242,7 +277,7 @@ export function SelectPredictions() {
         </div>
         <div className="flex items-center gap-4">
           <span className="text-2xl font-semibold text-primary">
-            ${totalPrice}
+            {"$" + totalPrice}
           </span>
           <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer">
             Continue

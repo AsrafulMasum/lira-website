@@ -27,7 +27,7 @@ export default function SearchInput({ initialValue }: SearchInputProps) {
 
   const updateUrlWithoutNav = (searchValue: string) => {
     const url = buildUrl(searchValue);
-    window.history.replaceState(null, "", url);
+    globalThis.history.replaceState(null, "", url);
   };
 
   useEffect(() => {

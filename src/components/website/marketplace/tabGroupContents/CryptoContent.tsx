@@ -1,5 +1,5 @@
 import ContainerLayout from "@/layout/ContainerLayout";
-import { ListFilter, Search } from "lucide-react";
+import { ListFilter } from "lucide-react";
 import Contests from "../filterTabsContent/Contests";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import FilterSheet from "../sheets/FilterSheet";
@@ -72,7 +72,7 @@ const CryptoContent: React.FC<CryptoContentProps> = async ({
 
         {/* Tab Content */}
         <div className="">
-          <Contests data={data} type={tabName ?? ""} />
+          <Contests data={data} category={tabName ?? ""} />
         </div>
       </ContainerLayout>
     </section>

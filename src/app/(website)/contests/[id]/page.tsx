@@ -4,6 +4,7 @@ import LearnToUse from "@/components/website/contestsDetails/LearnToUse";
 import ContestDetailsRightSection from "@/components/website/contestsDetails/ContestDetailsRightSection";
 import ContestDetailsLeftSection from "@/components/website/contestsDetails/ContestDetailsLeftSection";
 import ContestDetailsMobileView from "@/components/website/contestsDetails/ContestDetailsMobileView";
+import { apiRequest } from "@/helpers/apiRequest";
 
 const contest = {
   _id: "c1a7f2e9-8b91-4a23-9f3c-1f9e12d92b10",
@@ -20,13 +21,27 @@ const contest = {
   },
 };
 
-const page = () => {
+type PageProps = {
+  params: Promise<{ id: string }>;
+};
+
+const page = async ({ params }: PageProps) => {
+  const { id } = await params;
+
+  const { data } = await apiRequest(`/contest/contest/${id}`, {
+    method: "GET",
+  });
+
+  const { data:tiers } = await apiRequest(`/contest/${id}/tiers`, {
+    method: "GET",
+  });
+
   return (
     <section className="bg-[#FAFFFC]">
       <ContainerLayout>
         <div className="hidden lg:grid grid-cols-3 gap-20 pt-10">
           {/* left */}
-          <ContestDetailsLeftSection contest={contest} />
+          <ContestDetailsLeftSection contest={data} tiers={tiers} />
 
           {/* right */}
           <ContestDetailsRightSection contest={contest} />

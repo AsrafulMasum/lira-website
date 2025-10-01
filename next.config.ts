@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
-    domains: ["tse1.mm.bing.net"],
+    domains: ["tse1.mm.bing.net", "10.10.7.62"],
   },
 };
 

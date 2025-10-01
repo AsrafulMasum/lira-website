@@ -47,7 +47,6 @@ import {
 // Import separated components
 import { SortableCategory } from "./SortableCategory";
 import { SortableGroupItem } from "./SortableGroupItem";
-import { initialCategories } from "./data";
 import { Category } from "./types";
 import {
   useCreateCategoryMutation,
@@ -63,7 +62,7 @@ const OrganizeContestsPage = () => {
 
   // Initialize state with empty values
   const [activeGroup, setActiveGroup] = useState("");
-  const [categories, setCategories] = useState(initialCategories);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [groups, setGroups] = useState([
     "Crypto Market",
     "Weather",
@@ -284,7 +283,7 @@ const OrganizeContestsPage = () => {
           className="bg-green-600 hover:bg-green-700 text-white"
         >
           <Plus className="w-4 h-4 mr-2" />
-          New category
+          New category.
         </Button>
       </div>
 

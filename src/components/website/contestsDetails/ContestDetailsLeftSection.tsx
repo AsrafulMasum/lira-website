@@ -7,26 +7,28 @@ import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import RangeSheet from "./sheets/RangeSheet";
 import ContestCountdown from "@/hooks/ContestCountdown";
 import SearchSheet from "./sheets/SearchSheet";
+import moment from "moment";
 
-const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
+const ContestDetailsLeftSection = ({ contest, tiers }: { contest: any, tiers: any }) => {
+
   return (
     <div className="col-span-2">
       <div className="sticky top-10">
         <h4 className="text-3xl font-semibold text-[#002913]">
-          {contest?.contestName.split("on")[0] + "on"}{" "}
+          {contest?.name} on{" "}
           <span className="text-primary">
-            {contest?.contestName.split("on")[1]}
+            {moment(contest?.endTime).format("MMMM D [at] h:mm A")}
           </span>{" "}
         </h4>
 
         <div className="flex items-center gap-4 text-gray font-semibold mt-4">
           <p className="flex items-center gap-2">
             <Clock size={16} /> Ends In:{" "}
-            <ContestCountdown endDate={contest.endsIn} isMarketPlace={true} />
+            <ContestCountdown endDate={contest?.endTime} isMarketPlace={true} />
           </p>
           <p className="flex items-center gap-2">
             <Users size={16} />
-            {contest.totalEntries} entries
+            {contest?.totalEntries} entries
           </p>
         </div>
 
@@ -85,7 +87,7 @@ const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
         </div>
 
         <div className="mt-6">
-          <SelectPredictions />
+          <SelectPredictions tiers={tiers} contestId={contest?._id} />
         </div>
 
         <p className="text-gray-text font-semibold text-sm mt-4 text-center">
