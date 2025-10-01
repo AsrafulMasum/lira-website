@@ -9,9 +9,7 @@ import ContestCountdown from "@/hooks/ContestCountdown";
 import SearchSheet from "./sheets/SearchSheet";
 import moment from "moment";
 
-const ContestDetailsLeftSection = ({ contest }: { contest: any }) => {
-  const tiers = contest?.pricing?.tiers;
-  console.log(contest, "contest")
+const ContestDetailsLeftSection = ({ contest, tiers }: { contest: any, tiers: any }) => {
 
   return (
     <div className="col-span-2">

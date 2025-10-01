@@ -32,12 +32,16 @@ const page = async ({ params }: PageProps) => {
     method: "GET",
   });
 
+  const { data:tiers } = await apiRequest(`/contest/${id}/tiers`, {
+    method: "GET",
+  });
+
   return (
     <section className="bg-[#FAFFFC]">
       <ContainerLayout>
         <div className="hidden lg:grid grid-cols-3 gap-20 pt-10">
           {/* left */}
-          <ContestDetailsLeftSection contest={data} />
+          <ContestDetailsLeftSection contest={data} tiers={tiers} />
 
           {/* right */}
           <ContestDetailsRightSection contest={contest} />
