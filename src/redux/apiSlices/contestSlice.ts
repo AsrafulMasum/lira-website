@@ -7,6 +7,15 @@ const contestApi = api.injectEndpoints({
         url: "/contest",
         method: "GET",
       }),
+      providesTags: ["contests"],
+    }),
+
+    getContestByCategoryId: builder.query({
+      query: (categoryId) => ({
+        url: `/contest/category/${categoryId}`,
+        method: "GET",
+      }),
+      providesTags: ["contests"],
     }),
 
     createContest: builder.mutation({
@@ -15,6 +24,15 @@ const contestApi = api.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["contests"],
+    }),
+
+    publishContest: builder.mutation({
+      query: ({ contestId }) => ({
+        url: `/contest/${contestId}/publish`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["contests"],
     }),
 
     deleteContest: builder.mutation({
@@ -22,12 +40,15 @@ const contestApi = api.injectEndpoints({
         url: `contest/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["contests"],
     }),
   }),
 });
 
 export const {
   useGetContestsQuery,
+  useGetContestByCategoryIdQuery,
   useCreateContestMutation,
+  usePublishContestMutation,
   useDeleteContestMutation,
 } = contestApi;

@@ -1,5 +1,11 @@
+import AllUsersPage from "@/components/dashboard/allUsers/AllUsersPage";
+
 const page = () => {
-  return <div>All Users</div>;
+  return (
+    <div>
+      <AllUsersPage />
+    </div>
+  );
 };
 
 export default page;

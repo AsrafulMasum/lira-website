@@ -4,7 +4,13 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ChevronDown, ChevronRight, Edit, GripVertical, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Edit,
+  GripVertical,
+  Trash2,
+} from "lucide-react";
 import { Category } from "./types";
 import { SortableContestGrid } from "./SortableContestGrid";
 
@@ -13,6 +19,8 @@ interface SortableCategoryProps {
   onToggleExpand: (categoryId: string) => void;
   onEditCategory: (categoryId: string) => void;
   onDeleteCategory: (categoryId: string) => void;
+  contests?: any[];
+  isLoadingContests?: boolean;
 }
 
 export const SortableCategory = ({
@@ -20,6 +28,8 @@ export const SortableCategory = ({
   onToggleExpand,
   onEditCategory,
   onDeleteCategory,
+  contests = [],
+  isLoadingContests = false,
 }: SortableCategoryProps) => {
   const {
     attributes,
@@ -29,6 +39,8 @@ export const SortableCategory = ({
     transition,
     isDragging,
   } = useSortable({ id: category.id });
+
+  console.log("in count line", contests);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -103,10 +115,17 @@ export const SortableCategory = ({
       {/* Contest Cards */}
       {category.isExpanded && (
         <div className="p-4 bg-gray-50/50">
-          <SortableContestGrid
-            contests={category.contests}
-            categoryId={category.id}
-          />
+          {isLoadingContests ? (
+            <div className="flex justify-center py-4">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+            </div>
+          ) : contests && contests.length > 0 ? (
+            <SortableContestGrid contests={contests} categoryId={category.id} />
+          ) : (
+            <div className="text-center py-4 text-gray-500">
+              No contests found in this category
+            </div>
+          )}
         </div>
       )}
     </div>

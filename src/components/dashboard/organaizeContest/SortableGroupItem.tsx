@@ -4,16 +4,17 @@ import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Edit, GripVertical, Trash2 } from "lucide-react";
-import { Category } from "./types";
 
 interface SortableGroupItemProps {
-  category: Category;
-  onEdit: (category: Category) => void;
-  onDelete: (categoryId: string) => void;
+  tab: string;
+  groupId: string;
+  onEdit: (tab: string) => void;
+  onDelete: (tab: string) => void;
 }
 
 export const SortableGroupItem = ({ 
-  category, 
+  tab, 
+  groupId,
   onEdit, 
   onDelete 
 }: SortableGroupItemProps) => {
@@ -24,7 +25,7 @@ export const SortableGroupItem = ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: category.id });
+  } = useSortable({ id: groupId });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -50,12 +51,12 @@ export const SortableGroupItem = ({
           <GripVertical className="w-4 h-4 text-gray-400" />
         </div>
         <span className="font-medium text-gray-900">
-          {category.name}
+          {tab}
         </span>
       </div>
       <div className="flex items-center gap-2">
         <button
-          onClick={() => onEdit(category)}
+          onClick={() => onEdit(tab)}
           className="p-2 hover:bg-gray-200 rounded-md transition-colors"
           title="Edit group"
         >
@@ -63,7 +64,7 @@ export const SortableGroupItem = ({
         </button>
 
         <button
-          onClick={() => onDelete(category.id)}
+          onClick={() => onDelete(tab)}
           className="p-2 hover:bg-red-100 rounded-md transition-colors cursor-pointer"
           title="Delete group"
         >

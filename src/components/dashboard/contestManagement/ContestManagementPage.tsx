@@ -46,6 +46,7 @@ import Link from "next/link";
 import {
   useDeleteContestMutation,
   useGetContestsQuery,
+  usePublishContestMutation,
 } from "@/redux/apiSlices/contestSlice";
 import Loading from "@/app/loading";
 import { toast } from "sonner";
@@ -85,11 +86,17 @@ const ContestManagementPage = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [contestToDelete, setContestToDelete] = useState<any>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Search and filter states
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
   const { data: getAllContestsData, isLoading } =
     useGetContestsQuery(undefined);
   const { data: getAllCategoriesData, isLoading: isLoadingCategories } =
     useGetAllCategoryQuery(undefined);
+  const [publishContest] = usePublishContestMutation();
   const [deleteContest] = useDeleteContestMutation();
 
   if (isLoading || isLoadingCategories) {
@@ -99,8 +106,20 @@ const ContestManagementPage = () => {
   const contestsData = getAllContestsData?.data || [];
   const categoriesData = getAllCategoriesData?.data || [];
 
-  const handleFeaturedToggle = (contestId: number) => {
-    console.log(contestId);
+  const handleFeaturedToggle = async (contest: any) => {
+    try {
+      await publishContest({
+        contestId: contest._id,
+      }).unwrap();
+      toast.success(
+        `Contest ${contest.featured ? "unpublished" : "published"} successfully`
+      );
+    } catch (error) {
+      toast.error(
+        `Failed to ${contest.featured ? "unpublish" : "publish"} contest`
+      );
+      console.error("Publish error:", error);
+    }
   };
 
   const handleDeleteClick = (contest: any) => {
@@ -125,12 +144,26 @@ const ContestManagementPage = () => {
     }
   };
 
+  // Apply filters to contests
+  const filteredContests = contestsData.filter((contest: any) => {
+    // Search filter
+    const nameMatch = contest.name?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Status filter
+    const statusMatch = statusFilter === "all" || contest.status === statusFilter;
+    
+    // Category filter
+    const categoryMatch = categoryFilter === "all" || contest.categoryId?._id === categoryFilter;
+    
+    return nameMatch && statusMatch && categoryMatch;
+  });
+
   // Pagination logic
-  const totalItems = contestsData.length;
+  const totalItems = filteredContests.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentContests = contestsData.slice(startIndex, endIndex);
+  const currentContests = filteredContests.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -202,11 +235,13 @@ const ContestManagementPage = () => {
             <Input
               placeholder="Search by name, category..."
               className="pl-10 h-9 bg-bg"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
           {/* Status Filter */}
-          <Select>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[120px] bg-bg font-bold">
               <SelectValue
                 placeholder={<p className="text-primary font-bold">Status</p>}
@@ -214,15 +249,15 @@ const ContestManagementPage = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="done">Done</SelectItem>
-              <SelectItem value="deleted">Deleted</SelectItem>
+              <SelectItem value="Active">Active</SelectItem>
+              <SelectItem value="Draft">Draft</SelectItem>
+              <SelectItem value="Done">Done</SelectItem>
+              <SelectItem value="Deleted">Deleted</SelectItem>
             </SelectContent>
           </Select>
 
           {/* Categories Filter */}
-          <Select>
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
             <SelectTrigger className="w-[140px] bg-bg font-bold">
               <SelectValue
                 placeholder={
@@ -231,6 +266,7 @@ const ContestManagementPage = () => {
               />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
               {categoriesData?.map((category: any) => (
                 <SelectItem key={category._id} value={category._id}>
                   {category.name}
@@ -308,8 +344,8 @@ const ContestManagementPage = () => {
                 <TableCell>
                   <Switch
                     className="w-8 h-5"
-                    checked={contest.featured}
-                    onCheckedChange={() => handleFeaturedToggle(contest.id)}
+                    checked={contest.status === "Active"}
+                    onCheckedChange={() => handleFeaturedToggle(contest)}
                   />
                 </TableCell>
                 <TableCell>
@@ -329,6 +365,19 @@ const ContestManagementPage = () => {
                           size="sm"
                           className="h-8 w-8 p-0 bg-bg text-primary cursor-pointer"
                           title="Upload"
+                          onClick={() => {
+                            publishContest({
+                              contestId: contest._id,
+                            })
+                              .unwrap()
+                              .then(() =>
+                                toast.success("Contest published successfully")
+                              )
+                              .catch((error) => {
+                                toast.error("Failed to publish contest");
+                                console.error("Publish error:", error);
+                              });
+                          }}
                         >
                           <Upload className="h-4 w-4" />
                         </Button>
