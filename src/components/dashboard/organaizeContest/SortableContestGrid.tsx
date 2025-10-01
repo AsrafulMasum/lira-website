@@ -47,12 +47,12 @@ export const SortableContestGrid = ({ contests }: SortableContestGridProps) => {
       onDragEnd={handleDragEnd}
     >
       <SortableContext
-        items={contests.map((c) => c.id)}
+        items={contests.map((c) => c._id || c.id)}
         strategy={horizontalListSortingStrategy}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {contests.map((contest) => (
-            <SortableContestCard key={contest.id} contest={contest} />
+          {contests?.map((contest) => (
+            <SortableContestCard key={contest._id} contest={contest} />
           ))}
         </div>
       </SortableContext>

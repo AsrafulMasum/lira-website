@@ -46,14 +46,25 @@ import {
 
 // Import separated components
 import { SortableCategory } from "./SortableCategory";
-import { SortableTabItem } from "./SortableTabItem";
+import { SortableGroupItem } from "./SortableGroupItem";
 import { initialCategories } from "./data";
 import { Category } from "./types";
+import {
+  useCreateCategoryMutation,
+  useGetAllGroupQuery,
+  useGetCategoriesByGroupIdQuery,
+} from "@/redux/apiSlices/categoryUnitTypeSlice";
+import { useGetContestByCategoryIdQuery } from "@/redux/apiSlices/contestSlice";
 
 const OrganizeContestsPage = () => {
-  const [activeTab, setActiveTab] = useState("Crypto Market");
+  // Get all groups data first
+  const { data: getAllGroups, isLoading: isLoadingGroups } =
+    useGetAllGroupQuery(undefined);
+
+  // Initialize state with empty values
+  const [activeGroup, setActiveGroup] = useState("");
   const [categories, setCategories] = useState(initialCategories);
-  const [tabs, setTabs] = useState([
+  const [groups, setGroups] = useState([
     "Crypto Market",
     "Weather",
     "Stock Market",
@@ -68,9 +79,43 @@ const OrganizeContestsPage = () => {
     null
   );
   const [groupName, setGroupName] = useState("");
+  const [originalGroupName, setOriginalGroupName] = useState("");
   const [categoryTitle, setCategoryTitle] = useState("");
-  const [selectedGroup, setSelectedGroup] = useState("Crypto Market");
+  const [selectedGroup, setSelectedGroup] = useState("");
   const [dataSource, setDataSource] = useState("");
+
+  // Set the active group to the first group ID when groups data is loaded
+  React.useEffect(() => {
+    if (getAllGroups?.data && getAllGroups.data.length > 0) {
+      setActiveGroup(getAllGroups.data[0]._id);
+      setSelectedGroup(getAllGroups.data[0]._id);
+    }
+  }, [getAllGroups]);
+
+  // Fetch categories based on the active group ID
+  const { data: getCategoriesByGroupId, isLoading: isLoadingCategories } =
+    useGetCategoriesByGroupIdQuery(
+      activeGroup,
+      { skip: !activeGroup } // Skip the query if activeGroup is empty
+    );
+
+  // State to track the active category for contest fetching
+  const [activeCategory, setActiveCategory] = useState("");
+
+  // Fetch contests based on the active category ID
+  const { data: getContestByCategoryId, isLoading: isLoadingContests } =
+    useGetContestByCategoryIdQuery(
+      activeCategory,
+      { skip: !activeCategory } // Skip the query if activeCategory is empty
+    );
+
+  // Get categories for the active group
+  const categoriesForActiveGroup = React.useMemo(() => {
+    if (isLoadingCategories) {
+      return [];
+    }
+    return getCategoriesByGroupId?.data || [];
+  }, [getCategoriesByGroupId, isLoadingCategories]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -89,6 +134,15 @@ const OrganizeContestsPage = () => {
     })
   );
 
+  const [createCategory, { isLoading: isLoadingCreateCategory }] =
+    useCreateCategoryMutation();
+
+  if (isLoadingGroups) {
+    return <div>Loading groups...</div>;
+  }
+
+  const allGroups = getAllGroups?.data || [];
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -103,11 +157,30 @@ const OrganizeContestsPage = () => {
   };
 
   const handleToggleExpand = (categoryId: string) => {
-    setCategories((prev) =>
-      prev.map((cat) =>
-        cat.id === categoryId ? { ...cat, isExpanded: !cat.isExpanded } : cat
-      )
+    // Find the category to check its current expanded state
+    const category = categoriesForActiveGroup.find(
+      (cat: any) => cat._id === categoryId
     );
+    const isCurrentlyExpanded = category?.isExpanded || false;
+
+    // If we're expanding the category, set it as active to fetch contests
+    // If we're collapsing it, clear the active category
+    if (!isCurrentlyExpanded) {
+      setActiveCategory(categoryId);
+    } else {
+      setActiveCategory("");
+    }
+
+    // Toggle the expanded state in the UI
+    const updatedCategories = categoriesForActiveGroup.map((cat: any) => {
+      if (cat._id === categoryId) {
+        return { ...cat, isExpanded: !isCurrentlyExpanded };
+      }
+      // Collapse other categories when expanding this one
+      return cat._id !== categoryId && !isCurrentlyExpanded
+        ? { ...cat, isExpanded: false }
+        : cat;
+    });
   };
 
   const handleEditCategory = (categoryId: string) => {
@@ -144,9 +217,9 @@ const OrganizeContestsPage = () => {
           cat.id === selectedCategory.id ? { ...cat, name: groupName } : cat
         )
       );
-      // Update active tab if it was the edited category
-      if (selectedCategory.name === activeTab) {
-        setActiveTab(groupName);
+      // Update active group if it was the edited category
+      if (selectedCategory.name === activeGroup) {
+        setActiveGroup(groupName);
       }
     } else {
       // Create new group
@@ -173,6 +246,7 @@ const OrganizeContestsPage = () => {
     setIsAddGroupModalOpen(false);
     setSelectedCategory(null);
     setGroupName("");
+    setOriginalGroupName("");
     setCategoryTitle("");
     setSelectedGroup("Crypto Market");
     setDataSource("");
@@ -182,12 +256,12 @@ const OrganizeContestsPage = () => {
   //   setCategories((prev) => prev.filter((cat) => cat.id !== categoryId));
   // };
 
-  // Handle drag end for tabs in Edit Groups Sheet
-  const handleTabDragEnd = (event: DragEndEvent) => {
+  // Handle drag end for groups in Edit Groups Sheet
+  const handleGroupDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (active.id !== over?.id) {
-      setTabs((items) => {
+      setGroups((items) => {
         const oldIndex = items.findIndex((item) => item === active.id);
         const newIndex = items.findIndex((item) => item === over?.id);
 
@@ -214,7 +288,7 @@ const OrganizeContestsPage = () => {
         </Button>
       </div>
 
-      {/* Tabs */}
+      {/* Groups */}
       <div className="flex items-center gap-6 mb-8 border-b">
         <div className="flex items-center gap-2">
           <button
@@ -233,43 +307,63 @@ const OrganizeContestsPage = () => {
           </button>
         </div>
 
-        {tabs.map((tab) => (
+        {allGroups?.map((group: any) => (
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
+            key={group?._id}
+            onClick={() => setActiveGroup(group?._id)}
             className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === tab
+              activeGroup === group?._id
                 ? "border-green-600 text-green-600"
                 : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
-            {tab}
+            {group?.name}
           </button>
         ))}
       </div>
 
       {/* Categories List */}
       <div className="space-y-4">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={categories.map((c) => c.id)}
-            strategy={verticalListSortingStrategy}
+        {isLoadingCategories ? (
+          <div>Loading categories...</div>
+        ) : categoriesForActiveGroup.length > 0 ? (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
           >
-            {categories.map((category) => (
-              <SortableCategory
-                key={category.id}
-                category={category}
-                onToggleExpand={handleToggleExpand}
-                onEditCategory={handleEditCategory}
-                onDeleteCategory={handleDeleteCategory}
-              />
-            ))}
-          </SortableContext>
-        </DndContext>
+            <SortableContext
+              items={categoriesForActiveGroup?.map((c: any) => c._id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {categoriesForActiveGroup?.map((category: any) => (
+                <SortableCategory
+                  key={category._id}
+                  category={{
+                    id: category._id,
+                    name: category.name,
+                    count: category.count || 0,
+                    isExpanded: category._id === activeCategory,
+                    contests: category.contests || [],
+                  }}
+                  contests={
+                    category._id === activeCategory
+                      ? getContestByCategoryId?.data || []
+                      : []
+                  }
+                  isLoadingContests={
+                    category._id === activeCategory && isLoadingContests
+                  }
+                  onToggleExpand={handleToggleExpand}
+                  onEditCategory={handleEditCategory}
+                  onDeleteCategory={handleDeleteCategory}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+        ) : (
+          <div>No categories found for this group</div>
+        )}
       </div>
 
       {/* Create Group Modal */}
@@ -319,28 +413,36 @@ const OrganizeContestsPage = () => {
           </SheetHeader>
           <div className="py-6 space-y-6">
             <div className="space-y-4">
-              <h3 className="text-sm font-medium">Tabs</h3>
+              <h3 className="text-sm font-medium">Groups</h3>
               <div className="space-y-2">
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
-                  onDragEnd={handleTabDragEnd}
+                  onDragEnd={handleGroupDragEnd}
                 >
                   <SortableContext
-                    items={tabs}
+                    items={allGroups?.map((group: any) => group._id)}
                     strategy={verticalListSortingStrategy}
                   >
-                    {tabs.map((tab) => (
-                      <SortableTabItem
-                        key={tab}
-                        tab={tab}
-                        onEdit={(tab) => {
-                          // Handle edit tab
-                          console.log(`Edit tab: ${tab}`);
+                    {allGroups?.map((group: any) => (
+                      <SortableGroupItem
+                        key={group._id}
+                        tab={group.name}
+                        groupId={group._id}
+                        onEdit={(groupName) => {
+                          // Find the group by name to get its ID
+                          const groupObj = allGroups.find(
+                            (g: any) => g.name === groupName
+                          );
+                          if (groupObj) {
+                            setOriginalGroupName(groupObj.name);
+                            setGroupName(groupObj.name);
+                            setIsAddGroupModalOpen(true);
+                          }
                         }}
-                        onDelete={(tab) => {
-                          // Handle delete tab
-                          setTabs((prev) => prev.filter((t) => t !== tab));
+                        onDelete={(groupName) => {
+                          // Handle delete group - would need API integration
+                          console.log(`Delete group: ${groupName}`);
                         }}
                       />
                     ))}
@@ -348,12 +450,16 @@ const OrganizeContestsPage = () => {
                 </DndContext>
               </div>
               <Button
-                onClick={() => setIsAddGroupModalOpen(true)}
+                onClick={() => {
+                  setOriginalGroupName("");
+                  setGroupName("");
+                  setIsAddGroupModalOpen(true);
+                }}
                 variant="outline"
                 className="w-full"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add Tab
+                Add Group
               </Button>
             </div>
           </div>
@@ -378,14 +484,14 @@ const OrganizeContestsPage = () => {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <label htmlFor="title" className="text-right text-sm font-medium">
-                Title
+                Name
               </label>
               <Input
                 id="title"
                 value={categoryTitle}
                 onChange={(e) => setCategoryTitle(e.target.value)}
                 className="col-span-3"
-                placeholder="Enter category title"
+                placeholder="Enter category name"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -397,9 +503,9 @@ const OrganizeContestsPage = () => {
                   <SelectValue placeholder="Select group" />
                 </SelectTrigger>
                 <SelectContent>
-                  {tabs.map((tab) => (
-                    <SelectItem key={tab} value={tab}>
-                      {tab}
+                  {allGroups?.map((group: any) => (
+                    <SelectItem key={group._id} value={group._id}>
+                      {group.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -410,14 +516,14 @@ const OrganizeContestsPage = () => {
                 htmlFor="dataSource"
                 className="text-right text-sm font-medium"
               >
-                Data Source
+                URL
               </label>
               <Input
                 id="dataSource"
                 value={dataSource}
                 onChange={(e) => setDataSource(e.target.value)}
                 className="col-span-3"
-                placeholder="Enter data source"
+                placeholder="Enter data source URL"
               />
             </div>
           </div>
@@ -425,7 +531,26 @@ const OrganizeContestsPage = () => {
             <Button variant="outline" onClick={handleCloseModal}>
               Cancel
             </Button>
-            <Button onClick={handleCloseModal}>Add Category</Button>
+            <Button
+              onClick={() => {
+                if (categoryTitle.trim() && selectedGroup) {
+                  // Create category with API
+                  createCategory({
+                    name: categoryTitle,
+                    groupId: selectedGroup,
+                    url: dataSource,
+                  });
+                  handleCloseModal();
+                }
+              }}
+              disabled={
+                isLoadingCreateCategory ||
+                !categoryTitle.trim() ||
+                !selectedGroup
+              }
+            >
+              {isLoadingCreateCategory ? "Creating..." : "Add Category"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -434,9 +559,13 @@ const OrganizeContestsPage = () => {
       <Dialog open={isAddGroupModalOpen} onOpenChange={setIsAddGroupModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add New Tab</DialogTitle>
+            <DialogTitle>
+              {groups.includes(groupName) ? "Edit Group" : "Add New Group"}
+            </DialogTitle>
             <DialogDescription>
-              Create a new tab to organize your categories.
+              {groups.includes(groupName)
+                ? "Edit your existing group name."
+                : "Create a new group to organize your categories."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -449,7 +578,7 @@ const OrganizeContestsPage = () => {
                 value={groupName}
                 onChange={(e) => setGroupName(e.target.value)}
                 className="col-span-3"
-                placeholder="Enter tab name"
+                placeholder="Enter group name"
               />
             </div>
           </div>
@@ -460,12 +589,25 @@ const OrganizeContestsPage = () => {
             <Button
               onClick={() => {
                 if (groupName.trim()) {
-                  setTabs((prev) => [...prev, groupName]);
+                  if (originalGroupName) {
+                    // This is an edit operation - we need to update the existing group
+                    setGroups((prev) => {
+                      const newGroups = [...prev];
+                      const index = newGroups.indexOf(originalGroupName);
+                      if (index !== -1) {
+                        newGroups[index] = groupName;
+                      }
+                      return newGroups;
+                    });
+                  } else {
+                    // This is an add operation
+                    setGroups((prev) => [...prev, groupName]);
+                  }
                   handleCloseModal();
                 }
               }}
             >
-              Add Tab
+              {originalGroupName ? "Save Changes" : "Add Group"}
             </Button>
           </DialogFooter>
         </DialogContent>

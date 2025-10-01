@@ -12,11 +12,11 @@ interface SortableContestCardProps {
 
 export const SortableContestCard = ({ contest }: SortableContestCardProps) => {
   const [isClient, setIsClient] = useState(false);
-  
+
   useEffect(() => {
     setIsClient(true);
   }, []);
-  
+
   const {
     attributes,
     listeners,
@@ -24,7 +24,7 @@ export const SortableContestCard = ({ contest }: SortableContestCardProps) => {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: contest.id });
+  } = useSortable({ id: contest._id || contest.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -80,8 +80,12 @@ export const SortableContestCard = ({ contest }: SortableContestCardProps) => {
       </div>
 
       <h3 className="font-medium text-gray-900 mb-2">{contest.name}</h3>
-      <p className="text-sm text-gray-600 mb-1">{contest.price}</p>
-      <p className="text-xs text-gray-500">{contest.date}</p>
+      <p className="text-sm text-gray-600 mb-1">
+        Status: {contest.status || "N/A"}
+      </p>
+      <p className="text-xs text-gray-500">
+        {new Date(contest.endTime || contest.date).toLocaleDateString()}
+      </p>
 
       {/* Drag indicator line */}
       <div

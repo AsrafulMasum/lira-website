@@ -44,7 +44,7 @@ export const SortableTabItem = ({
           {...attributes}
           {...listeners}
           className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-200 rounded transition-colors"
-          title="Drag to reorder"
+          title="Drag to reorder group"
         >
           <GripVertical className="w-4 h-4 text-gray-400" />
         </div>
@@ -56,7 +56,7 @@ export const SortableTabItem = ({
         <button
           onClick={() => onEdit(tab)}
           className="p-2 hover:bg-gray-200 rounded-md transition-colors"
-          title="Edit tab"
+          title="Edit group"
         >
           <Edit className="w-4 h-4 text-gray-600" />
         </button>
@@ -64,7 +64,7 @@ export const SortableTabItem = ({
         <button
           onClick={() => onDelete(tab)}
           className="p-2 hover:bg-red-100 rounded-md transition-colors cursor-pointer"
-          title="Delete tab"
+          title="Delete group"
         >
           <Trash2 className="w-4 h-4 text-red-600" />
         </button>
