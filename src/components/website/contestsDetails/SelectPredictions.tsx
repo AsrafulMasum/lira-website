@@ -10,6 +10,16 @@ import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import SelectedValueSheet from "./sheets/SelectedValueSheet";
 import { useRouter, useSearchParams } from "next/navigation";
 import { apiRequest } from "@/helpers/apiRequest";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface PriceRange {
   id: string;
@@ -113,7 +123,27 @@ export function SelectPredictions({
     router.push(`?${params.toString()}`);
   };
 
-  console.log(selectedItems);
+  const handlePayment = async () => {
+    const ids = Array.from(selectedItems).map((item) => {
+      const parsed = JSON.parse(item);
+      return { id: parsed._id };
+    });
+    const payload = {
+      contestId,
+      generatedPredictionsIds: ids,
+    };
+
+    const res = await apiRequest("/orders/create-and-checkout", {
+      method: "POST",
+      body: payload,
+    });
+    console.log(res);
+
+    if (res?.success) {
+      globalThis.location.href = res?.data?.url;
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="w-full overflow-x-auto scrollbar-hide">
@@ -240,9 +270,37 @@ export function SelectPredictions({
               <span className="text-2xl font-semibold text-primary">
                 {"$" + totalPrice}
               </span>
-              <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer">
-                Continue
-              </Button>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer">
+                    Continue
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Confirm Payment</DialogTitle>
+                    <DialogDescription className="my-5">
+                      Please confirm that you want to proceed with this payment.
+                      Once completed, this action cannot be reversed.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline" className="cursor-pointer">
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                    <Button
+                      onClick={handlePayment}
+                      type="submit"
+                      className="bg-dark-primary px-4 hover:bg-dark-primary/90 text-primary-foreground cursor-pointer"
+                    >
+                      Save changes
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </Card>
