@@ -82,6 +82,7 @@ export function SelectPredictions({
           `/contest/contest/prediction/${contestId}/tiers/${activeRange}`,
           {
             method: "GET",
+            cache: "no-store",
           }
         );
         setApiResult(response.data);
