@@ -10,9 +10,13 @@ import {
   X,
   LogOut,
   BarChart3,
+  Home,
+  ChartLine,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 interface SidebarProps {
   className?: string;
@@ -20,6 +24,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   const pathname = usePathname();
+  const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -31,11 +36,22 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
     setIsMobileOpen(!isMobileOpen);
   };
 
+  const handleLogout = () => {
+    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
+    router.push("/login");
+  };
+
   const navItems = [
     {
       name: "Dashboard",
       href: "/dashboard",
       icon: <LayoutDashboard className="h-5 w-5" />,
+    },
+    {
+      name: "Analytics",
+      href: "/dashboard/analytics",
+      icon: <ChartLine className="h-5 w-5" />,
     },
     {
       name: "Organize Contests",
@@ -45,6 +61,11 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
     {
       name: "Users",
       href: "/dashboard/all-users",
+      icon: <Users className="h-5 w-5" />,
+    },
+    {
+      name: "Types & Units",
+      href: "/dashboard/types-units",
       icon: <Users className="h-5 w-5" />,
     },
   ];
@@ -82,7 +103,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center justify-between px-4 py-[12px] border-b">
             <Link href="/dashboard" className="flex items-center">
               {!isCollapsed && (
                 <span className="text-xl font-semibold text-gray-900">
@@ -144,16 +165,33 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
 
           {/* Footer */}
           <div className="p-4 border-t">
-            <Button
-              variant="ghost"
-              className={cn(
-                "w-full flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg",
-                isCollapsed && "justify-center"
-              )}
-            >
-              <LogOut className="h-5 w-5" />
-              {!isCollapsed && <span className="ml-3">Logout</span>}
-            </Button>
+            <div className="flex flex-col gap-2">
+              <Button
+                asChild
+                variant="ghost"
+                className={cn(
+                  "w-full flex items-center cursor-pointer p-3 text-gray-700 hover:bg-gray-100 rounded-lg",
+                  isCollapsed && "justify-center"
+                )}
+              >
+                <Link href="/">
+                  <Home className="h-5 w-5" />
+                  {!isCollapsed && <span className="ml-3">Home</span>}
+                </Link>
+              </Button>
+
+              <Button
+                onClick={handleLogout}
+                variant="ghost"
+                className={cn(
+                  "w-full flex items-center cursor-pointer p-3 text-gray-700 hover:bg-gray-100 rounded-lg",
+                  isCollapsed && "justify-center"
+                )}
+              >
+                <LogOut className="h-5 w-5" />
+                {!isCollapsed && <span className="ml-3">Logout</span>}
+              </Button>
+            </div>
           </div>
         </div>
       </aside>

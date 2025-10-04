@@ -1,7 +1,5 @@
-
-
-import { Share2, ThumbsDown, ThumbsUp } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Share2, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Card() {
   return (
@@ -18,7 +16,9 @@ export default function Card() {
       </div>
 
       {/* Title */}
-      <h2 className="mb-3 text-[#002913] text-xl font-semibold leading-tight">Predict the Bitcoin price on New Year's eve.</h2>
+      <h2 className="mb-3 text-[#002913] text-xl font-semibold leading-tight">
+        Predict the Bitcoin price on New Year&apos;s eve.
+      </h2>
 
       {/* Engagement metrics */}
       <div className="mb-3 flex items-center gap-4 text-sm text-muted-foreground">
@@ -34,7 +34,8 @@ export default function Card() {
 
       {/* Description */}
       <p className="mb-4 text-sm text-muted-foreground">
-        I'm really excited about BTC hitting the moon on New Year's Eve!
+        I&apos;m really excited about BTC hitting the moon on New Year&apos;s
+        Eve!
       </p>
 
       {/* Action bar */}
@@ -54,8 +55,10 @@ export default function Card() {
             <ThumbsUp className="size-4 fill-current" />
           </Button>
         </div>
-        <Button className="bg-primary hover:bg-primary/90 cursor-pointer">Live now</Button>
+        <Button className="bg-primary hover:bg-primary/90 cursor-pointer">
+          Live now
+        </Button>
       </div>
     </div>
-  )
+  );
 }

@@ -159,7 +159,10 @@ const Login = () => {
                 </div>
 
                 {/* submit button */}
-                <Button type="submit" className="w-full mt-5 h-10">
+                <Button
+                  type="submit"
+                  className="w-full mt-5 h-10 cursor-pointer"
+                >
                   Log In
                 </Button>
 

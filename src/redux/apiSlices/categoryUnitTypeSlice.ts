@@ -27,6 +27,23 @@ const categoryUnitTypeApi = api.injectEndpoints({
       invalidatesTags: ["Category"],
     }),
 
+    updateCategory: builder.mutation({
+      query: (data) => ({
+        url: `/categories/${data.id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Category"],
+    }),
+
+    deleteCategory: builder.mutation({
+      query: (categoryId) => ({
+        url: `/categories/${categoryId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Category"],
+    }),
+
     // units & type
     getAllUnitOrType: builder.query({
       query: (key) => ({
@@ -35,6 +52,24 @@ const categoryUnitTypeApi = api.injectEndpoints({
       }),
       providesTags: ["UnitOrType"],
     }),
+    
+    createUnitOrType: builder.mutation({
+      query: (data) => ({
+        url: "/unit-type/create",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["UnitOrType"],
+    }),
+  
+  updateUnitOrType: builder.mutation({
+    query: (data) => ({
+      url: `/unit-type/update/${data.id}`,
+      method: "PATCH",
+      body: { content: data.content },
+    }),
+    invalidatesTags: ["UnitOrType"],
+  }),
 
     // group
 
@@ -58,7 +93,7 @@ const categoryUnitTypeApi = api.injectEndpoints({
     updateGroup: builder.mutation({
       query: (data) => ({
         url: `/groups/${data.id}`,
-        method: "PUT",
+        method: "PATCH",
         body: data,
       }),
       invalidatesTags: ["Group"],
@@ -66,7 +101,7 @@ const categoryUnitTypeApi = api.injectEndpoints({
 
     deleteGroup: builder.mutation({
       query: (groupId) => ({
-        url: `/groups/delete/${groupId}`,
+        url: `/groups/${groupId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Group"],
@@ -79,9 +114,13 @@ export const {
   useGetAllCategoryQuery,
   useGetCategoriesByGroupIdQuery,
   useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
 
   // unit & type
   useGetAllUnitOrTypeQuery,
+  useCreateUnitOrTypeMutation,
+  useUpdateUnitOrTypeMutation,
 
   //group
   useGetAllGroupQuery,
