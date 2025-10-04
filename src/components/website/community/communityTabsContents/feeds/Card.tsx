@@ -1,6 +1,6 @@
 
 
-import { Share2, ThumbsDown, ThumbsUp, MessageSquare } from "lucide-react"
+import { Share2, ThumbsDown, ThumbsUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export default function Card() {
@@ -8,7 +8,7 @@ export default function Card() {
     <div className="w-full max-w-2xl mx-auto rounded-xl border bg-card p-6 shadow-sm">
       {/* Header with avatar and user info */}
       <div className="mb-4 flex items-center gap-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-sm font-semibold text-white">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
           F
         </div>
         <div className="flex items-center gap-2 text-sm">
@@ -18,7 +18,7 @@ export default function Card() {
       </div>
 
       {/* Title */}
-      <h2 className="mb-3 text-xl font-semibold leading-tight">Predict the Bitcoin price on New Year's eve.</h2>
+      <h2 className="mb-3 text-[#002913] text-xl font-semibold leading-tight">Predict the Bitcoin price on New Year's eve.</h2>
 
       {/* Engagement metrics */}
       <div className="mb-3 flex items-center gap-4 text-sm text-muted-foreground">
@@ -27,7 +27,7 @@ export default function Card() {
           <span>134</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <MessageSquare className="h-4 w-4 " />
+          <ThumbsDown className="h-4 w-4 " />
           <span>52</span>
         </div>
       </div>
