@@ -4,7 +4,13 @@ import React, { useEffect, useRef } from "react";
 import { OngoingContests } from "./ongoingContests/OngoingContests";
 import PastContests from "./PastContests";
 
-const MyContests = () => {
+const MyContests = ({
+  ongoingAnalytics,
+  ongoingContests,
+}: {
+  ongoingAnalytics?: any;
+  ongoingContests?: any;
+}) => {
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
 
@@ -22,7 +28,11 @@ const MyContests = () => {
         id="leftDiv"
         ref={leftRef}
       >
-        <OngoingContests viewAll={false} />
+        <OngoingContests
+          viewAll={false}
+          ongoingAnalytics={ongoingAnalytics}
+          ongoingContests={ongoingContests}
+        />
       </div>
 
       {/* Right div - match left height */}

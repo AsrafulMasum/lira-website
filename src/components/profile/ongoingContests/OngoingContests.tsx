@@ -101,10 +101,38 @@ const contestData = [
   },
 ];
 
-export function OngoingContests({ viewAll }: { viewAll?: boolean }) {
+export function OngoingContests({
+  viewAll,
+  ongoingAnalytics,
+  ongoingContests,
+}: {
+  viewAll?: boolean;
+  ongoingAnalytics?: any;
+  ongoingContests?: any;
+}) {
+  const statsData = [
+    {
+      value: ongoingAnalytics?.totalEntries,
+      label: "Entries",
+      value2: ongoingAnalytics?.totalContests,
+      label2: "Contests",
+    },
+    {
+      value: `$ ${ongoingAnalytics?.totalSpend}`,
+      label: "Total Spent",
+      onlyDesktop: true,
+    },
+    {
+      value: `$ ${ongoingAnalytics?.totalRevenue}`,
+      label: "Potential earnings",
+      hasInfo: true,
+    },
+  ];
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
-
+  
+  console.log(ongoingContests);
   // Calculate indexes
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
