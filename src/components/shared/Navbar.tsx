@@ -10,7 +10,7 @@ const Navbar = async () => {
   const profile = await getProfile();
 
   return (
-    <div className="bg-[#FAFFFC] sticky top-0 z-50">
+    <div className="bg-[#FAFFFC] sticky top-0 z-50 shadow-xs">
       <ContainerLayout>
         <nav className="w-full h-16 flex justify-between items-center">
           <Link href="/">
