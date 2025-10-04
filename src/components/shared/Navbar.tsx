@@ -37,7 +37,7 @@ const Navbar = async () => {
               </li>
               <li>
                 <Dialog>
-                  <DialogTrigger>
+                  <DialogTrigger asChild>
                     <button className="text-dark-primary text-sm font-bold cursor-pointer">
                       How it works
                     </button>
