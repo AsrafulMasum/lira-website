@@ -8,8 +8,7 @@ import ContainerLayout from "@/layout/ContainerLayout";
 const CommunityTabs = () => {
   return (
     <section>
-
-      <div className="pb-6">
+      <div>
         <Tabs defaultValue="feeds" className="w-full">
           <div className="border-b border-border-color sticky top-16 z-50 bg-[#FAFFFC]">
             <ContainerLayout>
@@ -19,6 +18,7 @@ const CommunityTabs = () => {
               <h2 className="text-2xl font-semibold text-dark-primary mb-8">
                 Where markets are created 🔥
               </h2>
+              
               <TabsList className="flex w-full bg-transparent rounded-none h-auto p-0">
                 <TabsTrigger
                   value="feeds"

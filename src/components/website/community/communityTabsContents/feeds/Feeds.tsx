@@ -6,7 +6,7 @@ import ContainerLayout from "@/layout/ContainerLayout";
 
 const Feeds = () => {
   return (
-    <section className="bg-[#F2F7F5] min-h-[calc(100vh-160px)] pt-10">
+    <section className="bg-[#F2F7F5] min-h-[calc(100vh-160px)] pt-4">
       <ContainerLayout>
         <UploadForm />
         <SearchFilter />

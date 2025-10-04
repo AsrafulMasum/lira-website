@@ -4,7 +4,7 @@ import React from "react";
 
 const page = () => {
   return (
-    <section className="bg-[#FAFFFC] min-h-[calc(100vh-64px)] pb-10">
+    <section className="bg-[#FAFFFC] min-h-[calc(100vh-64px)]">
       <CommunityTabs />
     </section>
   );
