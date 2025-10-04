@@ -1,11 +1,22 @@
 import LogoutButton from "@/components/profile/LogoutButton";
 import MyContests from "@/components/profile/MyContests";
 import TopCard from "@/components/profile/TopCard";
+import { apiRequest } from "@/helpers/apiRequest";
+import getProfile from "@/helpers/getProfile";
 import ContainerLayout from "@/layout/ContainerLayout";
+import { get } from "http";
 import Link from "next/link";
 import React from "react";
 
-const Profile = () => {
+const Profile = async () => {
+  const { data: ongoingContests } = await apiRequest(`/orders/my-orders`, {
+    method: "GET",
+  });
+
+  const { data: ongoingAnalytics } = await apiRequest(`/orders/analysis`, {
+    method: "GET",
+  });
+
   return (
     <section className="bg-[#FAFFFC] min-h-[calc(100vh-64px)] pb-10">
       <ContainerLayout>
@@ -38,7 +49,10 @@ const Profile = () => {
         </div>
 
         <TopCard />
-        <MyContests />
+        <MyContests
+          ongoingAnalytics={ongoingAnalytics}
+          ongoingContests={ongoingContests}
+        />
       </ContainerLayout>
     </section>
   );
