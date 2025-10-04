@@ -13,7 +13,7 @@ const ContestDetailsLeftSection = ({ contest, tiers }: { contest: any, tiers: an
 
   return (
     <div className="col-span-2">
-      <div className="sticky top-10">
+      <div className="sticky top-20">
         <h4 className="text-3xl font-semibold text-[#002913]">
           {contest?.name} on{" "}
           <span className="text-primary">

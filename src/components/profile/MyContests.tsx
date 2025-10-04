@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef } from "react";
 import { OngoingContests } from "./ongoingContests/OngoingContests";
 import PastContests from "./PastContests";
