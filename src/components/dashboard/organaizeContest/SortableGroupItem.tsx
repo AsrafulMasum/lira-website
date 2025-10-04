@@ -8,8 +8,8 @@ import { Edit, GripVertical, Trash2 } from "lucide-react";
 interface SortableGroupItemProps {
   tab: string;
   groupId: string;
-  onEdit: (tab: string) => void;
-  onDelete: (tab: string) => void;
+  onEdit: (groupId: string, tab: string) => void;
+  onDelete: (groupId: string) => void;
 }
 
 export const SortableGroupItem = ({ 
@@ -56,7 +56,7 @@ export const SortableGroupItem = ({
       </div>
       <div className="flex items-center gap-2">
         <button
-          onClick={() => onEdit(tab)}
+          onClick={() => onEdit(groupId, tab)}
           className="p-2 hover:bg-gray-200 rounded-md transition-colors"
           title="Edit group"
         >
@@ -64,7 +64,7 @@ export const SortableGroupItem = ({
         </button>
 
         <button
-          onClick={() => onDelete(tab)}
+          onClick={() => onDelete(groupId)}
           className="p-2 hover:bg-red-100 rounded-md transition-colors cursor-pointer"
           title="Delete group"
         >

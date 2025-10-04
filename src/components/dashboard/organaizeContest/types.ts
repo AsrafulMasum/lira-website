@@ -16,3 +16,8 @@ export interface Category {
   isExpanded: boolean;
   contests: Contest[];
 }
+
+export interface Group {
+  id: string;
+  name: string;
+}

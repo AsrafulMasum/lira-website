@@ -40,8 +40,6 @@ export const SortableCategory = ({
     isDragging,
   } = useSortable({ id: category.id });
 
-  console.log("in count line", contests);
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,

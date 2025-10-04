@@ -27,6 +27,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Plus, Edit } from "lucide-react";
+import { toast } from "sonner";
 import {
   DndContext,
   closestCenter,
@@ -37,12 +38,7 @@ import {
   DragEndEvent,
   TouchSensor,
 } from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 // Import separated components
 import { SortableCategory } from "./SortableCategory";
@@ -50,27 +46,29 @@ import { SortableGroupItem } from "./SortableGroupItem";
 import { Category } from "./types";
 import {
   useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
+  useCreateGroupMutation,
+  useDeleteGroupMutation,
   useGetAllGroupQuery,
   useGetCategoriesByGroupIdQuery,
+  useUpdateGroupMutation,
 } from "@/redux/apiSlices/categoryUnitTypeSlice";
 import { useGetContestByCategoryIdQuery } from "@/redux/apiSlices/contestSlice";
 
 const OrganizeContestsPage = () => {
   // Get all groups data first
-  const { data: getAllGroups, isLoading: isLoadingGroups } =
-    useGetAllGroupQuery(undefined);
+  const {
+    data: getAllGroups,
+    isLoading: isLoadingGroups,
+    isError: isErrorGroups,
+    error: groupsError,
+  } = useGetAllGroupQuery(undefined);
 
-  // Initialize state with empty values
+  // Initialize state
   const [activeGroup, setActiveGroup] = useState("");
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [groups, setGroups] = useState([
-    "Crypto Market",
-    "Weather",
-    "Stock Market",
-  ]);
 
   // Modal state management
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditGroupsSheetOpen, setIsEditGroupsSheetOpen] = useState(false);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [isAddGroupModalOpen, setIsAddGroupModalOpen] = useState(false);
@@ -79,6 +77,7 @@ const OrganizeContestsPage = () => {
   );
   const [groupName, setGroupName] = useState("");
   const [originalGroupName, setOriginalGroupName] = useState("");
+  const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
   const [categoryTitle, setCategoryTitle] = useState("");
   const [selectedGroup, setSelectedGroup] = useState("");
   const [dataSource, setDataSource] = useState("");
@@ -133,26 +132,33 @@ const OrganizeContestsPage = () => {
     })
   );
 
-  const [createCategory, { isLoading: isLoadingCreateCategory }] =
-    useCreateCategoryMutation();
+  const [createCategory, { isLoading: isLoadingCreateCategory }] = useCreateCategoryMutation();
+  const [updateCategory, { isLoading: isLoadingUpdateCategory }] = useUpdateCategoryMutation();
+  const [deleteCategoryApi] = useDeleteCategoryMutation();
+  const [createGroup, { isLoading: isLoadingCreateGroup }] =
+    useCreateGroupMutation();
+  const [updateGroup, { isLoading: isLoadingUpdateGroup }] =
+    useUpdateGroupMutation();
+  const [deleteGroup] = useDeleteGroupMutation();
 
   if (isLoadingGroups) {
     return <div>Loading groups...</div>;
   }
 
+  if (isErrorGroups) {
+    const message =
+      typeof groupsError === "object" &&
+      groupsError !== null &&
+      "status" in groupsError
+        ? `Failed to load groups (status: ${(groupsError as any).status}).`
+        : "Failed to load groups.";
+    return <div className="text-red-600">{message}</div>;
+  }
+
   const allGroups = getAllGroups?.data || [];
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (active.id !== over?.id) {
-      setCategories((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over?.id);
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
+  const handleDragEnd = (_event: DragEndEvent) => {
+    // Sorting is visual-only for now; no server-side reordering implemented
   };
 
   const handleToggleExpand = (categoryId: string) => {
@@ -183,22 +189,38 @@ const OrganizeContestsPage = () => {
   };
 
   const handleEditCategory = (categoryId: string) => {
-    const category = categories.find((cat) => cat.id === categoryId);
-    if (category) {
-      setSelectedCategory(category);
-      setGroupName(category.name);
-      setIsCreateModalOpen(true);
+    const apiCategory = categoriesForActiveGroup.find(
+      (cat: any) => cat._id === categoryId
+    );
+    if (apiCategory) {
+      const cat = {
+        id: apiCategory._id,
+        name: apiCategory.name,
+        count: apiCategory.count || 0,
+        isExpanded: apiCategory._id === activeCategory,
+        contests: apiCategory.contests || [],
+      } as Category;
+      setSelectedCategory(cat);
+      setCategoryTitle(cat.name);
+      setIsAddCategoryModalOpen(true);
     }
   };
 
-  const handleDeleteCategory = (categoryId: string) => {
-    setCategories((prev) => prev.filter((cat) => cat.id !== categoryId));
+  const handleDeleteCategory = async (categoryId: string) => {
+    try {
+      const res = await deleteCategoryApi(categoryId).unwrap();
+      toast.success(res?.message || "Category deleted successfully");
+    } catch (e: any) {
+      toast.error(e?.data?.message || "Failed to delete category. Please try again.");
+    }
   };
 
   // Modal handlers
   const handleCreateGroup = () => {
+    setEditingGroupId(null);
+    setOriginalGroupName("");
     setGroupName("");
-    setIsCreateModalOpen(true);
+    setIsAddGroupModalOpen(true);
   };
 
   const handleEditGroup = () => {
@@ -206,48 +228,17 @@ const OrganizeContestsPage = () => {
     document.getElementById("edit-groups-trigger")?.click();
   };
 
-  const handleSaveGroup = () => {
-    if (!groupName.trim()) return;
-
-    if (selectedCategory) {
-      // Edit existing group
-      setCategories((prev) =>
-        prev.map((cat) =>
-          cat.id === selectedCategory.id ? { ...cat, name: groupName } : cat
-        )
-      );
-      // Update active group if it was the edited category
-      if (selectedCategory.name === activeGroup) {
-        setActiveGroup(groupName);
-      }
-    } else {
-      // Create new group
-      const newCategory: Category = {
-        id: `category-${Date.now()}`,
-        name: groupName,
-        count: 0,
-        isExpanded: false,
-        contests: [],
-      };
-      setCategories((prev) => [...prev, newCategory]);
-    }
-
-    // Close modals and reset state
-    setIsCreateModalOpen(false);
-    setSelectedCategory(null);
-    setGroupName("");
-  };
+  // Removed legacy local group handler; group creation/editing handled via RTK mutations
 
   const handleCloseModal = () => {
-    setIsCreateModalOpen(false);
     setIsEditGroupsSheetOpen(false);
     setIsAddCategoryModalOpen(false);
     setIsAddGroupModalOpen(false);
     setSelectedCategory(null);
     setGroupName("");
     setOriginalGroupName("");
+    setEditingGroupId(null);
     setCategoryTitle("");
-    setSelectedGroup("Crypto Market");
     setDataSource("");
   };
 
@@ -256,17 +247,8 @@ const OrganizeContestsPage = () => {
   // };
 
   // Handle drag end for groups in Edit Groups Sheet
-  const handleGroupDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (active.id !== over?.id) {
-      setGroups((items) => {
-        const oldIndex = items.findIndex((item) => item === active.id);
-        const newIndex = items.findIndex((item) => item === over?.id);
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
+  const handleGroupDragEnd = (_event: DragEndEvent) => {
+    // Visual drag only; no persistence implemented
   };
 
   return (
@@ -365,41 +347,7 @@ const OrganizeContestsPage = () => {
         )}
       </div>
 
-      {/* Create Group Modal */}
-      <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedCategory ? "Edit Group" : "Create New Group"}
-            </DialogTitle>
-            <DialogDescription>
-              {selectedCategory
-                ? "Update the name of your contest group."
-                : "Create a new group to organize your contests."}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="name" className="text-right text-sm font-medium">
-                Name
-              </label>
-              <Input
-                id="name"
-                value={groupName}
-                onChange={(e) => setGroupName(e.target.value)}
-                className="col-span-3"
-                placeholder="Enter group name"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={handleCloseModal}>
-              Cancel
-            </Button>
-            <Button onClick={handleSaveGroup}>Save</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Legacy create group modal removed; creation/editing handled in Add Group Modal */}
 
       {/* Edit Groups Sheet */}
       <Sheet>
@@ -428,20 +376,19 @@ const OrganizeContestsPage = () => {
                         key={group._id}
                         tab={group.name}
                         groupId={group._id}
-                        onEdit={(groupName) => {
-                          // Find the group by name to get its ID
-                          const groupObj = allGroups.find(
-                            (g: any) => g.name === groupName
-                          );
-                          if (groupObj) {
-                            setOriginalGroupName(groupObj.name);
-                            setGroupName(groupObj.name);
-                            setIsAddGroupModalOpen(true);
-                          }
+                        onEdit={(id, name) => {
+                          setEditingGroupId(id);
+                          setOriginalGroupName(name);
+                          setGroupName(name);
+                          setIsAddGroupModalOpen(true);
                         }}
-                        onDelete={(groupName) => {
-                          // Handle delete group - would need API integration
-                          console.log(`Delete group: ${groupName}`);
+                        onDelete={async (id) => {
+                          try {
+                            const res = await deleteGroup(id).unwrap();
+                            toast.success(res?.message || "Group deleted successfully");
+                          } catch (e: any) {
+                            toast.error(e?.data?.message || "Failed to delete group");
+                          }
                         }}
                       />
                     ))}
@@ -468,16 +415,20 @@ const OrganizeContestsPage = () => {
         </SheetContent>
       </Sheet>
 
-      {/* Add Category Modal */}
+      {/* Add / Edit Category Modal */}
       <Dialog
         open={isAddCategoryModalOpen}
         onOpenChange={setIsAddCategoryModalOpen}
       >
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add New Category</DialogTitle>
+            <DialogTitle>
+              {selectedCategory ? "Edit Category" : "Add New Category"}
+            </DialogTitle>
             <DialogDescription>
-              Create a new category to organize your contests.
+              {selectedCategory
+                ? "Update your category details."
+                : "Create a new category to organize your contests."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -497,7 +448,11 @@ const OrganizeContestsPage = () => {
               <label htmlFor="group" className="text-right text-sm font-medium">
                 Group
               </label>
-              <Select value={selectedGroup} onValueChange={setSelectedGroup}>
+              <Select
+                value={selectedGroup}
+                onValueChange={setSelectedGroup}
+                disabled={!!selectedCategory}
+              >
                 <SelectTrigger className="col-span-3">
                   <SelectValue placeholder="Select group" />
                 </SelectTrigger>
@@ -531,24 +486,43 @@ const OrganizeContestsPage = () => {
               Cancel
             </Button>
             <Button
-              onClick={() => {
-                if (categoryTitle.trim() && selectedGroup) {
-                  // Create category with API
-                  createCategory({
-                    name: categoryTitle,
-                    groupId: selectedGroup,
-                    url: dataSource,
-                  });
+              onClick={async () => {
+                if (!categoryTitle.trim()) return;
+                try {
+                  if (selectedCategory) {
+                    const res = await updateCategory({
+                      id: selectedCategory.id,
+                      name: categoryTitle,
+                    }).unwrap();
+                    toast.success(res?.message || "Category updated successfully");
+                  } else {
+                    if (!selectedGroup) return;
+                    const res = await createCategory({
+                      name: categoryTitle,
+                      groupId: selectedGroup,
+                      url: dataSource,
+                    }).unwrap();
+                    toast.success(res?.message || "Category created successfully");
+                  }
                   handleCloseModal();
+                } catch (e: any) {
+                  toast.error(e?.data?.message || "Action failed. Please try again.");
                 }
               }}
               disabled={
-                isLoadingCreateCategory ||
-                !categoryTitle.trim() ||
-                !selectedGroup
+                (!!selectedCategory && isLoadingUpdateCategory) ||
+                (!selectedCategory &&
+                  (isLoadingCreateCategory || !selectedGroup)) ||
+                !categoryTitle.trim()
               }
             >
-              {isLoadingCreateCategory ? "Creating..." : "Add Category"}
+              {selectedCategory
+                ? isLoadingUpdateCategory
+                  ? "Saving..."
+                  : "Save Changes"
+                : isLoadingCreateCategory
+                ? "Creating..."
+                : "Add Category"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -559,10 +533,10 @@ const OrganizeContestsPage = () => {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>
-              {groups.includes(groupName) ? "Edit Group" : "Add New Group"}
+              {editingGroupId ? "Edit Group" : "Add New Group"}
             </DialogTitle>
             <DialogDescription>
-              {groups.includes(groupName)
+              {editingGroupId
                 ? "Edit your existing group name."
                 : "Create a new group to organize your categories."}
             </DialogDescription>
@@ -586,27 +560,34 @@ const OrganizeContestsPage = () => {
               Cancel
             </Button>
             <Button
-              onClick={() => {
-                if (groupName.trim()) {
-                  if (originalGroupName) {
-                    // This is an edit operation - we need to update the existing group
-                    setGroups((prev) => {
-                      const newGroups = [...prev];
-                      const index = newGroups.indexOf(originalGroupName);
-                      if (index !== -1) {
-                        newGroups[index] = groupName;
-                      }
-                      return newGroups;
-                    });
+              onClick={async () => {
+                if (!groupName.trim()) return;
+                try {
+                  if (editingGroupId) {
+                    const res = await updateGroup({ id: editingGroupId, name: groupName }).unwrap();
+                    toast.success(res?.message || "Group updated successfully");
                   } else {
-                    // This is an add operation
-                    setGroups((prev) => [...prev, groupName]);
+                    const res = await createGroup({ name: groupName }).unwrap();
+                    toast.success(res?.message || "Group created successfully");
                   }
                   handleCloseModal();
+                } catch (e: any) {
+                  toast.error(e?.data?.message || "Action failed. Please try again.");
                 }
               }}
+              disabled={
+                !groupName.trim() ||
+                isLoadingCreateGroup ||
+                isLoadingUpdateGroup
+              }
             >
-              {originalGroupName ? "Save Changes" : "Add Group"}
+              {editingGroupId
+                ? isLoadingUpdateGroup
+                  ? "Saving..."
+                  : "Save Changes"
+                : isLoadingCreateGroup
+                ? "Adding..."
+                : "Add Group"}
             </Button>
           </DialogFooter>
         </DialogContent>
