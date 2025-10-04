@@ -5,12 +5,21 @@ import ContainerLayout from "@/layout/ContainerLayout";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import getProfile from "@/helpers/getProfile";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import HowItWorksModalContent from "./HowItWorksModalContent";
 
 const Navbar = async () => {
   const profile = await getProfile();
 
   return (
-    <div className="bg-[#FAFFFC] sticky top-0 z-50 shadow-xs">
+    <div className="bg-[#FAFFFC] sticky top-0 z-50">
       <ContainerLayout>
         <nav className="w-full h-16 flex justify-between items-center">
           <Link href="/">
@@ -27,12 +36,14 @@ const Navbar = async () => {
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/how-it-works"
-                  className="text-dark-primary text-sm font-bold"
-                >
-                  How it works
-                </Link>
+                <Dialog>
+                  <DialogTrigger>
+                    <button className="text-dark-primary text-sm font-bold cursor-pointer">
+                      How it works
+                    </button>
+                  </DialogTrigger>
+                  <HowItWorksModalContent />
+                </Dialog>
               </li>
               <li>
                 <Link
