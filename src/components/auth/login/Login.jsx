@@ -54,7 +54,7 @@ const Login = () => {
         method: "POST",
         body: payload,
       });
-      console.log(res);
+
       if (res?.success) {
         if (remember) {
           localStorage.setItem("auth", JSON.stringify(payload));

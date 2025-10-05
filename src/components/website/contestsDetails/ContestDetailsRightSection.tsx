@@ -5,23 +5,23 @@ import ContestCountdown from "@/hooks/ContestCountdown";
 import { CircleQuestionMark } from "lucide-react";
 import Image from "next/image";
 
-const ContestDetailsRightSection = ({contest}:any) => {
+const ContestDetailsRightSection = ({ contest }: any) => {
   return (
     <div className="col-span-1">
       <Image
-        src={contest?.prize?.image}
-        alt={contest.prize.name}
+        src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${contest?.image}`}
+        alt={contest?.image}
         width={400}
         height={400}
-        className="w-full h-[200px] rounded-2xl object-cover"
+        className="w-full h-[200px] rounded-2xl object-contain"
       />
 
       <h4 className="text-dark-primary text-2xl font-semibold mt-4 leading-[120%] tracking-[-0.52px]">
-        Win a {contest?.prize?.name}
+        Win a {contest?.prize?.title}
       </h4>
 
       <p className="text-primary font-semibold text-2xl mt-2">
-        ${contest?.prize?.price}{" "}
+        $ {contest?.prize?.prizePool}{" "}
         <span className="text-gray-text text-base">Prize pool</span>
       </p>
 
@@ -33,7 +33,7 @@ const ContestDetailsRightSection = ({contest}:any) => {
         <p className="text-dark-primary text-sm font-semibold">
           Make your prediction before it ends!
         </p>
-        <ContestCountdown endDate={contest.endsIn} isMarketPlace={false} />
+        <ContestCountdown endDate={contest?.endTime} isMarketPlace={false} />
       </div>
 
       <div className="mt-8">
