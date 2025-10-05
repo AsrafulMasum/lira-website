@@ -6,10 +6,10 @@ import PastContests from "./PastContests";
 
 const MyContests = ({
   ongoingAnalytics,
-  ongoingContests,
+  ongoingContestsRes,
 }: {
   ongoingAnalytics?: any;
-  ongoingContests?: any;
+  ongoingContestsRes?: any;
 }) => {
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
@@ -31,7 +31,8 @@ const MyContests = ({
         <OngoingContests
           viewAll={false}
           ongoingAnalytics={ongoingAnalytics}
-          ongoingContests={ongoingContests}
+          ongoingContests={ongoingContestsRes?.data}
+          meta={ongoingContestsRes?.meta}
         />
       </div>
 

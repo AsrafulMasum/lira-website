@@ -2,16 +2,27 @@ import LogoutButton from "@/components/profile/LogoutButton";
 import MyContests from "@/components/profile/MyContests";
 import TopCard from "@/components/profile/TopCard";
 import { apiRequest } from "@/helpers/apiRequest";
-import getProfile from "@/helpers/getProfile";
 import ContainerLayout from "@/layout/ContainerLayout";
-import { get } from "http";
 import Link from "next/link";
 import React from "react";
 
-const Profile = async () => {
-  const { data: ongoingContests } = await apiRequest(`/orders/my-orders`, {
-    method: "GET",
-  });
+interface PageProps {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+}
+
+const Profile = async ({ searchParams }: PageProps) => {
+  const resolvedSearchParams = await searchParams;
+  const page = resolvedSearchParams?.page ?? "1";
+
+  const ongoingContestsRes = await apiRequest(
+    `/orders/my-orders?limit=2&page=${page}`,
+    {
+      method: "GET",
+      cache: "no-store",
+    }
+  );
 
   const { data: ongoingAnalytics } = await apiRequest(`/orders/analysis`, {
     method: "GET",
@@ -51,7 +62,7 @@ const Profile = async () => {
         <TopCard />
         <MyContests
           ongoingAnalytics={ongoingAnalytics}
-          ongoingContests={ongoingContests}
+          ongoingContestsRes={ongoingContestsRes}
         />
       </ContainerLayout>
     </section>
