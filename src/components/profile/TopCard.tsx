@@ -3,8 +3,7 @@
 import React, { useRef } from "react";
 import { toast } from "sonner";
 
-const TopCard = () => {
-
+const TopCard = ({ referral, profile }: any) => {
   const textRef = useRef<HTMLSpanElement>(null);
 
   const handleCopy = () => {
@@ -31,7 +30,9 @@ const TopCard = () => {
     <div className="mt-12 bg-[#007A3914] p-2 rounded-3xl flex flex-col lg:flex-row items-center gap-2">
       <div className="w-full lg:w-[320px] flex justify-between items-center bg-[#FAFFFC] py-6 pl-8 pr-6 rounded-2xl">
         <div>
-          <h4 className="text-primary text-3xl font-semibold pb-2">2,845</h4>
+          <h4 className="text-primary text-3xl font-semibold pb-2">
+            {profile?.points}
+          </h4>
           <p className="flex items-center gap-1 text-gray-text text-sm font-semibold">
             Credits balance{" "}
             <svg
@@ -64,7 +65,7 @@ const TopCard = () => {
         </div>
 
         <button className="py-4 pl-5 pr-4 border border-border-color bg-white rounded-xl text-[#002913] text-sm font-bold flex justify-between items-center gap-5">
-          <span ref={textRef}>/firas420</span>
+          <span ref={textRef}>{referral?.referralCode}</span>
           <div
             onClick={handleCopy}
             className="bg-bg border border-border-color size-8 flex justify-center items-center rounded-lg cursor-pointer"

@@ -1,7 +1,9 @@
+import GetHelpButton from "@/components/profile/GetHelpButton";
 import LogoutButton from "@/components/profile/LogoutButton";
 import MyContests from "@/components/profile/MyContests";
 import TopCard from "@/components/profile/TopCard";
 import { apiRequest } from "@/helpers/apiRequest";
+import getProfile from "@/helpers/getProfile";
 import ContainerLayout from "@/layout/ContainerLayout";
 import Link from "next/link";
 import React from "react";
@@ -13,6 +15,7 @@ interface PageProps {
 }
 
 const Profile = async ({ searchParams }: PageProps) => {
+  const profile = await getProfile();
   const resolvedSearchParams = await searchParams;
   const page = resolvedSearchParams?.page ?? "1";
 
@@ -28,14 +31,20 @@ const Profile = async ({ searchParams }: PageProps) => {
     method: "GET",
   });
 
+  const { data: referral } = await apiRequest(`/referrals/code`, {
+    method: "GET",
+  });
+
   return (
     <section className="bg-[#FAFFFC] min-h-[calc(100vh-64px)] pb-10">
       <ContainerLayout>
-        <div className="flex justify-between items-center pt-16">
-          <h4 className="text-[#002913] text-3xl font-semibold">
-            Welcome, Firas 👋
+        <div className="flex justify-between items-center gap-8 pt-16">
+          <h4 className="text-[#002913] text-xl lg:text-3xl font-semibold">
+            Welcome, {profile?.name} 👋
           </h4>
           <div className="flex items-center gap-4">
+            <GetHelpButton profile={profile} />
+
             <Link
               href="/profile/settings"
               className="flex items-center gap-1 py-3 pl-3 pr-3 lg:pr-4 border border-border-color bg-bg rounded-xl text-dark-primary text-sm font-bold cursor-pointer"
@@ -59,7 +68,7 @@ const Profile = async ({ searchParams }: PageProps) => {
           </div>
         </div>
 
-        <TopCard />
+        <TopCard referral={referral} profile={profile} />
         <MyContests
           ongoingAnalytics={ongoingAnalytics}
           ongoingContestsRes={ongoingContestsRes}
