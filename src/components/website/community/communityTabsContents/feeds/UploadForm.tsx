@@ -6,14 +6,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { apiRequest } from "@/helpers/apiRequest";
+import { revalidateTags } from "@/helpers/revalidateTags";
+import { toast } from "sonner";
 
 const UploadForm = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ title, description });
+    toast.loading("Posting idea...", { id: "createPost" });
+    const payload = { title, description };
+    try {
+      const res = await apiRequest("/community/create", {
+        method: "POST",
+        body: payload,
+      });
+      if (res?.success) {
+        revalidateTags(["posts"]);
+        toast.success("Idea posted successfully", { id: "createPost" });
+        setTitle("");
+        setDescription("");
+      } else {
+        toast.error(res?.message, { id: "createPost" });
+      }
+    } catch (error) {
+      toast.error("Something went wrong. Please try again."),
+        { id: "createPost" };
+      console.log(error);
+    }
   };
 
   return (
