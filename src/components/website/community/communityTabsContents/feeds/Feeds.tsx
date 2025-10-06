@@ -10,7 +10,7 @@ const Feeds = () => {
       <ContainerLayout>
         <UploadForm />
         <SearchFilter />
-        <Ideas />
+        <Ideas from="feeds" />
       </ContainerLayout>
     </section>
   );

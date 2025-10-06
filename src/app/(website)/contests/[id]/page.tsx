@@ -35,7 +35,7 @@ const page = async ({ params }: PageProps) => {
   const { data: tiers } = await apiRequest(`/contest/${id}/tiers`, {
     method: "GET",
   });
-  console.log(data);
+
   return (
     <section className="bg-[#FAFFFC]">
       <ContainerLayout>
