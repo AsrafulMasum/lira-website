@@ -18,91 +18,7 @@ interface Contest {
   predictions: any[];
 }
 
-const contestData = [
-  {
-    id: 1,
-    title: "Predict the BTC price on July 1 at 9:00 PM",
-    prize: "Win a Rolex Daytona",
-    prizePool: "$2,845.50",
-    entries: 8,
-    timeLeft: "2d 3h 20m",
-    image:
-      "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-  },
-  {
-    id: 2,
-    title: "Predict the BTC price on July 1 at 9:00 PM",
-    prize: "Win a Rolex Daytona",
-    prizePool: "$2,845.50",
-    entries: 8,
-    timeLeft: "2d 3h 20m",
-    image:
-      "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-  },
-  {
-    id: 3,
-    title: "Predict the BTC price on July 1 at 9:00 PM",
-    prize: "Win a Rolex Daytona",
-    prizePool: "$2,845.50",
-    entries: 8,
-    timeLeft: "2d 3h 20m",
-    image:
-      "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-  },
-  {
-    id: 4,
-    title: "Predict the BTC price on July 1 at 9:00 PM",
-    prize: "Win a Rolex Daytona",
-    prizePool: "$2,845.50",
-    entries: 8,
-    timeLeft: "2d 3h 20m",
-    image:
-      "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-  },
-  {
-    id: 5,
-    title: "Predict the BTC price on July 1 at 9:00 PM",
-    prize: "Win a Rolex Daytona",
-    prizePool: "$2,845.50",
-    entries: 8,
-    timeLeft: "2d 3h 20m",
-    image:
-      "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-  },
-  {
-    id: 6,
-    title: "Predict the BTC price on July 1 at 9:00 PM",
-    prize: "Win a Rolex Daytona",
-    prizePool: "$2,845.50",
-    entries: 8,
-    timeLeft: "2d 3h 20m",
-    image:
-      "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-  },
-  {
-    id: 7,
-    title: "Predict the BTC price on July 1 at 9:00 PM",
-    prize: "Win a Rolex Daytona",
-    prizePool: "$2,845.50",
-    entries: 8,
-    timeLeft: "2d 3h 20m",
-    image:
-      "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-  },
-  {
-    id: 8,
-    title: "Predict the BTC price on July 1 at 9:00 PM",
-    prize: "Win a Rolex Daytona",
-    prizePool: "$2,845.50",
-    entries: 8,
-    timeLeft: "2d 3h 20m",
-    image:
-      "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-  },
-];
-
 export function OngoingContests({
-  viewAll,
   ongoingAnalytics,
   ongoingContests,
   meta,
@@ -130,10 +46,6 @@ export function OngoingContests({
       hasInfo: true,
     },
   ];
-
-  if (viewAll) {
-    return <AllOngoingContests contestData={contestData} />;
-  }
 
   return (
     <div className="bg-[#FAFFFC] rounded-2xl p-6 ">
@@ -229,7 +141,7 @@ export function OngoingContests({
           >
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
               <div className="flex lg:items-center gap-2">
-                <h3 className="text-sm font-semibold text-gray-900">
+                <h3 className="text-base font-semibold text-gray-900">
                   {contest?.contestName} on{" "}
                   <span className="text-primary">
                     {moment(contest?.contestId?.endTime).format(
@@ -256,7 +168,7 @@ export function OngoingContests({
                 </Link>
               </div>
 
-              <div className="flex items-center gap-1 text-gray text-xs font-semibold">
+              <div className="flex items-center gap-1 text-gray text-sm font-semibold">
                 <Clock size={16} /> Ends In:{" "}
                 <ContestCountdown
                   endDate={contest?.contestId?.endTime}
@@ -275,10 +187,10 @@ export function OngoingContests({
                   className="w-10 h-10 rounded-lg border border-border-color object-cover"
                 />
                 <div>
-                  <div className="text-dark-primary text-xs font-semibold mb-1">
+                  <div className="text-dark-primary text-sm font-semibold mb-1">
                     {contest?.contestId?.prize?.title}
                   </div>
-                  <div className="text-primary text-xs font-semibold">
+                  <div className="text-primary text-sm font-semibold">
                     $ {contest?.contestId?.prize?.prizePool}{" "}
                     <span className="text-gray-text font-normal">
                       Prize pool
@@ -291,7 +203,7 @@ export function OngoingContests({
                 <Sheet>
                   <SheetTrigger asChild>
                     <button
-                      className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg text-nowrap`}
+                      className={`text-sm lg:text-base px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg text-nowrap`}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -313,9 +225,9 @@ export function OngoingContests({
 
                 <Link
                   href={`/contests/${contest?.contestId?._id}`}
-                  className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg text-nowrap`}
+                  className={`text-sm lg:text-base px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg text-nowrap`}
                 >
-                  <svg
+                  <svg 
                     xmlns="http://www.w3.org/2000/svg"
                     width="12"
                     height="12"

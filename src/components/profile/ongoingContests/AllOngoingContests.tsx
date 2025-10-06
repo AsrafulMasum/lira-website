@@ -12,49 +12,42 @@ import { Button } from "../../ui/button";
 import Image from "next/image";
 import { Card } from "../../ui/card";
 import { Input } from "../../ui/input";
+import Pagination from "@/components/shared/Pagination";
+import moment from "moment";
+import Link from "next/link";
+import ContestCountdown from "@/hooks/ContestCountdown";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
+import MyEntriesSheet from "./MyEntriesSheet";
 
-const statsDataForViewAll = [
-  { value: "24", label: "Entries" },
-  { value: "12", label: "Contests" },
-  {
-    value: "$18,000",
-    label: "Potential earnings",
-    hasInfo: true,
-  },
-];
-
-type Contest = {
-  id: string | number;
-  title: string;
-  image: string;
-  prize: string;
-  prizePool: string;
-  entries: number;
-  timeLeft: string;
-};
+interface Contest {
+  _id: string | number;
+  orderId: string;
+  userId: string;
+  contestId: any;
+  contestName: string;
+  predictions: any[];
+}
 
 interface AllOngoingContestsProps {
   contestData: Contest[];
+  meta: any;
+  ongoingAnalytics: any;
 }
 
-const AllOngoingContests = ({ contestData }: AllOngoingContestsProps) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
-
-  // Calculate indexes
-  const indexOfLast = currentPage * itemsPerPage;
-  const indexOfFirst = indexOfLast - itemsPerPage;
-  const currentContests = contestData.slice(indexOfFirst, indexOfLast);
-
-  const totalPages = Math.ceil(contestData.length / itemsPerPage);
-
-  const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
-  };
+const AllOngoingContests = ({
+  contestData,
+  meta,
+  ongoingAnalytics,
+}: AllOngoingContestsProps) => {
+  const statsDataForViewAll = [
+    { value: ongoingAnalytics?.totalEntries, label: "Entries" },
+    { value: ongoingAnalytics?.totalContests, label: "Contests" },
+    {
+      value: `$ ${ongoingAnalytics?.totalRevenue}`,
+      label: "Potential earnings",
+      hasInfo: true,
+    },
+  ];
 
   return (
     <div className="min-h-screen">
@@ -139,21 +132,26 @@ const AllOngoingContests = ({ contestData }: AllOngoingContestsProps) => {
 
         {/* Contest List */}
         <div className="space-y-4 mb-6">
-          {currentContests.map((contest) => (
+          {contestData.map((contest) => (
             <Card
-              key={contest.id}
+              key={contest._id}
               className="p-6 bg-white border-border-color shadow-none gap-5"
             >
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div className="flex lg:items-center gap-2">
                   <h3 className="text-base font-semibold text-gray-900">
-                    {contest?.title.split("on")[0] + "on"}{" "}
+                    {contest?.contestName} on{" "}
                     <span className="text-primary">
-                      {contest?.title.split("on")[1]}
+                      {moment(contest?.contestId?.endTime).format(
+                        "MMMM D [at] h:mm A"
+                      )}
                     </span>{" "}
                   </h3>
 
-                  <div className="cursor-pointer">
+                  <Link
+                    href={`/contests/${contest?.contestId?._id}`}
+                    className="cursor-pointer"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="20"
@@ -166,30 +164,34 @@ const AllOngoingContests = ({ contestData }: AllOngoingContestsProps) => {
                         fill="#717A75"
                       />
                     </svg>
-                  </div>
+                  </Link>
                 </div>
 
                 <div className="flex items-center gap-1 text-gray text-sm font-semibold">
                   <Clock className="w-4 h-4" />
-                  Ends in {contest.timeLeft}
+                  Ends in{" "}
+                  <ContestCountdown
+                    endDate={contest?.contestId?.endTime}
+                    isMarketPlace={true}
+                  />
                 </div>
               </div>
 
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <Image
-                    src={contest.image}
-                    alt={contest.title}
+                    src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${contest?.contestId?.image}`}
+                    alt={contest?.contestId?.image}
                     width={50}
                     height={50}
                     className="w-16 h-16 rounded-lg border border-border-color object-cover"
                   />
                   <div>
                     <div className="text-dark-primary text-sm font-semibold mb-1">
-                      {contest.prize}
+                      {contest?.contestId?.prize?.title}
                     </div>
                     <div className="text-primary text-sm font-semibold">
-                      {contest.prizePool}{" "}
+                      $ {contest?.contestId?.prize?.prizePool}{" "}
                       <span className="text-gray-text font-normal">
                         Prize pool
                       </span>
@@ -198,25 +200,32 @@ const AllOngoingContests = ({ contestData }: AllOngoingContestsProps) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <button
-                    className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="18"
-                      height="18"
-                      viewBox="0 0 18 18"
-                      fill="none"
-                    >
-                      <path
-                        d="M9 3C5.25 3 2.0475 5.3325 0.75 8.625C2.0475 11.9175 5.25 14.25 9 14.25C12.75 14.25 15.9525 11.9175 17.25 8.625C15.9525 5.3325 12.75 3 9 3ZM9 12.375C6.93 12.375 5.25 10.695 5.25 8.625C5.25 6.555 6.93 4.875 9 4.875C11.07 4.875 12.75 6.555 12.75 8.625C12.75 10.695 11.07 12.375 9 12.375ZM9 6.375C7.755 6.375 6.75 7.38 6.75 8.625C6.75 9.87 7.755 10.875 9 10.875C10.245 10.875 11.25 9.87 11.25 8.625C11.25 7.38 10.245 6.375 9 6.375Z"
-                        fill="#004721"
-                      />
-                    </svg>
-                    {contest.entries} Entries
-                  </button>
-                  <button
-                    className={`px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg`}
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <button
+                        className={`text-sm lg:text-base px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg text-nowrap`}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 18 18"
+                          fill="none"
+                        >
+                          <path
+                            d="M9 3C5.25 3 2.0475 5.3325 0.75 8.625C2.0475 11.9175 5.25 14.25 9 14.25C12.75 14.25 15.9525 11.9175 17.25 8.625C15.9525 5.3325 12.75 3 9 3ZM9 12.375C6.93 12.375 5.25 10.695 5.25 8.625C5.25 6.555 6.93 4.875 9 4.875C11.07 4.875 12.75 6.555 12.75 8.625C12.75 10.695 11.07 12.375 9 12.375ZM9 6.375C7.755 6.375 6.75 7.38 6.75 8.625C6.75 9.87 7.755 10.875 9 10.875C10.245 10.875 11.25 9.87 11.25 8.625C11.25 7.38 10.245 6.375 9 6.375Z"
+                            fill="#004721"
+                          />
+                        </svg>
+                        {contest?.predictions?.length} Entries
+                      </button>
+                    </SheetTrigger>
+                    <MyEntriesSheet items={contest?.predictions} />
+                  </Sheet>
+
+                  <Link
+                    href={`/contests/${contest?.contestId?._id}`}
+                    className={`text-sm lg:text-base px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg text-nowrap`}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -231,7 +240,7 @@ const AllOngoingContests = ({ contestData }: AllOngoingContestsProps) => {
                       />
                     </svg>
                     Add entries
-                  </button>
+                  </Link>
                 </div>
               </div>
             </Card>
@@ -239,54 +248,7 @@ const AllOngoingContests = ({ contestData }: AllOngoingContestsProps) => {
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between px-6">
-          <div className="text-sm text-gray-500">
-            <span className="hidden lg:block">Showing</span> {indexOfFirst + 1}{" "}
-            to{" "}
-            {indexOfLast > contestData.length
-              ? contestData.length
-              : indexOfLast}{" "}
-            of {contestData.length}{" "}
-            <span className="hidden lg:block">contests</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-gray-400"
-              onClick={handlePrev}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
-
-            {Array.from({ length: totalPages }, (_, i) => (
-              <Button
-                key={i + 1}
-                size="sm"
-                className={`${
-                  currentPage === i + 1
-                    ? "bg-dark-primary text-white hover:bg-primary cursor-pointer"
-                    : "bg-white text-gray-600 border hover:text-white hover:bg-primary cursor-pointer"
-                }`}
-                onClick={() => setCurrentPage(i + 1)}
-              >
-                {i + 1}
-              </Button>
-            ))}
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-gray-400"
-              onClick={handleNext}
-              disabled={currentPage === totalPages}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
+        <Pagination meta={meta} />
       </div>
     </div>
   );
