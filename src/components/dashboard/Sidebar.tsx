@@ -12,6 +12,7 @@ import {
   BarChart3,
   Home,
   ChartLine,
+  HelpCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -64,9 +65,14 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       icon: <Users className="h-5 w-5" />,
     },
     {
-      name: "Types & Units",
+      name: "Price Types & Units",
       href: "/dashboard/types-units",
       icon: <Users className="h-5 w-5" />,
+    },
+    {
+      name: "Get Help",
+      href: "/dashboard/get-help",
+      icon: <HelpCircle className="h-5 w-5" />,
     },
   ];
 

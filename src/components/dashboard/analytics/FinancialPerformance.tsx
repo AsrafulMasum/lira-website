@@ -1,172 +1,51 @@
 "use client";
 
+import { DollarSign, TrendingUp, ShoppingCart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { FilterState } from "./AnalyticsFilters";
 
-interface MetricCardProps {
-  icon: React.ReactNode;
-  value: string;
-  label: string;
-  change: string;
-  changePositive: boolean;
-}
-
-const MetricCard = ({ icon, value, label, change, changePositive }: MetricCardProps) => {
+export default function FinancialPerformance() {
   return (
-    <Card>
-      <CardContent className="p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div className="p-2 bg-gray-100 rounded-md">{icon}</div>
-          <div className={`text-sm font-medium flex items-center ${changePositive ? 'text-green-600' : 'text-red-600'}`}>
-            {change}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="ml-1"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 16v-4" />
-              <path d="M12 8h.01" />
-            </svg>
-          </div>
-        </div>
-        <div className="text-2xl font-bold mb-1">{value}</div>
-        <div className="text-sm text-gray-500">{label}</div>
-      </CardContent>
-    </Card>
-  );
-};
-
-interface FinancialPerformanceProps {
-  filters: FilterState;
-}
-
-// This would normally come from an API based on filters
-const getFinancialData = (filters: FilterState) => {
-  // Mock data - in a real app, this would be fetched based on filters
-  return {
-    totalRevenue: {
-      value: "$127,450",
-      change: "+12.5%",
-      positive: true
-    },
-    avgRevenuePerUser: {
-      value: "$59.12",
-      change: "+8.3%",
-      positive: true
-    },
-    avgSpendPerUser: {
-      value: "$47.85",
-      change: "+5.7%",
-      positive: true
-    }
-  };
-};
-
-export const FinancialPerformance = ({ filters }: FinancialPerformanceProps) => {
-  const financialData = getFinancialData(filters);
-
-  return (
-    <div className="mb-8">
+    <div>
       <div className="flex items-center gap-2 mb-4">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="text-gray-700"
-        >
-          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-        </svg>
-        <h2 className="text-xl font-bold">Financial Performance</h2>
+        <DollarSign className="h-5 w-5" />
+        <h2 className="text-xl font-semibold">Financial Performance</h2>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <MetricCard
-          icon={
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-green-600"
-            >
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
-          }
-          value={financialData.totalRevenue.value}
-          label="Total Revenue"
-          change={financialData.totalRevenue.change}
-          changePositive={financialData.totalRevenue.positive}
-        />
-
-        <MetricCard
-          icon={
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-blue-600"
-            >
-              <path d="M3 3v18h18" />
-              <path d="m19 9-5 5-4-4-3 3" />
-            </svg>
-          }
-          value={financialData.avgRevenuePerUser.value}
-          label="Avg Revenue per User"
-          change={financialData.avgRevenuePerUser.change}
-          changePositive={financialData.avgRevenuePerUser.positive}
-        />
-
-        <MetricCard
-          icon={
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-purple-600"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z" />
-            </svg>
-          }
-          value={financialData.avgSpendPerUser.value}
-          label="Avg Spend per User"
-          change={financialData.avgSpendPerUser.change}
-          changePositive={financialData.avgSpendPerUser.positive}
-        />
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-2">
+              <DollarSign className="h-8 w-8 text-green-500" />
+              <span className="text-sm text-green-500">+24.5% ↑</span>
+            </div>
+            <div className="text-3xl font-bold">
+              ${(127450).toLocaleString()}
+            </div>
+            <p className="text-xs text-gray-600 mt-1">Total Revenue</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-2">
+              <TrendingUp className="h-8 w-8 text-blue-500" />
+              <span className="text-sm text-green-500">+8.3% ↑</span>
+            </div>
+            <div className="text-3xl font-bold">${(59.12).toFixed(2)}</div>
+            <p className="text-xs text-gray-600 mt-1">
+              Avg Revenue per User
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-2">
+              <ShoppingCart className="h-8 w-8 text-purple-500" />
+              <span className="text-sm text-green-500">+4.2% ↑</span>
+            </div>
+            <div className="text-3xl font-bold">${(47.85).toFixed(2)}</div>
+            <p className="text-xs text-gray-600 mt-1">Avg Order Value</p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
-};
-
-export default FinancialPerformance;
+}
