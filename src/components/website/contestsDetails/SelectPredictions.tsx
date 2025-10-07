@@ -297,7 +297,7 @@ export function SelectPredictions({
                       type="submit"
                       className="bg-dark-primary px-4 hover:bg-dark-primary/90 text-primary-foreground cursor-pointer"
                     >
-                      Save changes
+                      Confirm Payment
                     </Button>
                   </DialogFooter>
                 </DialogContent>
