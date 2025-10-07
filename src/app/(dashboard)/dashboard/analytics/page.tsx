@@ -3,7 +3,6 @@ import AnalyticsMainPage from "@/components/dashboard/analytics/AnalyticsMainPag
 const page = () => {
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold text-primary">Analytics</h1>
       <AnalyticsMainPage />
     </div>
   );

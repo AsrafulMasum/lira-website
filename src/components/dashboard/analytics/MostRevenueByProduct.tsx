@@ -1,68 +1,42 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { FilterState } from "./AnalyticsFilters";
+import { TrendingUp } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
-interface ProductRevenue {
-  name: string;
-  revenue: number;
-  formattedRevenue: string;
-}
+// Mock data
+const productRevenueData = [
+  { name: "Hermès Birkin", value: 4460, percentage: 100 },
+  { name: "AP Royal Oak", value: 3780, percentage: 85 },
+  { name: "Rolex Daytona", value: 3735, percentage: 84 },
+  { name: "Modern Villa", value: 2615, percentage: 59 },
+  { name: "Cartier Love Bracelet", value: 1268, percentage: 28 },
+  { name: "Diamond Studs", value: 890, percentage: 20 },
+];
 
-interface MostRevenueByProductProps {
-  filters: FilterState;
-}
-
-// Mock data - in a real app, this would be fetched based on filters
-const getProductRevenueData = (filters: FilterState): ProductRevenue[] => {
-  return [
-    { name: "Hermes Birkin", revenue: 4460, formattedRevenue: "$4,460" },
-    { name: "AP Royal Oak", revenue: 3780, formattedRevenue: "$3,780" },
-    { name: "Rolex Daytona", revenue: 3735, formattedRevenue: "$3,735" },
-    { name: "Modern Villa", revenue: 2615, formattedRevenue: "$2,615" },
-    { name: "Cartier Love Bracelet", revenue: 1248, formattedRevenue: "$1,248" },
-    { name: "Diamond Studs", revenue: 890, formattedRevenue: "$890" },
-  ];
-};
-
-export const MostRevenueByProduct = ({ filters }: MostRevenueByProductProps) => {
-  const productData = getProductRevenueData(filters);
-  const maxRevenue = Math.max(...productData.map(item => item.revenue));
-  
+export default function MostRevenueByProduct() {
   return (
-    <Card className="col-span-1 lg:col-span-3 xl:col-span-2">
-      <CardContent className="p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-gray-700"
-          >
-            <path d="M3 3v18h18" />
-            <path d="m19 9-5 5-4-4-3 3" />
-          </svg>
-          <h2 className="text-xl font-bold">Most Revenue by Product</h2>
-        </div>
-        
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base flex items-center gap-2">
+          <TrendingUp className="h-4 w-4" />
+          Most Revenue by Product
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
         <div className="space-y-4">
-          {productData.map((product, index) => (
+          {productRevenueData.map((product, index) => (
             <div key={index} className="flex items-center justify-between">
-              <span className="text-sm font-medium">{product.name}</span>
-              <div className="flex items-center gap-2">
-                <div className="w-40 h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-green-600 rounded-full" 
-                    style={{ width: `${(product.revenue / maxRevenue) * 100}%` }}
+              <div className="flex-1">
+                <div className="font-medium mb-1">{product.name}</div>
+                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-green-800 rounded-full transition-all"
+                    style={{ width: `${product.percentage}%` }}
                   />
                 </div>
-                <span className="text-sm font-medium">{product.formattedRevenue}</span>
+              </div>
+              <div className="text-right font-semibold text-green-800 ml-4">
+                ${product.value.toLocaleString()}
               </div>
             </div>
           ))}
@@ -70,6 +44,4 @@ export const MostRevenueByProduct = ({ filters }: MostRevenueByProductProps) => 
       </CardContent>
     </Card>
   );
-};
-
-export default MostRevenueByProduct;
+}
