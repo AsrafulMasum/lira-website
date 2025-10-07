@@ -43,7 +43,7 @@ const Login = () => {
     }
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     toast.loading("Logging in...", { id: "login" });
 
@@ -140,7 +140,7 @@ const Login = () => {
                       id="remember"
                       name="remember"
                       checked={remember}
-                      onCheckedChange={(val) => setRemember(val)}
+                      onCheckedChange={(val) => setRemember(val === 'indeterminate' ? false : val)}
                       className="size-5 border-primary"
                     />
                     <label

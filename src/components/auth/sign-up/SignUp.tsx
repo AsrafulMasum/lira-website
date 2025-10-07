@@ -91,12 +91,12 @@ const SignUp = () => {
   const router = useRouter();
   const redirect = "/verify-email";
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     toast.loading("Singing up...", {
       id: "signUp",
     });
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
     const terms = formData.get("terms");
     const password = formData.get("password");
     const confirmPassword = formData.get("confirmPassword");
@@ -122,7 +122,7 @@ const SignUp = () => {
         toast.success("Sign up successful", { id: "signUp" });
         const params = new URLSearchParams({
           from: "register",
-          email: payload.email,
+          email: typeof payload.email === "string" ? payload.email : "",
         });
         router.push(`${redirect}?${params.toString()}`);
       } else {

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const EmptyContest = () => {
@@ -5,10 +6,10 @@ const EmptyContest = () => {
     <div className="py-6 px-6 lg:px-12 flex flex-col lg:flex-row justify-between items-center gap-10">
       <div>
         <h4 className="text-lg font-semibold text-dark-primary mb-1">It’s quiet in here… too quiet 👀</h4>
-        <p className="text-sm text-dark-primary">Pick a contest and make your first prediction.</p>
-        <button className="py-3 px-4 border border-border-color bg-dark-primary rounded-xl text-bg text-sm font-bold cursor-pointer mt-5">
+        <p className="text-sm text-dark-primary mb-5">Pick a contest and make your first prediction.</p>
+        <Link href="/" className="py-3 px-4 bg-dark-primary rounded-xl text-bg text-sm font-bold border-0">
           Find a contest
-        </button>
+        </Link>
       </div>
 
 
