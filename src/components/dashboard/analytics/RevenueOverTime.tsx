@@ -30,7 +30,7 @@ export default function RevenueOverTime() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2">
+        <CardTitle className="text-xl font-bold flex items-center gap-2">
           <TrendingUp className="h-4 w-4" />
           Revenue Over Time
         </CardTitle>
@@ -43,7 +43,7 @@ export default function RevenueOverTime() {
               color: "hsl(220, 70%, 50%)",
             },
           }}
-          className="h-[200px]"
+          className=""
         >
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={revenueOverTimeData}>

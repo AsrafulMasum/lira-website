@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Page = () => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-white rounded-md p-6 min-h-screen">
       <h1 className="text-2xl font-semibold text-primary">
         Unit & Types Management
       </h1>

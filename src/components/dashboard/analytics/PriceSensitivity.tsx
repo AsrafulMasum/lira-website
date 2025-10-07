@@ -15,7 +15,7 @@ export default function PriceSensitivity() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2">
+        <CardTitle className="text-xl font-bold flex items-center gap-2">
           <DollarSign className="h-4 w-4" />
           Entry Price Sensitivity
         </CardTitle>
@@ -23,7 +23,7 @@ export default function PriceSensitivity() {
       <CardContent>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead>
+            <thead className="bg-green-50">
               <tr className="border-b border-gray-200">
                 <th className="text-left py-3 px-4 text-sm font-medium">
                   Price Range
@@ -45,9 +45,7 @@ export default function PriceSensitivity() {
                   key={index}
                   className="border-b border-gray-200 last:border-0"
                 >
-                  <td className="py-3 px-4 text-sm font-medium">
-                    {row.range}
-                  </td>
+                  <td className="py-3 px-4 text-sm font-medium">{row.range}</td>
                   <td className="py-3 px-4 text-sm">{row.sellRate}</td>
                   <td className="py-3 px-4 text-sm">{row.amplifier}</td>
                   <td className="py-3 px-4 text-sm font-semibold">

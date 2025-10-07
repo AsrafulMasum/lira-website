@@ -25,18 +25,20 @@ export default function UserActivity() {
     <div className="grid gap-4 lg:grid-cols-2">
       <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <UserPlus className="h-4 w-4" />
-            New Users This Week
+          <CardTitle className="text-base flex flex-col gap-2">
+            <div className="flex items-center gap-2 text-xl font-bold">
+              <UserPlus className="h-4 w-4" />
+              New Users This Week
+            </div>
             <span className="text-xs text-gray-600 font-normal ml-1">
-              (First entry this week)
+              First entry this week
             </span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead>
+              <thead className="bg-green-50">
                 <tr className="border-b border-gray-200">
                   <th className="text-left py-3 px-2 text-sm font-medium">
                     User
@@ -70,18 +72,20 @@ export default function UserActivity() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Award className="h-4 w-4" />
-            High Activity Users
+          <CardTitle className="text-base flex flex-col gap-2">
+            <div className="flex items-center gap-2 text-xl font-bold">
+              <Award className="h-4 w-4" />
+              High Activity Users
+            </div>
             <span className="text-xs text-gray-600 font-normal ml-1">
-              (Most entries this week)
+              Most entries this week
             </span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead>
+              <thead className="bg-green-50">
                 <tr className="border-b border-gray-200">
                   <th className="text-left py-3 px-2 text-sm font-medium">
                     User

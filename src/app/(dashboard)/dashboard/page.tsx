@@ -2,7 +2,7 @@ import ContestManagementPage from "@/components/dashboard/contestManagement/Cont
 
 const DashboardMain = () => {
   return (
-    <div className="my-10">
+    <div className="bg-white rounded-md p-6 min-h-screen">
       <ContestManagementPage />
     </div>
   );
