@@ -86,7 +86,7 @@ const ContestManagementPage = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [contestToDelete, setContestToDelete] = useState<any>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  
+
   // Search and filter states
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -147,14 +147,18 @@ const ContestManagementPage = () => {
   // Apply filters to contests
   const filteredContests = contestsData.filter((contest: any) => {
     // Search filter
-    const nameMatch = contest.name?.toLowerCase().includes(searchQuery.toLowerCase());
-    
+    const nameMatch = contest.name
+      ?.toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
     // Status filter
-    const statusMatch = statusFilter === "all" || contest.status === statusFilter;
-    
+    const statusMatch =
+      statusFilter === "all" || contest.status === statusFilter;
+
     // Category filter
-    const categoryMatch = categoryFilter === "all" || contest.categoryId?._id === categoryFilter;
-    
+    const categoryMatch =
+      categoryFilter === "all" || contest.categoryId?._id === categoryFilter;
+
     return nameMatch && statusMatch && categoryMatch;
   });
 
@@ -287,13 +291,15 @@ const ContestManagementPage = () => {
               Organize
             </Button>
           </Link>
-          <Button
-            variant="outline"
-            className="flex items-center gap-2 cursor-pointer text-primary font-bold bg-bg"
-          >
-            <BarChart3 className="w-4 h-4" />
-            Analytics
-          </Button>
+          <Link href={"/dashboard/analytics"}>
+            <Button
+              variant="outline"
+              className="flex items-center gap-2 cursor-pointer text-primary font-bold bg-bg"
+            >
+              <BarChart3 className="w-4 h-4" />
+              Analytics
+            </Button>
+          </Link>
         </div>
       </div>
 
