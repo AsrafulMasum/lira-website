@@ -19,15 +19,75 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import logo from "@/assets/logo.svg";
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebookF } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { apiRequest } from "@/helpers/apiRequest";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const US_STATES = [
+  "Alabama",
+  "Alaska",
+  "Arizona",
+  "Arkansas",
+  "California",
+  "Colorado",
+  "Connecticut",
+  "Delaware",
+  "Florida",
+  "Georgia",
+  "Hawaii",
+  "Idaho",
+  "Illinois",
+  "Indiana",
+  "Iowa",
+  "Kansas",
+  "Kentucky",
+  "Louisiana",
+  "Maine",
+  "Maryland",
+  "Massachusetts",
+  "Michigan",
+  "Minnesota",
+  "Mississippi",
+  "Missouri",
+  "Montana",
+  "Nebraska",
+  "Nevada",
+  "New Hampshire",
+  "New Jersey",
+  "New Mexico",
+  "New York",
+  "North Carolina",
+  "North Dakota",
+  "Ohio",
+  "Oklahoma",
+  "Oregon",
+  "Pennsylvania",
+  "Rhode Island",
+  "South Carolina",
+  "South Dakota",
+  "Tennessee",
+  "Texas",
+  "Utah",
+  "Vermont",
+  "Virginia",
+  "Washington",
+  "West Virginia",
+  "Wisconsin",
+  "Wyoming",
+];
 
 const SignUp = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
+  const [selectedState, setSelectedState] = useState("");
   const router = useRouter();
   const redirect = "/verify-email";
 
@@ -49,6 +109,8 @@ const SignUp = () => {
       email: formData.get("email"),
       password,
       agreeWithTerms: terms === "on" ? true : false,
+      referralCode: formData.get("referralCode"),
+      state: selectedState,
     };
 
     try {
@@ -82,7 +144,7 @@ const SignUp = () => {
         <Card className="h-full py-10 xl:px-[100px] shadow-none border-none">
           <CardHeader className="text-center">
             <figure className="flex justify-center mb-7">
-              <Image src={logo} alt="logo" height={85} />
+              <Image src={logo} alt="logo" height={65} />
             </figure>
             <CardTitle className="text-2xl">Sign up</CardTitle>
             <CardDescription className="py-4 text-[#5C5C5C]">
@@ -120,57 +182,102 @@ const SignUp = () => {
                     />
                   </div>
 
-                  {/* password */}
-                  <div className="grid gap-2">
-                    <div className="flex items-center">
-                      <Label htmlFor="password">Password</Label>
+                  {/* passwords */}
+                  <div className="flex justify-center items-center gap-4">
+                    {/* password */}
+                    <div className="grid gap-2 w-1/2">
+                      <div className="flex items-center">
+                        <Label htmlFor="password">Password</Label>
+                      </div>
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          name="password"
+                          type={`${isPasswordVisible ? "text" : "password"}`}
+                          placeholder="Enter password"
+                          required
+                          className="bg-white shadow-none h-10"
+                        />
+                        <span
+                          onClick={() =>
+                            setIsPasswordVisible(!isPasswordVisible)
+                          }
+                          className="text-slate-400 absolute right-5 top-1.5 cursor-pointer"
+                        >
+                          {!isPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
+                        </span>
+                      </div>
                     </div>
-                    <div className="relative">
-                      <Input
-                        id="password"
-                        name="password"
-                        type={`${isPasswordVisible ? "text" : "password"}`}
-                        placeholder="Enter password"
-                        required
-                        className="bg-white shadow-none h-10"
-                      />
-                      <span
-                        onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-                        className="text-slate-400 absolute right-5 top-1.5 cursor-pointer"
-                      >
-                        {!isPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
-                      </span>
+
+                    {/* confirmPassword */}
+                    <div className="grid gap-2 w-1/2">
+                      <div className="flex items-center">
+                        <Label htmlFor="confirmPassword">
+                          Confirm Password
+                        </Label>
+                      </div>
+                      <div className="relative">
+                        <Input
+                          id="confirmPassword"
+                          name="confirmPassword"
+                          type={`${
+                            isConfirmPasswordVisible ? "text" : "password"
+                          }`}
+                          placeholder="Enter password"
+                          required
+                          className="bg-white shadow-none h-10"
+                        />
+                        <span
+                          onClick={() =>
+                            setIsConfirmPasswordVisible(
+                              !isConfirmPasswordVisible
+                            )
+                          }
+                          className="text-slate-400 absolute right-5 top-1.5 cursor-pointer"
+                        >
+                          {!isConfirmPasswordVisible ? (
+                            <EyeOffIcon />
+                          ) : (
+                            <EyeIcon />
+                          )}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* confirmPassword */}
-                  <div className="grid gap-2">
-                    <div className="flex items-center">
-                      <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    </div>
-                    <div className="relative">
+                  {/* referral code & states */}
+                  <div className="flex justify-center items-center gap-4">
+                    {/* referral code */}
+                    <div className="grid gap-2 w-1/2">
+                      <Label htmlFor="referralCode">Referral Code</Label>
                       <Input
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        type={`${
-                          isConfirmPasswordVisible ? "text" : "password"
-                        }`}
-                        placeholder="Enter password"
-                        required
-                        className="bg-white shadow-none h-10"
+                        id="referralCode"
+                        name="referralCode"
+                        type="text"
+                        placeholder="SAND868617"
+                        className="bg-white shadow-none h-9 w-full"
                       />
-                      <span
-                        onClick={() =>
-                          setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
-                        }
-                        className="text-slate-400 absolute right-5 top-1.5 cursor-pointer"
+                    </div>
+
+                    {/* States */}
+                    <div className="grid gap-2 w-1/2">
+                      <Label htmlFor="state">State</Label>
+                      <Select
+                        value={selectedState}
+                        onValueChange={setSelectedState}
+                        required
                       >
-                        {!isConfirmPasswordVisible ? (
-                          <EyeOffIcon />
-                        ) : (
-                          <EyeIcon />
-                        )}
-                      </span>
+                        <SelectTrigger className="bg-white shadow-none h-10 w-full">
+                          <SelectValue placeholder="Select your state" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {US_STATES.map((state) => (
+                            <SelectItem key={state} value={state}>
+                              {state}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 

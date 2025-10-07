@@ -29,7 +29,6 @@ const MyContests = ({
         ref={leftRef}
       >
         <OngoingContests
-          viewAll={false}
           ongoingAnalytics={ongoingAnalytics}
           ongoingContests={ongoingContestsRes?.data}
           meta={ongoingContestsRes?.meta}

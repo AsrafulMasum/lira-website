@@ -84,8 +84,8 @@ export default function Card({ post }: { post: any }) {
               y2="20.5"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stop-color="#007A39" />
-              <stop offset="1" stop-color="#004721" />
+              <stop stopColor="#007A39" />
+              <stop offset="1" stopColor="#004721" />
             </linearGradient>
           </defs>
         </svg>

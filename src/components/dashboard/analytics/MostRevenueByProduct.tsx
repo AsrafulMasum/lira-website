@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 // Mock data
 const productRevenueData = [
   { name: "Hermès Birkin", value: 4460, percentage: 100 },
-  { name: "AP Royal Oak", value: 3780, percentage: 85 },
+  { name: "AP Royal Oak", value: 3780, percentage: 88 },
   { name: "Rolex Daytona", value: 3735, percentage: 84 },
   { name: "Modern Villa", value: 2615, percentage: 59 },
   { name: "Cartier Love Bracelet", value: 1268, percentage: 28 },
