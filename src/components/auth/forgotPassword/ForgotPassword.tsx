@@ -14,12 +14,12 @@ import { apiRequest } from "@/helpers/apiRequest";
 const ForgotPassword = () => {
   const router = useRouter();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     toast.loading("Sending code...", {
       id: "send-code",
     });
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
     const email = formData.get("email");
 
     try {
@@ -30,7 +30,7 @@ const ForgotPassword = () => {
 
       if (res?.success) {
         toast.success("Code sent to your email.", { id: "send-code" });
-        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+        router.push(`/verify-email?email=${encodeURIComponent(String(email))}`);
       } else {
         toast.error(res?.message);
       }

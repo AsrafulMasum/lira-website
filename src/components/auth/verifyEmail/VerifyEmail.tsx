@@ -31,7 +31,7 @@ const VerifyEmail = () => {
 
   const [otp, setOtp] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (otp.length !== 4) {

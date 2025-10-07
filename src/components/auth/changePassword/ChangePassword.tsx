@@ -27,13 +27,13 @@ const ChangePassword = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const redirect = useSearchParams().get("redirect");
-  console.log(token);
-  const handleSubmit = async (e) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     toast.loading("Resetting password...", {
       id: "reset",
     });
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
     const payload = {
       newPassword: formData.get("password"),
       confirmPassword: formData.get("confirmPassword"),
