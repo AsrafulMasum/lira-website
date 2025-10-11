@@ -12,7 +12,7 @@ const tabs = [
 
 interface LayoutProps {
   children: ReactNode;
-  params: Promise<{ tab?: string }>; // 👈 params is async
+  params: Promise<{ tab?: string }>;
 }
 
 type Group = {
