@@ -10,32 +10,34 @@ import RangeSheet from "./sheets/RangeSheet";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import AddCustomValue from "./AddCustomValue";
 import SearchSheet from "./sheets/SearchSheet";
+import moment from "moment";
 
 const ContestDetailsMobileView = ({ contest }: any) => {
+  console.log("entries", contest);
   return (
     <section className="pt-5">
       <h4 className="text-2xl font-semibold text-[#002913]">
-        {contest?.contestName.split("on")[0] + "on"}{" "}
+        {contest?.name} on{" "}
         <span className="text-primary">
-          {contest?.contestName.split("on")[1]}
+          {moment(contest?.endTime).format("MMMM D [at] h:mm A")}
         </span>{" "}
       </h4>
 
       <div className="flex items-center gap-4 text-gray mt-3">
         <p className="flex items-center gap-2">
           <Clock size={16} /> Ends In:{" "}
-          <ContestCountdown endDate={contest.endsIn} isMarketPlace={true} />
+          <ContestCountdown endDate={contest?.endTime} isMarketPlace={true} />
         </p>
         <p className="flex items-center gap-2">
           <Users size={16} />
-          {contest.totalEntries} entries
+          {contest?.totalEntries} entries
         </p>
       </div>
 
       <div className="flex items-center gap-4 mt-6 bg-bg rounded-2xl py-2 pl-2 pr-3">
         <Image
-          src={contest?.prize?.image}
-          alt={contest.prize.name}
+          src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${contest?.image}`}
+          alt={contest?.image}
           width={400}
           height={400}
           className="w-20 h-20 rounded-2xl object-cover"
@@ -47,7 +49,7 @@ const ContestDetailsMobileView = ({ contest }: any) => {
           </h4>
 
           <p className="text-primary font-semibold text-base mt-2">
-            ${contest?.prize?.price}{" "}
+            ${contest?.prize?.prizePool}{" "}
             <span className="text-gray-text text-sm font-normal">
               Prize pool
             </span>
