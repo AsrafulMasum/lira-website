@@ -114,7 +114,9 @@ const Pagination = ({ meta }: any) => {
           size="sm"
           className="text-gray-400"
           onClick={() =>
-            updateSearchParams("page", page > 1 ? `${page - 1}` : page)
+            updateSearchParams({
+              page: page > 1 ? `${page - 1}` : page,
+            })
           }
           disabled={page === 1}
         >
@@ -130,7 +132,7 @@ const Pagination = ({ meta }: any) => {
                 ? "bg-dark-primary text-white hover:bg-primary cursor-pointer"
                 : "bg-white text-gray-600 border hover:text-white hover:bg-primary cursor-pointer"
             }`}
-            onClick={() => updateSearchParams("page", (idx + 1).toString())}
+            onClick={() => updateSearchParams({ page: `${idx + 1}` })}
           >
             {idx + 1}
           </Button>
@@ -141,10 +143,9 @@ const Pagination = ({ meta }: any) => {
           size="sm"
           className="text-gray-400"
           onClick={() =>
-            updateSearchParams(
-              "page",
-              page < meta?.totalPage ? `${page + 1}` : page
-            )
+            updateSearchParams({
+              page: page < totalPages ? `${page + 1}` : page,
+            })
           }
           disabled={page === totalPages}
         >
