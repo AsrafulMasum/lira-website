@@ -16,14 +16,17 @@ export default async function TabPage({ params, searchParams }: PageProps) {
   });
 
   const activeTab = searchParamsValue?.tab ?? tabs[0]?._id;
+
   const { data } = await apiRequest(
-    `/contest/active/list?categoryId=${activeTab}`,
+    `/contest/active/list?${
+      searchTerm ? `searchTerm=${searchTerm}&` : `categoryId=${activeTab}`
+    }`,
     {
       method: "GET",
     }
   );
+
   const tabName = tabs.find((tab: any) => tab._id === activeTab)?.name;
-  console.log(searchTerm);
 
   return (
     <CryptoContent

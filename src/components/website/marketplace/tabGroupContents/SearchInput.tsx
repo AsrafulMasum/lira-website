@@ -13,7 +13,10 @@ export default function SearchInput() {
 
   const clearSearch = () => {
     updateSearchParams({ search: null });
-    inputRef.current?.focus({ preventScroll: true });
+    if (inputRef.current) {
+      inputRef.current.value = "";
+      inputRef.current.focus({ preventScroll: true });
+    }
   };
 
   return (
@@ -30,7 +33,7 @@ export default function SearchInput() {
       {searchParams.get("search") && (
         <button
           onClick={clearSearch}
-          className="absolute right-3 top-1/2 -translate-y-1/2"
+          className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
