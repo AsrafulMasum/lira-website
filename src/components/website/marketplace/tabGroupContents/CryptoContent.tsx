@@ -14,30 +14,23 @@ interface Tab {
 
 interface CryptoContentProps {
   tabs: Tab[];
-  searchParams: any;
+  activeTab: string;
+  data: any[];
+  tabName: string | undefined;
 }
 
 const CryptoContent: React.FC<CryptoContentProps> = async ({
   tabs,
-  searchParams,
+  activeTab,
+  data,
+  tabName,
 }) => {
-  const sp = await searchParams;
-  const activeTab = sp?.tab ?? tabs[0]?._id;
-  const searchValue = sp.search || "";
-  const { data } = await apiRequest(
-    `/contest/active/list?categoryId=${activeTab}`,
-    {
-      method: "GET",
-    }
-  );
-  const tabName = tabs.find((tab) => tab._id === activeTab)?.name;
-
   return (
     <section className="bg-bg min-h-[calc(100vh-112px)] py-10">
       <ContainerLayout>
         <div className="flex flex-col lg:flex-row items-center gap-6">
           <div className="w-full lg:w-auto flex items-center gap-4 lg:border-r lg:pr-6">
-            <SearchInput initialValue={searchValue} />
+            <SearchInput />
 
             <div>
               <Sheet>
