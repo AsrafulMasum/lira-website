@@ -48,7 +48,7 @@ const page = async ({ params }: PageProps) => {
         </div>
 
         <div className="lg:hidden">
-          <ContestDetailsMobileView contest={data} />
+          <ContestDetailsMobileView contest={data} tiers={tiers}  />
         </div>
       </ContainerLayout>
 

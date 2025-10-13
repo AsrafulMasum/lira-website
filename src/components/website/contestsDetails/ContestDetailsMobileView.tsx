@@ -12,8 +12,7 @@ import AddCustomValue from "./AddCustomValue";
 import SearchSheet from "./sheets/SearchSheet";
 import moment from "moment";
 
-const ContestDetailsMobileView = ({ contest }: any) => {
-  console.log("entries", contest);
+const ContestDetailsMobileView = ({ contest, tiers }: any) => {
   return (
     <section className="pt-5">
       <h4 className="text-2xl font-semibold text-[#002913]">
@@ -66,7 +65,7 @@ const ContestDetailsMobileView = ({ contest }: any) => {
       </h4>
 
       <div className="mt-6">
-        <SelectPredictions />
+        <SelectPredictions tiers={tiers} contestId={contest?._id} />
       </div>
 
       <div className="grid grid-cols-2 lg:flex justify-center items-center gap-3">
@@ -120,7 +119,7 @@ const ContestDetailsMobileView = ({ contest }: any) => {
         <p className="text-dark-primary text-sm font-semibold">
           Make your prediction before it ends!
         </p>
-        <ContestCountdown endDate={contest.endsIn} isMarketPlace={false} />
+        <ContestCountdown endDate={contest?.endTime} isMarketPlace={false} />
       </div>
 
       <div className="mt-8">
