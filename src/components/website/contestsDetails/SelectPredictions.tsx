@@ -338,9 +338,36 @@ export function SelectPredictions({
           <span className="text-2xl font-semibold text-primary">
             {"$" + totalPrice}
           </span>
-          <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer">
-            Continue
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer">
+                Continue
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Confirm Payment</DialogTitle>
+                <DialogDescription className="my-5">
+                  Please confirm that you want to proceed with this payment.
+                  Once completed, this action cannot be reversed.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline" className="cursor-pointer">
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button
+                  onClick={handlePayment}
+                  type="submit"
+                  className="bg-dark-primary px-4 hover:bg-dark-primary/90 text-primary-foreground cursor-pointer"
+                >
+                  Confirm Payment
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>
