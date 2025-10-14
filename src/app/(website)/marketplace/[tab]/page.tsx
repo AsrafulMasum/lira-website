@@ -25,7 +25,6 @@ export default async function TabPage({ params, searchParams }: PageProps) {
   const prizeMax = searchParamsValue?.prizeMax || null;
   const entriesMin = searchParamsValue?.entriesMin || null;
   const entriesMax = searchParamsValue?.entriesMax || null;
-  console.log(sortBy, prizeType, prizeMin, prizeMax, entriesMax, entriesMin);
 
   const { data: tabs } = await apiRequest(`/categories/?groupId=${tab}`, {
     method: "GET",

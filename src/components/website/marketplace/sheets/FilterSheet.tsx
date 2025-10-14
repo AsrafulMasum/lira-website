@@ -78,7 +78,7 @@ const FilterSheet = () => {
     setPrizeRangeEnd(prizeMaxValue);
     setEntriesRangeStart(entriesMinValue);
     setEntriesRangeEnd(entriesMaxValue);
-    setSortBy("Numbers of entries");
+    setSortBy("Latest");
     setPrizeType("All");
 
     updateSearchParams({
@@ -224,22 +224,14 @@ const FilterSheet = () => {
           <Button
             onClick={handleClear}
             variant="outline"
-            className="bg-bg h-12 px-4 text-base font-bold text-primary rounded-2xl flex-1"
+            className="bg-bg h-12 px-4 text-base font-bold text-primary rounded-2xl flex-1 cursor-pointer"
           >
             Clear
           </Button>
 
-          {/* <Button
-            onClick={handleApplyFilters}
-            variant="outline"
-            className="bg-bg h-12 px-4 text-base font-bold text-primary rounded-2xl flex-1"
-          >
-            View list
-          </Button> */}
-
           <Button
             onClick={handleApplyFilters}
-            className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl flex-1"
+            className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl flex-1 cursor-pointer"
           >
             View list
           </Button>
