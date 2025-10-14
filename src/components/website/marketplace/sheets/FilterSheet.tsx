@@ -7,8 +7,15 @@ import { useMediaQuery } from "react-responsive";
 import { ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import RangeBarChart from "@/components/shared/RangeBarChart";
+import { useUpdateSearchParams } from "@/hooks/useUpdateSearchParams";
 
-const chartData = [
+interface ChartData {
+  value: number;
+  amount: number;
+  height: number;
+}
+
+const chartData: ChartData[] = [
   { value: 3, amount: 118000, height: 60 },
   { value: 4, amount: 119000, height: 80 },
   { value: 6, amount: 120000, height: 100 },
@@ -17,7 +24,7 @@ const chartData = [
   { value: 3, amount: 124000, height: 40 },
 ];
 
-const entriesChartData = [
+const entriesChartData: ChartData[] = [
   { value: 2, amount: 5, height: 40 },
   { value: 5, amount: 10, height: 70 },
   { value: 8, amount: 15, height: 100 },
@@ -27,14 +34,15 @@ const entriesChartData = [
 ];
 
 const FilterSheet = () => {
-  const [prizeRangeStart, setPrizeRangeStart] = useState(118000);
-  const [prizeRangeEnd, setPrizeRangeEnd] = useState(120500);
-  const [entriesRangeStart, setEntriesRangeStart] = useState(5);
-  const [entriesRangeEnd, setEntriesRangeEnd] = useState(20);
+  const updateSearchParams = useUpdateSearchParams();
 
-  const [sortBy, setSortBy] = useState("Numbers of entries");
-  const [prizeType, setPrizeType] = useState("All");
-  const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const [prizeRangeStart, setPrizeRangeStart] = useState<number>(118000);
+  const [prizeRangeEnd, setPrizeRangeEnd] = useState<number>(120500);
+  const [entriesRangeStart, setEntriesRangeStart] = useState<number>(5);
+  const [entriesRangeEnd, setEntriesRangeEnd] = useState<number>(20);
+  const [sortBy, setSortBy] = useState<string>("Latest");
+  const [prizeType, setPrizeType] = useState<string>("All");
+  const [showSortDropdown, setShowSortDropdown] = useState<boolean>(false);
 
   const prizeMinValue = 118000;
   const prizeMaxValue = 124000;
@@ -43,14 +51,14 @@ const FilterSheet = () => {
 
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
-  const formatCurrency = (value: number) => {
+  const formatCurrency = (value: number): string => {
     if (value >= 1000) {
       return `$${(value / 1000).toFixed(value % 1000 === 0 ? 0 : 1)}k`;
     }
     return `$${value}`;
   };
 
-  const formatEntries = (value: number) => {
+  const formatEntries = (value: number): string => {
     return `$${value}`;
   };
 
@@ -64,6 +72,7 @@ const FilterSheet = () => {
     setEntriesRangeEnd(end);
   };
 
+  // 🧹 Clear all filters
   const handleClear = () => {
     setPrizeRangeStart(prizeMinValue);
     setPrizeRangeEnd(prizeMaxValue);
@@ -71,15 +80,37 @@ const FilterSheet = () => {
     setEntriesRangeEnd(entriesMaxValue);
     setSortBy("Numbers of entries");
     setPrizeType("All");
+
+    updateSearchParams({
+      sortBy: null,
+      prizeType: null,
+      prizeMin: null,
+      prizeMax: null,
+      entriesMin: null,
+      entriesMax: null,
+    });
   };
 
-  const sortOptions = [
+  // ✅ Apply filters and update search params
+  const handleApplyFilters = () => {
+    updateSearchParams({
+      sortBy,
+      prizeType,
+      prizeMin: String(prizeRangeStart),
+      prizeMax: String(prizeRangeEnd),
+      entriesMin: String(entriesRangeStart),
+      entriesMax: String(entriesRangeEnd),
+    });
+  };
+
+  const sortOptions: string[] = [
+    "Latest",
     "Numbers of entries",
     "Prize value",
-    "End date",
     "Popularity",
   ];
-  const prizeTypes = ["All", "Cash", "Product", "Other"];
+
+  const prizeTypes: string[] = ["All", "Cash", "Product", "Other"];
 
   return (
     <SheetContent
@@ -94,6 +125,7 @@ const FilterSheet = () => {
 
       <div className="space-y-6 h-full flex flex-col justify-between">
         <div>
+          {/* Sort by */}
           <div className="space-y-4 mb-6">
             <h4 className="text-gray font-semibold">Sort by</h4>
             <div className="relative">
@@ -123,6 +155,7 @@ const FilterSheet = () => {
             </div>
           </div>
 
+          {/* Prize type */}
           <div className="space-y-4 mb-6">
             <h4 className="text-gray font-semibold">Type of prize</h4>
             <div className="grid grid-cols-2 gap-3">
@@ -148,10 +181,6 @@ const FilterSheet = () => {
                       <div className="absolute left-4 w-5 h-5 border-2 border-gray-300 rounded-full" />
                     )}
 
-                    {!isSelected && !isAvailable && (
-                      <div className="absolute left-4 w-5 h-5 bg-border-color rounded-full" />
-                    )}
-
                     {isSelected && isAvailable && (
                       <div className="absolute left-4 w-5 h-5 bg-white rounded-full flex justify-center items-center">
                         <Check className="w-4 h-4 text-primary" />
@@ -165,6 +194,7 @@ const FilterSheet = () => {
             </div>
           </div>
 
+          {/* Range sliders */}
           <RangeBarChart
             data={chartData}
             rangeStart={prizeRangeStart}
@@ -189,22 +219,29 @@ const FilterSheet = () => {
           />
         </div>
 
+        {/* Action buttons */}
         <div className="flex gap-3 pb-6">
           <Button
             onClick={handleClear}
             variant="outline"
-            className="bg-bg h-12 px-4 text-base font-bold text-primary rounded-2xl cursor-pointer flex-1"
+            className="bg-bg h-12 px-4 text-base font-bold text-primary rounded-2xl flex-1"
           >
             Clear
           </Button>
-          <Button
+
+          {/* <Button
+            onClick={handleApplyFilters}
             variant="outline"
-            className="bg-bg h-12 px-4 text-base font-bold text-primary rounded-2xl cursor-pointer flex-1"
+            className="bg-bg h-12 px-4 text-base font-bold text-primary rounded-2xl flex-1"
           >
             View list
-          </Button>
-          <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer flex-1">
-            Select
+          </Button> */}
+
+          <Button
+            onClick={handleApplyFilters}
+            className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl flex-1"
+          >
+            View list
           </Button>
         </div>
       </div>
