@@ -24,7 +24,7 @@ const GetHelpModal = ({ profile, setOpen }: any) => {
     toast.loading("Sending help request...", { id: "help" });
     const payload = {
       email: profile?.email,
-      description,
+      message: description,
     };
 
     try {
