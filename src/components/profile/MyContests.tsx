@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import { OngoingContests } from "./ongoingContests/OngoingContests";
-import PastContests from "./PastContests";
+import PastContests from "./pastContests/PastContests";
 
 const MyContests = ({
   ongoingAnalytics,

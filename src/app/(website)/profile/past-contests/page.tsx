@@ -1,4 +1,3 @@
-import PastContests from "@/components/profile/PastContests";
 import AllPastContests from "@/components/profile/pastContests/AllPastContests";
 import { apiRequest } from "@/helpers/apiRequest";
 import ContainerLayout from "@/layout/ContainerLayout";
@@ -34,7 +33,7 @@ const page = async () => {
     },
   ];
 
-  console.log(pastAnalytics);
+  console.log(pastContestsRes?.data);
   const contestDataForViewAll = [
     {
       id: 1,
@@ -123,7 +122,7 @@ const page = async () => {
       <ContainerLayout>
         <AllPastContests
           statsData={statsData}
-          contestDataForViewAll={contestDataForViewAll}
+          allPastContests={pastContestsRes?.data}
         />
       </ContainerLayout>
     </section>

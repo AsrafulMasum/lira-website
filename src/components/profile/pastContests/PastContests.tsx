@@ -1,15 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Eye } from "lucide-react";
 import Link from "next/link";
-import AllPastContests from "./pastContests/AllPastContests";
 import moment from "moment";
-import { Sheet, SheetTrigger } from "../ui/sheet";
-import MyEntriesSheet from "./ongoingContests/MyEntriesSheet";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
+import MyEntriesSheet from "../ongoingContests/MyEntriesSheet";
 
 interface PastContest {
-  id: string;
+  _id: string;
   contestName: string;
   contestId: string;
   endTime: string;
@@ -76,7 +74,7 @@ const PastContests = ({
 
         <TabsContent value="all" className="mt-4 space-y-4">
           {pastContests.map((contest: PastContest) => (
-            <div key={contest.id}>
+            <div key={contest?._id}>
               <Card className="border border-border-color rounded-lg shadow-none">
                 <CardContent className="">
                   <div className="space-y-3">
@@ -123,7 +121,7 @@ const PastContests = ({
                     <div className="flex items-center justify-between pt-2">
                       <div>
                         <span className="text-sm font-semibold text-primary">
-                          Value: {contest?.result?.prizeAmount}
+                          Value: $ {contest?.result?.prizeAmount}
                         </span>
                       </div>
 
@@ -168,7 +166,7 @@ const PastContests = ({
           {pastContests
             .filter((contest: PastContest) => contest.status === "won")
             .map((contest: PastContest) => (
-              <div key={contest.id}>
+              <div key={contest._id}>
                 <Card className="border border-border-color rounded-lg shadow-none">
                   <CardContent className="">
                     <div className="space-y-3">
@@ -219,7 +217,7 @@ const PastContests = ({
                       <div className="flex items-center justify-between pt-2">
                         <div>
                           <span className="text-sm font-semibold text-primary">
-                            Value: {contest?.result?.prizeAmount}
+                            Value: $ {contest?.result?.prizeAmount}
                           </span>
                         </div>
 
