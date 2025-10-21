@@ -53,6 +53,7 @@ interface ContestData {
   predictionEventDate: string;
   predictionEventTime: string;
   endOffset: string;
+  endOffsetTime?: string;
 }
 
 const steps: { id: Step; label: string }[] = [
@@ -98,6 +99,7 @@ const NewContestPage = () => {
     predictionEventDate: "",
     predictionEventTime: "",
     endOffset: "",
+    endOffsetTime: "",
   });
   
   // Force client-side rendering
@@ -184,11 +186,11 @@ const NewContestPage = () => {
       isActive: true,
     }));
 
-    // Combine event date and time
-    const eventDateTime = `${contestData.predictionEventDate}T${contestData.predictionEventTime}:00Z`;
+    // Combine event date and time in UTC format
+    const eventDateTime = `${contestData.predictionEventDate}T${contestData.predictionEventTime}:00.000Z`;
 
-    // Calculate end time based on offset (simplified for now)
-    const endOffsetTime = eventDateTime; // This should be calculated properly in a real implementation
+    // Use the calculated endOffsetTime from TimingStep
+    const endOffsetTime = contestData.endOffsetTime || eventDateTime;
 
     // Get category name from the category ID
     // In a real implementation, you would fetch this from your categories data

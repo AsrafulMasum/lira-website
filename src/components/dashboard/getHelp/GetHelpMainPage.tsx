@@ -20,113 +20,121 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
-import { Eye } from "lucide-react";
-
-// Mock data for help messages
-const helpMessages = [
-  {
-    id: "1",
-    userId: "user1",
-    userName: "John Doe",
-    userEmail: "john@example.com",
-    userAvatar: "/avatars/john.jpg",
-    subject: "Payment Issue",
-    message:
-      "I'm having trouble with my recent payment. The transaction was completed but it's not showing in my account. Can you please help me resolve this issue? I've attached the transaction receipt for your reference.",
-    status: "open",
-    priority: "high",
-    createdAt: new Date(2023, 10, 15),
-    attachments: ["receipt.pdf"],
-  },
-  {
-    id: "2",
-    userId: "user2",
-    userName: "Jane Smith",
-    userEmail: "jane@example.com",
-    userAvatar: "/avatars/jane.jpg",
-    subject: "Account Access",
-    message:
-      "I can't log into my account. I've tried resetting my password multiple times but I'm still unable to access my dashboard. Please help me regain access to my account as soon as possible.",
-    status: "in-progress",
-    priority: "medium",
-    createdAt: new Date(2023, 10, 18),
-    attachments: [],
-  },
-  {
-    id: "3",
-    userId: "user3",
-    userName: "Robert Johnson",
-    userEmail: "robert@example.com",
-    userAvatar: "/avatars/robert.jpg",
-    subject: "Refund Request",
-    message:
-      "I would like to request a refund for my recent purchase. The product doesn't meet my expectations and I'd like to return it. I've already initiated the return process and the product should reach your warehouse within 3-5 business days.",
-    status: "closed",
-    priority: "low",
-    createdAt: new Date(2023, 10, 10),
-    attachments: ["return_label.pdf"],
-  },
-  {
-    id: "4",
-    userId: "user4",
-    userName: "Emily Davis",
-    userEmail: "emily@example.com",
-    userAvatar: "/avatars/emily.jpg",
-    subject: "Feature Request",
-    message:
-      "I would love to see a dark mode option in the app. It would be much easier on the eyes when using the app at night. This feature would greatly enhance user experience for night owls like me!",
-    status: "open",
-    priority: "medium",
-    createdAt: new Date(2023, 10, 20),
-    attachments: [],
-  },
-  {
-    id: "5",
-    userId: "user5",
-    userName: "Michael Wilson",
-    userEmail: "michael@example.com",
-    userAvatar: "/avatars/michael.jpg",
-    subject: "Technical Issue",
-    message:
-      "The dashboard is not loading properly on my browser. I'm using Chrome version 96.0.4664.110 on Windows 10. The charts and graphs are not rendering correctly. I've attached a screenshot of the issue for your reference.",
-    status: "in-progress",
-    priority: "high",
-    createdAt: new Date(2023, 10, 22),
-    attachments: ["screenshot.png"],
-  },
-];
+import { Eye, ChevronLeft, ChevronRight, Trash } from "lucide-react";
+import {
+  useGetAllHelpQuery,
+  useUpdateHelpStatusMutation,
+} from "@/redux/apiSlices/publicSlice";
+import Loading from "@/app/loading";
+import { toast } from "sonner";
 
 const GetHelpMainPage = () => {
-  const [selectedMessage, setSelectedMessage] = useState<
-    (typeof helpMessages)[0] | null
-  >(null);
+  const [selectedMessage, setSelectedMessage] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [replyText, setReplyText] = useState("");
 
-  const handleViewMessage = (message: (typeof helpMessages)[0]) => {
+  const { data: getAllHelpMessages, isLoading } = useGetAllHelpQuery({
+    page: currentPage,
+    limit: itemsPerPage,
+  });
+
+  const [updateHelpStatus, { isLoading: isUpdating }] =
+    useUpdateHelpStatusMutation();
+
+  if (isLoading)
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+
+  const helpMessages = getAllHelpMessages?.data || [];
+  const meta = getAllHelpMessages?.meta || {
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPage: 1,
+  };
+  console.log(helpMessages);
+
+  const handleViewMessage = (message: any) => {
     setSelectedMessage(message);
     setIsDialogOpen(true);
+    setReplyText(""); // Reset reply text when opening a new message
+  };
+
+  const handleSendReply = async () => {
+    if (!selectedMessage || !replyText.trim()) return;
+
+    toast.loading("Sending reply...", { id: "send-reply" });
+
+    try {
+      await updateHelpStatus({
+        id: selectedMessage._id,
+        data: {
+          reply: replyText.trim(),
+          status: "resolved",
+        },
+      }).unwrap();
+
+      toast.success("Reply sent successfully", { id: "send-reply" });
+
+      // Reset and close dialog after successful reply
+      setReplyText("");
+      setIsDialogOpen(false);
+      setSelectedMessage(null);
+    } catch (error) {
+      console.error("Failed to send reply:", error);
+      toast.error("Failed to send reply. Please try again.", {
+        id: "send-reply",
+      });
+    }
+  };
+
+  const handleCloseTicket = async () => {
+    if (!selectedMessage) return;
+
+    toast.loading("Closing ticket...", { id: "close-ticket" });
+
+    try {
+      await updateHelpStatus({
+        id: selectedMessage._id,
+        data: {
+          status: "resolved",
+        },
+      }).unwrap();
+
+      toast.success("Ticket closed successfully", { id: "close-ticket" });
+
+      // Close dialog after successful status update
+      setIsDialogOpen(false);
+      setSelectedMessage(null);
+    } catch (error) {
+      console.error("Failed to close ticket:", error);
+      toast.error("Failed to close ticket. Please try again.", {
+        id: "close-ticket",
+      });
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (items: number) => {
+    setItemsPerPage(items);
+    setCurrentPage(1); // Reset to first page when changing items per page
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "open":
         return "bg-green-100 text-green-800";
-      case "in-progress":
-        return "bg-blue-100 text-blue-800";
-      case "closed":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-100 text-red-800";
-      case "medium":
-        return "bg-yellow-100 text-yellow-800";
-      case "low":
+      case "pending":
+        return "bg-orange-100 text-orange-800";
+      case "resolved":
         return "bg-green-100 text-green-800";
       default:
         return "bg-gray-100 text-gray-800";
@@ -141,35 +149,37 @@ const GetHelpMainPage = () => {
 
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-green-50">
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Subject</TableHead>
+              <TableHead>Serial</TableHead>
               <TableHead>User</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Problem</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Priority</TableHead>
               <TableHead>Date</TableHead>
               <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {helpMessages.map((message) => (
-              <TableRow key={message.id}>
-                <TableCell className="font-medium">{message.id}</TableCell>
-                <TableCell>{message.subject}</TableCell>
-                <TableCell>{message.userName}</TableCell>
+            {helpMessages?.map((message: any, index: number) => (
+              <TableRow key={message._id}>
+                <TableCell className="font-medium">{index + 1}</TableCell>
+
+                <TableCell>{message.userId.name}</TableCell>
+                <TableCell>{message.userId.email}</TableCell>
+                <TableCell>{message.message}</TableCell>
                 <TableCell>
                   <Badge className={getStatusColor(message.status)}>
                     {message.status}
                   </Badge>
                 </TableCell>
+
                 <TableCell>
-                  <Badge className={getPriorityColor(message.priority)}>
-                    {message.priority}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {formatDistanceToNow(message.createdAt, { addSuffix: true })}
+                  {message.createdAt
+                    ? formatDistanceToNow(new Date(message.createdAt), {
+                        addSuffix: true,
+                      })
+                    : "N/A"}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button
@@ -180,11 +190,114 @@ const GetHelpMainPage = () => {
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
+                  <Button
+                    className="cursor-pointer"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleViewMessage(message)}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+      </div>
+
+      {/* Pagination */}
+      <div className="flex items-center justify-between px-2">
+        <div className="flex items-center space-x-2">
+          <p className="text-sm text-gray-700">
+            Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+            {Math.min(currentPage * itemsPerPage, meta.total)} of {meta.total}{" "}
+            entries
+          </p>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-700">Show</span>
+            <select
+              value={itemsPerPage}
+              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+              className="border rounded px-2 py-1 text-sm"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+            </select>
+            <span className="text-sm text-gray-700">entries</span>
+          </div>
+
+          <div className="flex items-center space-x-1">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="h-8 w-8 p-0"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+
+            {/* Page Numbers */}
+            {Array.from({ length: meta.totalPage }, (_, i) => i + 1).map(
+              (page) => {
+                // Show first page, last page, current page, and pages around current page
+                const showPage =
+                  page === 1 ||
+                  page === meta.totalPage ||
+                  (page >= currentPage - 1 && page <= currentPage + 1);
+
+                if (!showPage && page === 2 && currentPage > 4) {
+                  return (
+                    <span key={page} className="px-2 text-gray-400">
+                      ...
+                    </span>
+                  );
+                }
+
+                if (
+                  !showPage &&
+                  page === meta.totalPage - 1 &&
+                  currentPage < meta.totalPage - 3
+                ) {
+                  return (
+                    <span key={page} className="px-2 text-gray-400">
+                      ...
+                    </span>
+                  );
+                }
+
+                if (!showPage) return null;
+
+                return (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handlePageChange(page)}
+                    className="h-8 w-8 p-0"
+                  >
+                    {page}
+                  </Button>
+                );
+              }
+            )}
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === meta.totalPage}
+              className="h-8 w-8 p-0"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* Message Detail Dialog */}
@@ -193,16 +306,11 @@ const GetHelpMainPage = () => {
           {selectedMessage && (
             <>
               <DialogHeader>
-                <DialogTitle>{selectedMessage.subject}</DialogTitle>
+                <DialogTitle>Help Request Details</DialogTitle>
                 <DialogDescription>
                   <div className="flex justify-between items-center mt-2">
                     <Badge className={getStatusColor(selectedMessage.status)}>
                       {selectedMessage.status}
-                    </Badge>
-                    <Badge
-                      className={getPriorityColor(selectedMessage.priority)}
-                    >
-                      {selectedMessage.priority}
                     </Badge>
                   </div>
                 </DialogDescription>
@@ -212,21 +320,24 @@ const GetHelpMainPage = () => {
                 {/* User Profile */}
                 <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-md">
                   <Avatar>
-                    <AvatarImage src={selectedMessage.userAvatar} />
+                    <AvatarImage src={selectedMessage.userId?.avatar} />
                     <AvatarFallback>
-                      {selectedMessage.userName.charAt(0)}
+                      {selectedMessage.userId?.name?.charAt(0) || "U"}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="font-medium">{selectedMessage.userName}</h3>
+                    <h3 className="font-medium">
+                      {selectedMessage.userId?.name || "Unknown User"}
+                    </h3>
                     <p className="text-sm text-gray-500">
-                      {selectedMessage.userEmail}
+                      {selectedMessage.userId?.email || selectedMessage.email}
                     </p>
                   </div>
                   <div className="ml-auto text-sm text-gray-500">
-                    {formatDistanceToNow(selectedMessage.createdAt, {
-                      addSuffix: true,
-                    })}
+                    {selectedMessage.createdAt &&
+                      formatDistanceToNow(new Date(selectedMessage.createdAt), {
+                        addSuffix: true,
+                      })}
                   </div>
                 </div>
 
@@ -237,34 +348,11 @@ const GetHelpMainPage = () => {
                   </p>
                 </div>
 
-                {/* Attachments */}
-                {selectedMessage.attachments.length > 0 && (
-                  <div className="space-y-2">
-                    <h4 className="font-medium">Attachments</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedMessage.attachments.map((attachment, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center p-2 bg-gray-100 rounded-md"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 mr-2"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                            />
-                          </svg>
-                          <span className="text-sm">{attachment}</span>
-                        </div>
-                      ))}
-                    </div>
+                {/* Reply Section */}
+                {selectedMessage.reply !== "" && (
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-md">
+                    <h4 className="text-sm mb-2 text-green-800">Admin Reply</h4>
+                    <p className="text-green-700">{selectedMessage.reply}</p>
                   </div>
                 )}
 
@@ -275,12 +363,24 @@ const GetHelpMainPage = () => {
                     className="w-full p-2 border rounded-md"
                     rows={3}
                     placeholder="Type your reply here..."
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
                   ></textarea>
                   <div className="flex justify-end mt-2">
-                    <Button variant="outline" className="mr-2">
+                    <Button
+                      variant="outline"
+                      className="mr-2"
+                      onClick={handleCloseTicket}
+                      disabled={isUpdating}
+                    >
                       Close Ticket
                     </Button>
-                    <Button>Send Reply</Button>
+                    <Button
+                      onClick={handleSendReply}
+                      disabled={isUpdating || !replyText.trim()}
+                    >
+                      {isUpdating ? "Sending..." : "Send Reply"}
+                    </Button>
                   </div>
                 </div>
               </div>

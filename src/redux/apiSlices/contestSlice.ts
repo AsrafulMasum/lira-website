@@ -3,10 +3,21 @@ import api from "../api/baseApi";
 const contestApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getContests: builder.query({
-      query: () => ({
-        url: "/contest",
-        method: "GET",
-      }),
+      query: (params = {}) => {
+        const { page = 1, limit = 10, search = "", status = "", categoryId = "" } = params;
+        const queryParams = new URLSearchParams({
+          page: page.toString(),
+          limit: limit.toString(),
+          ...(search && { search }),
+          ...(status && status !== "all" && { status }),
+          ...(categoryId && categoryId !== "all" && { categoryId }),
+        });
+        
+        return {
+          url: `/contest?${queryParams.toString()}`,
+          method: "GET",
+        };
+      },
       providesTags: ["contests"],
     }),
 
