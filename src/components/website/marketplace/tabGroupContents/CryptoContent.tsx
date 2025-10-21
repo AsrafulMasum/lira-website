@@ -15,7 +15,7 @@ interface Tab {
 interface CryptoContentProps {
   tabs: Tab[];
   activeTab: string;
-  data: any[];
+  data: any;
   tabName: string | undefined;
 }
 
@@ -39,7 +39,7 @@ const CryptoContent: React.FC<CryptoContentProps> = async ({
                     <ListFilter className="size-4" />
                   </button>
                 </SheetTrigger>
-                <FilterSheet />
+                <FilterSheet range={data?.range} />
               </Sheet>
             </div>
           </div>

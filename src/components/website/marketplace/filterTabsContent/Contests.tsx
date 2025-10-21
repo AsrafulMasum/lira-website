@@ -47,7 +47,7 @@ const Contests = ({ data, category }: { data: any; category: string }) => {
         {category}
       </h4>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
-        {data?.map((contest: contest) => (
+        {data?.result?.map((contest: contest) => (
           <Link key={contest._id} href={`/contests/${contest._id}`}>
             <Card className="w-[390px] lg:w-auto shadow-none">
               <CardHeader>

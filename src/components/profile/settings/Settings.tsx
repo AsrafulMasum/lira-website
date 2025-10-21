@@ -8,7 +8,7 @@ import getProfile from "@/helpers/getProfile";
 
 const Settings = async () => {
   const profile = await getProfile();
-  console.log(profile)
+
   return (
     <div className="pt-10 min-h-[calc(100vh-64px)]">
       {/* Breadcrumb Navigation */}
