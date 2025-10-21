@@ -86,19 +86,19 @@ export function Footer() {
                     Carrers
                   </Link>
                   <Link
-                    href="#"
+                    href="/about-us"
                     className="block text-sm font-bold text-dark-primary hover:text-primary transition-colors"
                   >
                     About us
                   </Link>
                   <Link
-                    href="#"
+                    href="/privacy-and-policy"
                     className="block text-sm font-bold text-dark-primary hover:text-primary transition-colors"
                   >
                     Privacy policy
                   </Link>
                   <Link
-                    href="#"
+                    href="/terms-and-conditions"
                     className="block text-sm font-bold text-dark-primary hover:text-primary transition-colors"
                   >
                     Terms of Service
