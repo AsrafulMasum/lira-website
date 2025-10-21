@@ -53,7 +53,7 @@ export function Footer() {
                     How it works
                   </Link>
                   <Link
-                    href="#"
+                    href="/faq"
                     className="block text-sm font-bold text-dark-primary hover:text-primary transition-colors"
                   >
                     FAQs
