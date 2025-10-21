@@ -35,6 +35,21 @@ const Profile = async ({ searchParams }: PageProps) => {
     method: "GET",
   });
 
+  const pastContestsRes = await apiRequest(
+    `/orders/past-orders?limit=3&page=${page}`,
+    {
+      method: "GET",
+      cache: "no-store",
+    }
+  );
+
+  const { data: pastAnalytics } = await apiRequest(
+    `/orders/past-order-analysis`,
+    {
+      method: "GET",
+    }
+  );
+
   return (
     <section className="bg-[#FAFFFC] min-h-[calc(100vh-64px)] pb-10">
       <ContainerLayout>
@@ -72,6 +87,8 @@ const Profile = async ({ searchParams }: PageProps) => {
         <MyContests
           ongoingAnalytics={ongoingAnalytics}
           ongoingContestsRes={ongoingContestsRes}
+          pastAnalytics={pastAnalytics}
+          pastContestsRes={pastContestsRes}
         />
       </ContainerLayout>
     </section>

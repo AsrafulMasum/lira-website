@@ -25,7 +25,7 @@ export default function ContestCountdown({
     } else if (isMarketPlace) {
       return (
         <span>
-          {days}d {hours}h {minutes}m
+          Ends In {days}d {hours}h {minutes}m
         </span>
       );
     } else {

@@ -13,44 +13,30 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const description = "An interactive area chart";
 
-const chartData = [
-  { date: "2024-09-15", value: 28000 },
-  { date: "2024-09-16", value: 32000 },
-  { date: "2024-09-17", value: 29000 },
-  { date: "2024-09-18", value: 35000 },
-  { date: "2024-09-19", value: 42000 },
-  { date: "2024-09-20", value: 48000 },
-  { date: "2024-09-21", value: 55000 },
-  { date: "2024-09-22", value: 62000 },
-  { date: "2024-09-23", value: 58000 },
-  { date: "2024-09-24", value: 65000 },
-  { date: "2024-09-25", value: 72000 },
-  { date: "2024-09-26", value: 78000 },
-  { date: "2024-09-27", value: 85000 },
-  { date: "2024-09-28", value: 92000 },
-  { date: "2024-09-29", value: 88000 },
-  { date: "2024-09-30", value: 95000 },
-  { date: "2024-10-01", value: 102000 },
-  { date: "2024-10-02", value: 108000 },
-  { date: "2024-10-03", value: 115000 },
-  { date: "2024-10-04", value: 122000 },
-  { date: "2024-10-05", value: 118000 },
-  { date: "2024-10-06", value: 125000 },
-];
-
 const chartConfig = {
   value: {
-    label: "Value",
+    label: "BTC Price (USD)",
     color: "#007A39",
   },
 } satisfies ChartConfig;
 
-export function LiveChart() {
+export function LiveChart({ livePrice }: any) {
   const [timeRange, setTimeRange] = React.useState("1W");
 
-  const filteredData = chartData.filter((item) => {
-    const date = new Date(item.date);
-    const referenceDate = new Date("2024-10-06");
+  // ✅ Map livePrice.history → chartData
+  const chartData = React.useMemo(() => {
+    if (!livePrice?.history || !Array.isArray(livePrice.history)) return [];
+    return livePrice.history.map((item: any) => ({
+      date: item.timestamp,
+      value: Number(item.value),
+    }));
+  }, [livePrice]);
+
+  // ✅ Filter data based on selected time range
+  const filteredData = React.useMemo(() => {
+    if (chartData.length === 0) return [];
+
+    const referenceDate = new Date(chartData[chartData.length - 1].date);
     let daysToSubtract = 7;
 
     switch (timeRange) {
@@ -75,8 +61,9 @@ export function LiveChart() {
 
     const startDate = new Date(referenceDate);
     startDate.setDate(startDate.getDate() - daysToSubtract);
-    return date >= startDate;
-  });
+
+    return chartData.filter((item: any) => new Date(item.date) >= startDate);
+  }, [chartData, timeRange]);
 
   return (
     <Card className="pt-0 bg-transparent shadow-none border-none">
@@ -118,19 +105,20 @@ export function LiveChart() {
                 <stop offset="95%" stopColor="#007A39" stopOpacity={0.05} />
               </linearGradient>
             </defs>
+
             <CartesianGrid
               vertical={true}
               strokeDasharray="3 3"
               stroke="#e5e7eb"
             />
+
             <YAxis
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => `${Math.round(value / 1000)}k`}
-              domain={[0, 150000]}
-              ticks={[0, 30000, 60000, 90000, 120000, 150000]}
+              tickFormatter={(value) => `$${Math.round(value / 1000)}k`}
             />
+
             <XAxis
               dataKey="date"
               tickLine={false}
@@ -145,25 +133,29 @@ export function LiveChart() {
                 });
               }}
             />
+
             <ChartTooltip
               cursor={false}
               content={
                 <ChartTooltipContent
-                  labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
+                  labelFormatter={(value) =>
+                    new Date(value).toLocaleDateString("en-US", {
                       weekday: "short",
                       month: "short",
                       day: "numeric",
-                    });
-                  }}
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  }
                   formatter={(value) => [
-                    `${Math.round(Number(value) / 1000)}k`,
-                    "Value",
+                    `$${Number(value).toLocaleString()}`,
+                    "BTC Price",
                   ]}
                   indicator="dot"
                 />
               }
             />
+
             <Area
               dataKey="value"
               type="natural"

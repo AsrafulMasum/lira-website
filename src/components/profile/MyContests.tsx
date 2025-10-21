@@ -2,14 +2,18 @@
 
 import React, { useEffect, useRef } from "react";
 import { OngoingContests } from "./ongoingContests/OngoingContests";
-import PastContests from "./PastContests";
+import PastContests from "./pastContests/PastContests";
 
 const MyContests = ({
   ongoingAnalytics,
   ongoingContestsRes,
+  pastAnalytics,
+  pastContestsRes,
 }: {
   ongoingAnalytics?: any;
   ongoingContestsRes?: any;
+  pastAnalytics?: any;
+  pastContestsRes?: any;
 }) => {
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
@@ -42,7 +46,7 @@ const MyContests = ({
         id="rightDiv"
         ref={rightRef}
       >
-        <PastContests viewAll={false} />
+        <PastContests pastAnalytics={pastAnalytics} pastContestsRes={pastContestsRes} />
       </div>
     </section>
   );
