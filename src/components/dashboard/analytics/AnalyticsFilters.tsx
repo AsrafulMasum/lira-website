@@ -1,6 +1,6 @@
 "use client";
 
-import { FilterIcon, TrendingUp } from "lucide-react";
+import { FilterIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,

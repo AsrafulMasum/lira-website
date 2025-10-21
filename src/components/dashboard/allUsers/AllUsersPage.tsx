@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import Loading from "@/app/loading";
-import { useGetAllUsersQuery } from "@/redux/apiSlices/userSlice";
+import {
+  useChangeUserStatusMutation,
+  useGetAllUsersQuery,
+} from "@/redux/apiSlices/userSlice";
 import {
   Table,
   TableBody,
@@ -18,10 +21,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, ChevronLeft, ChevronRight, Lock, Unlock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import Image from "next/image";
+import { toast } from "sonner";
 
 interface User {
   _id: string;
@@ -44,7 +48,13 @@ const AllUsersPage = () => {
   } = useGetAllUsersQuery(currentPage);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [userToChangeStatus, setUserToChangeStatus] = useState<User | null>(
+    null
+  );
   const itemsPerPage = 10;
+  const [changeUserStatus, { isLoading: isChangingStatus }] =
+    useChangeUserStatusMutation();
 
   if (isLoading) {
     return (
@@ -67,22 +77,68 @@ const AllUsersPage = () => {
     setCurrentPage(page);
   };
 
+  // const handleStatusChange = async (user: User) => {
+  //   try {
+  //     const newStatus = user.status === "active" ? "blocked" : "active";
+  //     await changeUserStatus({
+  //       userId: user._id,
+  //       status: newStatus,
+  //     }).unwrap();
+
+  //     toast.success(
+  //       `User ${newStatus === "blocked" ? "blocked" : "activated"} successfully`
+  //     );
+  //   } catch (error) {
+  //     toast.error("Failed to change user status");
+  //     console.error("Status change error:", error);
+  //   }
+  // };
+
+  const handleShowConfirmation = (user: User) => {
+    setUserToChangeStatus(user);
+    setIsConfirmDialogOpen(true);
+  };
+
+  const handleConfirmStatusChange = async () => {
+    if (!userToChangeStatus) return;
+
+    try {
+      const newStatus =
+        userToChangeStatus.status === "active" ? "blocked" : "active";
+      await changeUserStatus({
+        userId: userToChangeStatus._id,
+        status: newStatus,
+      }).unwrap();
+
+      toast.success(
+        `User ${newStatus === "blocked" ? "blocked" : "activated"} successfully`
+      );
+
+      // Close the confirmation dialog
+      setIsConfirmDialogOpen(false);
+      setUserToChangeStatus(null);
+    } catch (error) {
+      toast.error("Failed to change user status");
+      console.error("Status change error:", error);
+    }
+  };
+
   return (
     <div className="container mx-auto py-6">
       <h1 className="text-2xl font-bold mb-6">All Users</h1>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-green-50">
             <TableRow>
               <TableHead className="w-14">Serial</TableHead>
               <TableHead className="w-16">Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
               <TableHead>Verified</TableHead>
-              <TableHead>Created At</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Joined At</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -117,6 +173,19 @@ const AllUsersPage = () => {
                 <TableCell className="font-medium">{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
+
+                <TableCell>
+                  <Badge
+                    variant={user.verified ? "default" : "outline"}
+                    className={
+                      user.verified
+                        ? "bg-blue-100 text-blue-800"
+                        : "bg-gray-100 text-gray-800"
+                    }
+                  >
+                    {user.verified ? "Yes" : "No"}
+                  </Badge>
+                </TableCell>
                 <TableCell>
                   <Badge
                     variant={
@@ -131,23 +200,14 @@ const AllUsersPage = () => {
                     {user.status}
                   </Badge>
                 </TableCell>
-                <TableCell>
-                  <Badge
-                    variant={user.verified ? "default" : "outline"}
-                    className={
-                      user.verified
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-gray-100 text-gray-800"
-                    }
-                  >
-                    {user.verified ? "Yes" : "No"}
-                  </Badge>
-                </TableCell>
+
                 <TableCell>
                   {format(new Date(user.createdAt), "MMM dd, yyyy")}
                 </TableCell>
-                <TableCell className="text-right">
+
+                <TableCell className="space-x-2 text-right">
                   <Button
+                    className="bg-green-100 text-black cursor-pointer"
                     variant="ghost"
                     size="icon"
                     onClick={() => handleViewUser(user)}
@@ -155,6 +215,29 @@ const AllUsersPage = () => {
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
+                  {user.status === "active" ? (
+                    <Button
+                      className="bg-red-700 text-white cursor-pointer"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleShowConfirmation(user)}
+                      disabled={isChangingStatus}
+                      title="Block User"
+                    >
+                      <Lock className="h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Button
+                      className="bg-green-700 text-white cursor-pointer"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleShowConfirmation(user)}
+                      disabled={isChangingStatus}
+                      title="Activate User"
+                    >
+                      <Unlock className="h-4 w-4" />
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
@@ -294,6 +377,54 @@ const AllUsersPage = () => {
                     {selectedUser._id}
                   </p>
                 </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm Action</DialogTitle>
+          </DialogHeader>
+          {userToChangeStatus && (
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">
+                Are you sure you want to{" "}
+                <span className="font-semibold">
+                  {userToChangeStatus.status === "active"
+                    ? "block"
+                    : "activate"}
+                </span>{" "}
+                the user{" "}
+                <span className="font-semibold">{userToChangeStatus.name}</span>
+                ?
+              </p>
+              <div className="flex justify-end space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsConfirmDialogOpen(false);
+                    setUserToChangeStatus(null);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant={
+                    userToChangeStatus.status === "active"
+                      ? "destructive"
+                      : "default"
+                  }
+                  onClick={handleConfirmStatusChange}
+                  disabled={isChangingStatus}
+                >
+                  {userToChangeStatus.status === "active"
+                    ? "Block User"
+                    : "Activate User"}
+                </Button>
               </div>
             </div>
           )}

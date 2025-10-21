@@ -92,8 +92,17 @@ const ContestManagementPage = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
+  // Prepare query parameters for API call
+  const queryParams = {
+    page: currentPage,
+    limit: itemsPerPage,
+    search: searchQuery,
+    status: statusFilter,
+    categoryId: categoryFilter,
+  };
+
   const { data: getAllContestsData, isLoading } =
-    useGetContestsQuery(undefined);
+    useGetContestsQuery(queryParams);
   const { data: getAllCategoriesData, isLoading: isLoadingCategories } =
     useGetAllCategoryQuery(undefined);
   const [publishContest] = usePublishContestMutation();
@@ -104,6 +113,12 @@ const ContestManagementPage = () => {
   }
 
   const contestsData = getAllContestsData?.data || [];
+  const paginationInfo = getAllContestsData?.meta || {
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPage: 1,
+  };
   const categoriesData = getAllCategoriesData?.data || [];
 
   const handleFeaturedToggle = async (contest: any) => {
@@ -144,44 +159,19 @@ const ContestManagementPage = () => {
     }
   };
 
-  // Apply filters to contests
-  const filteredContests = contestsData.filter((contest: any) => {
-    // Search filter
-    const nameMatch = contest.name
-      ?.toLowerCase()
-      .includes(searchQuery.toLowerCase());
-
-    // Status filter
-    const statusMatch =
-      statusFilter === "all" || contest.status === statusFilter;
-
-    // Category filter
-    const categoryMatch =
-      categoryFilter === "all" || contest.categoryId?._id === categoryFilter;
-
-    return nameMatch && statusMatch && categoryMatch;
-  });
-
-  // Pagination logic
-  const totalItems = filteredContests.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentContests = filteredContests.slice(startIndex, endIndex);
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   const handlePrevious = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+    if (paginationInfo.page > 1) {
+      setCurrentPage(paginationInfo.page - 1);
     }
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+    if (paginationInfo.page < paginationInfo.totalPage) {
+      setCurrentPage(paginationInfo.page + 1);
     }
   };
 
@@ -320,7 +310,7 @@ const ContestManagementPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentContests?.map((contest: any) => (
+            {contestsData?.map((contest: any) => (
               <TableRow key={contest._id}>
                 <TableCell>{`${contest.name?.slice(0, 40)}${
                   contest.name?.length > 40 ? "..." : ""
@@ -478,8 +468,9 @@ const ContestManagementPage = () => {
       {/* Pagination */}
       <div className="flex items-center justify-between mt-4">
         <p className="text-sm text-gray-600">
-          Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of{" "}
-          {totalItems} contests
+          Showing {((paginationInfo.page - 1) * paginationInfo.limit) + 1} to{" "}
+          {Math.min(paginationInfo.page * paginationInfo.limit, paginationInfo.total)} of{" "}
+          {paginationInfo.total} contests
         </p>
         <div className="flex items-center gap-2">
           <Button
@@ -490,7 +481,7 @@ const ContestManagementPage = () => {
           >
             &lt;
           </Button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          {Array.from({ length: paginationInfo.totalPage }, (_, i) => i + 1).map((page) => (
             <Button
               key={page}
               variant={currentPage === page ? "default" : "outline"}
@@ -506,7 +497,7 @@ const ContestManagementPage = () => {
           <Button
             variant="outline"
             size="sm"
-            disabled={currentPage === totalPages}
+            disabled={currentPage === paginationInfo.totalPage}
             onClick={handleNext}
           >
             &gt;
