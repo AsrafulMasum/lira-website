@@ -13,6 +13,9 @@ import {
   Home,
   ChartLine,
   HelpCircle,
+  ClipboardList,
+  NotebookTabs,
+  MailQuestionMark,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -70,8 +73,23 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       icon: <Users className="h-5 w-5" />,
     },
     {
+      name: "Terms & Conditions",
+      href: "/dashboard/manageTerms",
+      icon: <ClipboardList className="h-5 w-5" />,
+    },
+    {
+      name: "Privacy Policy",
+      href: "/dashboard/managePrivacy",
+      icon: <NotebookTabs className="h-5 w-5" />,
+    },
+    {
       name: "Get Help",
       href: "/dashboard/get-help",
+      icon: <MailQuestionMark className="h-5 w-5" />,
+    },
+    {
+      name: "FAQ",
+      href: "/dashboard/manageFaq",
       icon: <HelpCircle className="h-5 w-5" />,
     },
   ];

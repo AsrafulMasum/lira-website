@@ -18,9 +18,11 @@ interface GeographicDistributionProps {
   filters: any;
 }
 
-const GeographicDistribution: React.FC<GeographicDistributionProps> = ({
-  filters,
-}) => {
+const GeographicDistribution: React.FC<GeographicDistributionProps> = (
+  {
+    // filters,
+  }
+) => {
   // In a real app, you would filter this data based on the filters prop
 
   // Calculate max revenue for progress bars

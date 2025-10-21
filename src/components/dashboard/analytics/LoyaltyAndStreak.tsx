@@ -31,7 +31,11 @@ interface LoyaltyAndStreakProps {
   filters: any;
 }
 
-const LoyaltyAndStreak: React.FC<LoyaltyAndStreakProps> = ({ filters }) => {
+const LoyaltyAndStreak: React.FC<LoyaltyAndStreakProps> = (
+  {
+    // filters,
+  }
+) => {
   // In a real app, you would filter this data based on the filters prop
 
   return (

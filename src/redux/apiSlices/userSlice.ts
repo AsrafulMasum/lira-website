@@ -7,8 +7,18 @@ const userApi = api.injectEndpoints({
         url: `/user-managements/?page=${page}`,
         method: "GET",
       }),
+      providesTags: ["users"],
+    }),
+
+    changeUserStatus: builder.mutation({
+      query: ({ userId, status }) => ({
+        url: `/user-managements/status/${userId}`,
+        method: "PATCH",
+        body: { status },
+      }),
+      invalidatesTags: ["users"],
     }),
   }),
 });
 
-export const { useGetAllUsersQuery } = userApi;
+export const { useGetAllUsersQuery, useChangeUserStatusMutation } = userApi;

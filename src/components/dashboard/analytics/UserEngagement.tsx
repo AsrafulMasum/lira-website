@@ -1,19 +1,23 @@
-import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Users, RefreshCw, Target, Eye, Clock } from 'lucide-react';
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Users, RefreshCw, Target, Eye, Clock } from "lucide-react";
 
 interface UserEngagementProps {
   filters: any;
 }
 
-const UserEngagement: React.FC<UserEngagementProps> = ({ filters }) => {
+const UserEngagement: React.FC<UserEngagementProps> = (
+  {
+    // filters,
+  }
+) => {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Users className="h-5 w-5 text-blue-600" />
         <h2 className="text-xl font-bold">User Engagement & Growth</h2>
       </div>
-      
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardContent className="p-6">
@@ -31,7 +35,7 @@ const UserEngagement: React.FC<UserEngagementProps> = ({ filters }) => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="flex flex-col space-y-2">
@@ -48,7 +52,7 @@ const UserEngagement: React.FC<UserEngagementProps> = ({ filters }) => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="flex flex-col space-y-2">
@@ -61,11 +65,13 @@ const UserEngagement: React.FC<UserEngagementProps> = ({ filters }) => {
                 </span>
               </div>
               <div className="text-3xl font-bold">3.8%</div>
-              <div className="text-sm text-muted-foreground">Conversion Rate</div>
+              <div className="text-sm text-muted-foreground">
+                Conversion Rate
+              </div>
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="flex flex-col space-y-2">
@@ -78,11 +84,13 @@ const UserEngagement: React.FC<UserEngagementProps> = ({ filters }) => {
                 </span>
               </div>
               <div className="text-3xl font-bold">12.3%</div>
-              <div className="text-sm text-muted-foreground">Abandonment Rate</div>
+              <div className="text-sm text-muted-foreground">
+                Abandonment Rate
+              </div>
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="flex flex-col space-y-2">
@@ -95,7 +103,9 @@ const UserEngagement: React.FC<UserEngagementProps> = ({ filters }) => {
                 </span>
               </div>
               <div className="text-3xl font-bold">2.4 days</div>
-              <div className="text-sm text-muted-foreground">Avg Time to First</div>
+              <div className="text-sm text-muted-foreground">
+                Avg Time to First
+              </div>
             </div>
           </CardContent>
         </Card>

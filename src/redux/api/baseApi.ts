@@ -64,6 +64,9 @@ const api = createApi({
     "Category",
     "UnitOrType",
     "Group",
+    "users",
+    "help",
+    "settings",
   ],
 });
 
