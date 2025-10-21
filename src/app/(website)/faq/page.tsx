@@ -26,7 +26,7 @@ const page = async () => {
                 <AccordionTrigger className="leading-[104.4%] hover:no-underline bg-[#E6F5EE] px-5">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="px-8 p">
+                <AccordionContent className="px-8">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>

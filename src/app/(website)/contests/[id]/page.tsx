@@ -43,7 +43,19 @@ const page = async ({ params }: PageProps) => {
   if (group?.toLowerCase().includes("crypto")) {
     try {
       const { data: priceData } = await apiRequest(
-        `/contest/crypto/price-history?crypto=${data?.category}&days=30`,
+        `/contest/crypto/price-history?crypto=${data?.category}&days=365`,
+        { method: "GET", cache: "no-store" }
+      );
+      livePrice = priceData;
+    } catch (error) {
+      console.error("Error fetching live price:", error);
+    }
+  }
+
+  if (group?.toLowerCase().includes("stock")) {
+    try {
+      const { data: priceData } = await apiRequest(
+        `/contest/stock/history?symbol=${data?.category}&days=365`,
         { method: "GET", cache: "no-store" }
       );
       livePrice = priceData;
@@ -64,7 +76,7 @@ const page = async ({ params }: PageProps) => {
         </div>
 
         <div className="lg:hidden">
-          <ContestDetailsMobileView contest={data} tiers={tiers} />
+          <ContestDetailsMobileView contest={data} tiers={tiers} livePrice={livePrice}/>
         </div>
       </ContainerLayout>
 

@@ -31,10 +31,11 @@ type contest = {
   pricing: {
     predictionType: string;
     flatPrice: string;
-  }
+    tiers: { pricePerPrediction: string }[];
+  };
   predictions: {
     minPrediction: number;
-  }
+  };
   category: string;
 };
 
@@ -101,7 +102,7 @@ const Contests = ({ data, category }: { data: any; category: string }) => {
                     <span className="text-sm font-normal">From</span> $ {" "}
                     {contest?.pricing?.predictionType === "priceOnly"
                       ? `${contest?.pricing?.flatPrice}`
-                      : `${contest?.predictions?.minPrediction}`}
+                      : `${contest?.pricing?.tiers[0]?.pricePerPrediction}`}
                   </p>
                 </CardAction>
               </CardFooter>
