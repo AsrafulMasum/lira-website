@@ -32,20 +32,38 @@ export default async function TabPage({ params, searchParams }: PageProps) {
 
   const activeTab = searchParamsValue?.tab ?? tabs[0]?._id;
 
+  const queryParams = new URLSearchParams();
+
+  // add only params that actually have values
+  if (searchTerm) queryParams.append("searchTerm", searchTerm);
+  if (sortBy) queryParams.append("sort", sortBy);
+  if (prizeType && prizeType !== "All")
+    queryParams.append("prizeType", prizeType);
+  if (prizeMin) queryParams.append("minPrice", prizeMin);
+  if (prizeMax) queryParams.append("maxPrice", prizeMax);
+  if (entriesMin) queryParams.append("minEntryPrice", entriesMin);
+  if (entriesMax) queryParams.append("maxEntryPrice", entriesMax);
+
+  // if no filters applied, use categoryId instead
+  const hasFilters = [
+    searchTerm,
+    sortBy,
+    prizeType && prizeType !== "All",
+    prizeMin,
+    prizeMax,
+    entriesMin,
+    entriesMax,
+  ].some(Boolean);
+
+  if (!hasFilters) {
+    queryParams.append("categoryId", activeTab);
+  }
+
   const { data } = await apiRequest(
-    `/contest/active/list?${
-      searchTerm ||
-      sortBy ||
-      prizeType ||
-      prizeMin ||
-      prizeMax ||
-      entriesMin ||
-      entriesMax
-        ? `searchTerm=${searchTerm}&sort=${sortBy}&prizeType=${prizeType}&minPrice=${prizeMin}&maxPrice=${prizeMax}&minEntryPrice=${entriesMin}&maxEntryPrice=${entriesMax}`
-        : `categoryId=${activeTab}`
-    }`,
+    `/contest/active/list?${queryParams.toString()}`,
     {
       method: "GET",
+      cache: "no-store",
     }
   );
 

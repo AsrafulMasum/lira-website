@@ -23,10 +23,16 @@ const contest = {
 
 type PageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{
+    [key: string]: string | undefined;
+  }>;
 };
 
-const page = async ({ params }: PageProps) => {
+const page = async ({ params, searchParams }: PageProps) => {
   const { id } = await params;
+  const searchParamsValue = await searchParams;
+
+  const customValue = searchParamsValue?.customValue;
 
   const { data } = await apiRequest(`/contest/contest/${id}`, {
     method: "GET",
@@ -64,19 +70,39 @@ const page = async ({ params }: PageProps) => {
     }
   }
 
+  if (group?.toLowerCase().includes("economic")) {
+    try {
+      const { data: priceData } = await apiRequest(
+        `/contest/economic/data?series=${data?.category}&days=365`,
+        { method: "GET", cache: "no-store" }
+      );
+      livePrice = priceData;
+    } catch (error) {
+      console.error("Error fetching live price:", error);
+    }
+  }
+
   return (
     <section className="bg-[#FAFFFC]">
       <ContainerLayout>
         <div className="hidden lg:grid grid-cols-3 gap-20 pt-10">
           {/* left */}
-          <ContestDetailsLeftSection contest={data} tiers={tiers} />
+          <ContestDetailsLeftSection
+            contest={data}
+            tiers={tiers}
+            customValue={customValue}
+          />
 
           {/* right */}
           <ContestDetailsRightSection contest={data} livePrice={livePrice} />
         </div>
 
         <div className="lg:hidden">
-          <ContestDetailsMobileView contest={data} tiers={tiers} livePrice={livePrice}/>
+          <ContestDetailsMobileView
+            contest={data}
+            tiers={tiers}
+            livePrice={livePrice}
+          />
         </div>
       </ContainerLayout>
 
