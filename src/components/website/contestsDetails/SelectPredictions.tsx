@@ -20,6 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 interface PriceRange {
   id: string;
@@ -34,13 +35,6 @@ interface SelectableItem {
   value: number;
   isAvailable: boolean;
 }
-
-// const priceRanges: PriceRange[] = [
-//   { id: "range1", label: "118k - 118.5k", min: 118000, max: 118500 },
-//   { id: "range2", label: "118.5k - 119k", min: 118500, max: 119000 },
-//   { id: "range3", label: "119k - 199.5k", min: 119000, max: 199500 },
-//   { id: "range4", label: "751 - 1000", min: 751, max: 1000 },
-// ];
 
 interface TierItem {
   name: string;
@@ -58,9 +52,11 @@ interface Tier {
 export function SelectPredictions({
   tiers,
   contestId,
+  customValue,
 }: {
   tiers?: Tier;
   contestId?: string;
+  customValue?: string | undefined;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -129,19 +125,29 @@ export function SelectPredictions({
       const parsed = JSON.parse(item);
       return { id: parsed._id };
     });
+
+    const customPredictions =
+      customValue && customValue.length > 0
+        ? customValue.split(",").map((v) => ({ value: Number(v) }))
+        : [];
+
     const payload = {
       contestId,
       generatedPredictionsIds: ids,
+      customPredictions,
     };
 
     const res = await apiRequest("/orders/create-and-checkout", {
       method: "POST",
       body: payload,
     });
+
     console.log(res);
 
     if (res?.success) {
       globalThis.location.href = res?.data?.url;
+    } else {
+      toast.error(res?.message || "Failed to initiate payment.");
     }
   };
 

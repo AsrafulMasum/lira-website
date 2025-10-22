@@ -9,22 +9,34 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useSearchParams } from "next/navigation";
+import { useUpdateSearchParams } from "@/hooks/useUpdateSearchParams";
 
 const AddCustomValue = () => {
+  const updateSearchParams = useUpdateSearchParams();
+  const searchParams = useSearchParams();
   const [value, setValue] = useState("");
 
   const handleAdd = () => {
-    console.log("Adding value:", value);
+    const existing = searchParams.get("customValue");
+    const values = existing ? existing.split(",") : [];
+
+    // avoid duplicates & empty values
+    if (value.trim() && !values.includes(value.trim())) {
+      values.push(value.trim());
+    }
+
+    updateSearchParams({ customValue: values.join(",") });
     setValue("");
   };
 
   const handleCancel = () => {
     setValue("");
+    updateSearchParams({ customValue: null });
   };
 
   return (
     <DialogContent className="sm:max-w-sm p-6 rounded-3xl">
-      {/* Main content with custom spacing */}
       <div>
         <DialogHeader className="space-y-4">
           <DialogTitle className="text-left text-2xl font-semibold text-[#002913]">

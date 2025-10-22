@@ -9,8 +9,15 @@ import ContestCountdown from "@/hooks/ContestCountdown";
 import SearchSheet from "./sheets/SearchSheet";
 import moment from "moment";
 
-const ContestDetailsLeftSection = ({ contest, tiers }: { contest: any, tiers: any }) => {
-
+const ContestDetailsLeftSection = ({
+  contest,
+  tiers,
+  customValue,
+}: {
+  contest: any;
+  tiers: any;
+  customValue: string | undefined;
+}) => {
   return (
     <div className="col-span-2">
       <div className="sticky top-[100px]">
@@ -87,7 +94,11 @@ const ContestDetailsLeftSection = ({ contest, tiers }: { contest: any, tiers: an
         </div>
 
         <div className="mt-6">
-          <SelectPredictions tiers={tiers} contestId={contest?._id} />
+          <SelectPredictions
+            tiers={tiers}
+            contestId={contest?._id}
+            customValue={customValue}
+          />
         </div>
 
         <p className="text-gray-text font-semibold text-sm mt-4 text-center">
