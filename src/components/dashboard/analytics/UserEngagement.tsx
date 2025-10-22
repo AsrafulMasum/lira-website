@@ -2,15 +2,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, RefreshCw, Target, Eye, Clock } from "lucide-react";
 
-interface UserEngagementProps {
-  filters: any;
-}
-
-const UserEngagement: React.FC<UserEngagementProps> = (
-  {
-    // filters,
-  }
-) => {
+const UserEngagement = ({ userEngagementAndGrowth }) => {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
@@ -27,10 +19,13 @@ const UserEngagement: React.FC<UserEngagementProps> = (
                   <Users className="h-4 w-4 text-blue-600" />
                 </div>
                 <span className="flex items-center text-sm font-medium text-green-600">
-                  +6.7% <span className="ml-1 text-xs">ⓘ</span>
+                  {userEngagementAndGrowth?.activeUsers?.change}{" "}
+                  <span className="ml-1 text-xs">ⓘ</span>
                 </span>
               </div>
-              <div className="text-3xl font-bold">2,156</div>
+              <div className="text-3xl font-bold">
+                {userEngagementAndGrowth?.activeUsers?.value}
+              </div>
               <div className="text-sm text-muted-foreground">Active Users</div>
             </div>
           </CardContent>

@@ -94,7 +94,7 @@ const PredictionsStep: React.FC<PredictionsStepProps> = ({
 
       {/* Prediction Range */}
       <div className="space-y-6">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           {/* Min Value */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">
@@ -175,14 +175,14 @@ const PredictionsStep: React.FC<PredictionsStepProps> = ({
           </div>
         </div>
 
-        {/* Predictions Summary */}
+        {/* Predictions Summary
         <div className="bg-bg rounded-lg p-4">
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">
               0 predictions • Grouped in 0 tabs
             </span>
           </div>
-        </div>
+        </div> */}
 
         {/* Number of entries per prediction */}
         <div className="space-y-2">

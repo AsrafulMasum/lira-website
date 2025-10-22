@@ -3,7 +3,17 @@
 import { DollarSign, TrendingUp, ShoppingCart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
-export default function FinancialPerformance() {
+type FinancialPerformanceData = {
+  totalRevenue: number;
+  avgRevenuePerUser: number;
+  avgOrderValue: number;
+};
+
+export default function FinancialPerformance({
+  financialPerformance,
+}: {
+  financialPerformance: FinancialPerformanceData;
+}) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-4">
@@ -18,7 +28,7 @@ export default function FinancialPerformance() {
               {/* <span className="text-sm text-green-500">+24.5% ↑</span> */}
             </div>
             <div className="text-3xl font-bold">
-              ${(127450).toLocaleString()}
+              ${financialPerformance.totalRevenue.toLocaleString()}
             </div>
             <p className="text-xs text-gray-600 mt-1">Total Revenue</p>
           </CardContent>
@@ -29,7 +39,9 @@ export default function FinancialPerformance() {
               <TrendingUp className="h-8 w-8 text-blue-500" />
               {/* <span className="text-sm text-green-500">+8.3% ↑</span> */}
             </div>
-            <div className="text-3xl font-bold">${(59.12).toFixed(2)}</div>
+            <div className="text-3xl font-bold">
+              ${financialPerformance.avgRevenuePerUser.toFixed(2)}
+            </div>
             <p className="text-xs text-gray-600 mt-1">Avg Revenue per User</p>
           </CardContent>
         </Card>
@@ -39,7 +51,9 @@ export default function FinancialPerformance() {
               <ShoppingCart className="h-8 w-8 text-purple-500" />
               {/* <span className="text-sm text-green-500">+4.2% ↑</span> */}
             </div>
-            <div className="text-3xl font-bold">${(47.85).toFixed(2)}</div>
+            <div className="text-3xl font-bold">
+              ${financialPerformance.avgOrderValue.toFixed(2)}
+            </div>
             <p className="text-xs text-gray-600 mt-1">Avg Order Value</p>
           </CardContent>
         </Card>

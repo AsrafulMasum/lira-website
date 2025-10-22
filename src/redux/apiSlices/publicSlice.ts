@@ -35,6 +35,47 @@ const publicApi = api.injectEndpoints({
       }),
       invalidatesTags: ["settings"],
     }),
+
+    getAllFaq: builder.query({
+      query: () => ({
+        url: "/faqs",
+        method: "GET",
+      }),
+      providesTags: ["faqs"],
+    }),
+
+    createFaq: builder.mutation({
+      query: (data) => ({
+        url: "/faqs",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["faqs"],
+    }),
+
+    updateFaq: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/faqs/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["faqs"],
+    }),
+
+    deleteFaq: builder.mutation({
+      query: (id) => ({
+        url: `/faqs/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["faqs"],
+    }),
+
+    getDashboardAnalytics: builder.query({
+      query: () => ({
+        url: "/dashboard/analytics",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -43,4 +84,11 @@ export const {
   useUpdateHelpStatusMutation,
   useGetSettingsQuery,
   useAddSettingsMutation,
+
+  useGetAllFaqQuery,
+  useCreateFaqMutation,
+  useUpdateFaqMutation,
+  useDeleteFaqMutation,
+
+  useGetDashboardAnalyticsQuery,
 } = publicApi;

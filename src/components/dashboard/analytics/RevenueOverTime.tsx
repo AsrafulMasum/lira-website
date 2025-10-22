@@ -16,17 +16,16 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-// Mock data
-const revenueOverTimeData = [
-  { month: "Jan", revenue: 45000 },
-  { month: "Feb", revenue: 52000 },
-  { month: "Mar", revenue: 48000 },
-  { month: "Apr", revenue: 61000 },
-  { month: "May", revenue: 55000 },
-  { month: "Jun", revenue: 67000 },
-];
+type RevenueOverTimeData = {
+  date: string;
+  revenue: number;
+};
 
-export default function RevenueOverTime() {
+export default function RevenueOverTime({
+  revenueOverTime,
+}: {
+  revenueOverTime: RevenueOverTimeData[];
+}) {
   return (
     <Card>
       <CardHeader>
@@ -40,18 +39,18 @@ export default function RevenueOverTime() {
           config={{
             revenue: {
               label: "Revenue",
-              color: "hsl(220, 70%, 50%)",
+              color: "#00661b",
             },
           }}
           className=""
         >
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={revenueOverTimeData}>
+            <LineChart data={revenueOverTime}>
               <CartesianGrid
                 strokeDasharray="3 3"
                 className="stroke-gray-200"
               />
-              <XAxis dataKey="month" className="text-xs" />
+              <XAxis dataKey="date" className="text-xs" />
               <YAxis className="text-xs" />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Line

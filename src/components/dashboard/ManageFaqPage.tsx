@@ -27,9 +27,16 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Plus, Edit, Trash2, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
+import {
+  useCreateFaqMutation,
+  useGetAllFaqQuery,
+  useUpdateFaqMutation,
+  useDeleteFaqMutation,
+} from "@/redux/apiSlices/publicSlice";
+import Loading from "@/app/loading";
 
 interface FAQ {
-  id: string;
+  _id: string;
   question: string;
   answer: string;
   createdAt: string;
@@ -38,32 +45,6 @@ interface FAQ {
 
 const ManageFaqPage = () => {
   // State management
-  const [faqs, setFaqs] = useState<FAQ[]>([
-    {
-      id: "1",
-      question: "How do I create an account?",
-      answer:
-        "To create an account, click on the 'Sign Up' button and fill in your details including email, password, and personal information.",
-      createdAt: "2024-01-15",
-      updatedAt: "2024-01-15",
-    },
-    {
-      id: "2",
-      question: "How can I reset my password?",
-      answer:
-        "You can reset your password by clicking on 'Forgot Password' on the login page and following the instructions sent to your email.",
-      createdAt: "2024-01-16",
-      updatedAt: "2024-01-16",
-    },
-    {
-      id: "3",
-      question: "Is my personal information secure?",
-      answer:
-        "Yes, we use industry-standard encryption and security measures to protect your personal information. We never share your data with third parties without your consent.",
-      createdAt: "2024-01-17",
-      updatedAt: "2024-01-17",
-    },
-  ]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -73,6 +54,23 @@ const ManageFaqPage = () => {
     question: "",
     answer: "",
   });
+
+  const { data: faqsData, isLoading: faqsLoading } =
+    useGetAllFaqQuery(undefined);
+  const [addFaq, { isLoading: addFaqLoading }] = useCreateFaqMutation();
+  const [updateFaq, { isLoading: updateFaqLoading }] = useUpdateFaqMutation();
+  const [deleteFaq, { isLoading: deleteFaqLoading }] = useDeleteFaqMutation();
+
+  if (faqsLoading || addFaqLoading || updateFaqLoading || deleteFaqLoading) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+  }
+
+  const allFaq = faqsData?.data || [];
+  console.log(allFaq);
 
   // Handle form input changes
   const handleInputChange = (field: string, value: string) => {
@@ -100,43 +98,39 @@ const ManageFaqPage = () => {
   };
 
   // Handle form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.question.trim() || !formData.answer.trim()) {
       toast.error("Please fill in both question and answer fields");
       return;
     }
 
-    if (editingFaq) {
-      // Update existing FAQ
-      setFaqs((prev) =>
-        prev.map((faq) =>
-          faq.id === editingFaq.id
-            ? {
-                ...faq,
-                question: formData.question,
-                answer: formData.answer,
-                updatedAt: new Date().toISOString().split("T")[0],
-              }
-            : faq
-        )
-      );
-      toast.success("FAQ updated successfully!");
-    } else {
-      // Add new FAQ
-      const newFaq: FAQ = {
-        id: Date.now().toString(),
-        question: formData.question,
-        answer: formData.answer,
-        createdAt: new Date().toISOString().split("T")[0],
-        updatedAt: new Date().toISOString().split("T")[0],
-      };
-      setFaqs((prev) => [newFaq, ...prev]);
-      toast.success("FAQ added successfully!");
-    }
+    try {
+      if (editingFaq) {
+        // Update existing FAQ
+        await updateFaq({
+          id: editingFaq._id,
+          data: {
+            question: formData.question,
+            answer: formData.answer,
+          },
+        }).unwrap();
+        toast.success("FAQ updated successfully!");
+      } else {
+        // Add new FAQ
+        await addFaq({
+          question: formData.question,
+          answer: formData.answer,
+        }).unwrap();
+        toast.success("FAQ added successfully!");
+      }
 
-    setIsModalOpen(false);
-    setFormData({ question: "", answer: "" });
-    setEditingFaq(null);
+      setIsModalOpen(false);
+      setFormData({ question: "", answer: "" });
+      setEditingFaq(null);
+    } catch (error) {
+      console.error("Error saving FAQ:", error);
+      toast.error("Failed to save FAQ. Please try again.");
+    }
   };
 
   // Handle delete confirmation
@@ -146,10 +140,15 @@ const ManageFaqPage = () => {
   };
 
   // Handle delete confirmation
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (deletingFaqId) {
-      setFaqs((prev) => prev.filter((faq) => faq.id !== deletingFaqId));
-      toast.success("FAQ deleted successfully!");
+      try {
+        await deleteFaq(deletingFaqId).unwrap();
+        toast.success("FAQ deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting FAQ:", error);
+        toast.error("Failed to delete FAQ. Please try again.");
+      }
     }
     setIsDeleteDialogOpen(false);
     setDeletingFaqId(null);
@@ -182,14 +181,14 @@ const ManageFaqPage = () => {
         {/* Stats */}
         <div className="flex items-center gap-4">
           <Badge variant="secondary" className="bg-green-100 text-green-800">
-            Total FAQs: {faqs.length}
+            Total FAQs: {allFaq.length}
           </Badge>
         </div>
       </div>
 
       {/* FAQ List */}
       <div className="space-y-4">
-        {faqs.length === 0 ? (
+        {allFaq.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>
               <HelpCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
@@ -209,9 +208,9 @@ const ManageFaqPage = () => {
             </CardContent>
           </Card>
         ) : (
-          faqs.map((faq, index) => (
+          allFaq?.map((faq: FAQ, index: number) => (
             <Card
-              key={faq.id}
+              key={faq._id}
               className="shadow-sm hover:shadow-md transition-shadow"
             >
               <CardHeader className="pb-3">
@@ -236,7 +235,7 @@ const ManageFaqPage = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDeleteClick(faq.id)}
+                      onClick={() => handleDeleteClick(faq._id)}
                       className="text-red-600 border-red-200 hover:bg-red-50"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -246,9 +245,13 @@ const ManageFaqPage = () => {
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <span>Created: {faq.createdAt}</span>
+                  <span>
+                    Created: {new Date(faq.createdAt).toLocaleDateString()}
+                  </span>
                   {faq.updatedAt !== faq.createdAt && (
-                    <span>Updated: {faq.updatedAt}</span>
+                    <span>
+                      Updated: {new Date(faq.updatedAt).toLocaleDateString()}
+                    </span>
                   )}
                 </div>
               </CardContent>
