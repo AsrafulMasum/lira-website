@@ -4,7 +4,13 @@ const contestApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getContests: builder.query({
       query: (params = {}) => {
-        const { page = 1, limit = 10, search = "", status = "", categoryId = "" } = params;
+        const {
+          page = 1,
+          limit = 10,
+          search = "",
+          status = "",
+          categoryId = "",
+        } = params;
         const queryParams = new URLSearchParams({
           page: page.toString(),
           limit: limit.toString(),
@@ -12,7 +18,7 @@ const contestApi = api.injectEndpoints({
           ...(status && status !== "all" && { status }),
           ...(categoryId && categoryId !== "all" && { categoryId }),
         });
-        
+
         return {
           url: `/contest?${queryParams.toString()}`,
           method: "GET",
@@ -24,6 +30,14 @@ const contestApi = api.injectEndpoints({
     getContestByCategoryId: builder.query({
       query: (categoryId) => ({
         url: `/contest/category/${categoryId}`,
+        method: "GET",
+      }),
+      providesTags: ["contests"],
+    }),
+
+    getManualWinnerContest: builder.query({
+      query: ({ page, limit }) => ({
+        url: `/manually-winner-contest/pending?page=${page}&limit=${limit}`,
         method: "GET",
       }),
       providesTags: ["contests"],
@@ -59,6 +73,7 @@ const contestApi = api.injectEndpoints({
 export const {
   useGetContestsQuery,
   useGetContestByCategoryIdQuery,
+  useGetManualWinnerContestQuery,
   useCreateContestMutation,
   usePublishContestMutation,
   useDeleteContestMutation,

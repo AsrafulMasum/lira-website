@@ -35,6 +35,60 @@ const publicApi = api.injectEndpoints({
       }),
       invalidatesTags: ["settings"],
     }),
+
+    getAllFaq: builder.query({
+      query: () => ({
+        url: "/faqs",
+        method: "GET",
+      }),
+      providesTags: ["faqs"],
+    }),
+
+    createFaq: builder.mutation({
+      query: (data) => ({
+        url: "/faqs",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["faqs"],
+    }),
+
+    updateFaq: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/faqs/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["faqs"],
+    }),
+
+    deleteFaq: builder.mutation({
+      query: (id) => ({
+        url: `/faqs/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["faqs"],
+    }),
+
+    getDashboardAnalytics: builder.query({
+      query: (filters = {}) => {
+        const { dateRange, category, gameType, userSegment, product, region } = filters;
+        const queryParams = new URLSearchParams();
+        
+        if (dateRange && dateRange !== "all") queryParams.append("dateRange", dateRange);
+        if (category && category !== "all") queryParams.append("category", category);
+        if (gameType && gameType !== "all") queryParams.append("gameType", gameType);
+        if (userSegment && userSegment !== "all") queryParams.append("userSegment", userSegment);
+        if (product && product !== "all") queryParams.append("product", product);
+        if (region && region !== "all") queryParams.append("region", region);
+        
+        const queryString = queryParams.toString();
+        return {
+          url: `/dashboard/analytics${queryString ? `?${queryString}` : ""}`,
+          method: "GET",
+        };
+      },
+    }),
   }),
 });
 
@@ -43,4 +97,11 @@ export const {
   useUpdateHelpStatusMutation,
   useGetSettingsQuery,
   useAddSettingsMutation,
+
+  useGetAllFaqQuery,
+  useCreateFaqMutation,
+  useUpdateFaqMutation,
+  useDeleteFaqMutation,
+
+  useGetDashboardAnalyticsQuery,
 } = publicApi;

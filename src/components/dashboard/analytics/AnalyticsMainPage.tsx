@@ -12,6 +12,8 @@ import UserActivity from "./UserActivity";
 import LoyaltyAndStreak from "./LoyaltyAndStreak";
 import GeographicDistribution from "./GeographicDistribution";
 import UserEngagement from "./UserEngagement";
+import { useGetDashboardAnalyticsQuery } from "@/redux/apiSlices/publicSlice";
+import Loading from "@/app/loading";
 
 export default function AnalyticsPage() {
   // State for filters that will be shared with all components
@@ -23,6 +25,30 @@ export default function AnalyticsPage() {
     product: "all",
     region: "all",
   });
+
+  const { data: analyticsData, isLoading } =
+    useGetDashboardAnalyticsQuery(filters);
+
+  if (isLoading) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+  }
+
+  const allAnalyticsData = analyticsData?.data;
+
+  const financialPerformance = allAnalyticsData?.financialPerformance;
+  const revenueOverTime = allAnalyticsData?.revenueOverTime;
+  const topProductsByRevenue = allAnalyticsData?.topProductsByRevenue;
+  const entryPriceSensitivity = allAnalyticsData?.entryPriceSensitivity;
+  const userEngagementAndGrowth = allAnalyticsData?.userEngagementAndGrowth;
+  const userActivity = allAnalyticsData?.userActivity;
+  const loyaltyMetrics = allAnalyticsData?.loyaltyMetrics;
+  const geographicDistribution = allAnalyticsData?.geographicDistribution;
+
+  console.log(allAnalyticsData);
 
   return (
     <div className="min-h-screen bg-white rounded-2xl p-6 md:p-8">
@@ -43,28 +69,30 @@ export default function AnalyticsPage() {
         <AnalyticsFilters filters={filters} setFilters={setFilters} />
 
         {/* Financial Performance Component */}
-        <FinancialPerformance />
+        <FinancialPerformance financialPerformance={financialPerformance} />
 
         {/* Revenue Charts */}
         <div className="grid gap-4 lg:grid-cols-2">
-          <RevenueOverTime />
-          <MostRevenueByProduct />
+          <RevenueOverTime revenueOverTime={revenueOverTime} />
+          <MostRevenueByProduct topProductsByRevenue={topProductsByRevenue} />
         </div>
 
         {/* Price Sensitivity Component */}
-        <PriceSensitivity />
+        <PriceSensitivity entryPriceSensitivity={entryPriceSensitivity} />
 
         {/* User Engagement Component */}
-        <UserEngagement filters={filters} />
+        <UserEngagement userEngagementAndGrowth={userEngagementAndGrowth} />
 
         {/* User Activity Component */}
-        <UserActivity />
+        <UserActivity userActivity={userActivity} />
 
         {/* Loyalty & Streak Component */}
-        <LoyaltyAndStreak filters={filters} />
+        <LoyaltyAndStreak loyaltyMetrics={loyaltyMetrics} />
 
         {/* Geographic Distribution Component */}
-        <GeographicDistribution filters={filters} />
+        <GeographicDistribution
+          geographicDistribution={geographicDistribution}
+        />
       </div>
     </div>
   );

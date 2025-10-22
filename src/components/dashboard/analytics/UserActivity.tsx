@@ -3,24 +3,24 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserPlus, Award } from "lucide-react";
 
-// Mock data
-const newUsersData = [
-  { name: "Evelyn Martinez", entries: "3", spend: "$45" },
-  { name: "Ryan Johnson", entries: "2", spend: "$30" },
-  { name: "Emily Davis", entries: "4", spend: "$60" },
-  { name: "Carlos Wilson", entries: "1", spend: "$15" },
-  { name: "Amanda Brown", entries: "5", spend: "$75" },
-];
+type UserActivity = {
+  newUsersThisWeek: {
+    name: string;
+    entries: string;
+    spend: string;
+  }[];
+  highActivityUsers: {
+    user: string;
+    thisWeek: string;
+    winRate: string;
+  }[];
+};
 
-const highActivityData = [
-  { name: "Sarah Johnson", thisWeek: "11", winRate: "92%" },
-  { name: "Michael Chen", thisWeek: "9", winRate: "87%" },
-  { name: "Emma Rodriguez", thisWeek: "8", winRate: "88%" },
-  { name: "Lisa Thompson", thisWeek: "8", winRate: "85%" },
-  { name: "James Wilson", thisWeek: "9", winRate: "92%" },
-];
-
-export default function UserActivity() {
+export default function UserActivity({
+  userActivity,
+}: {
+  userActivity: UserActivity;
+}) {
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <Card>
@@ -52,7 +52,7 @@ export default function UserActivity() {
                 </tr>
               </thead>
               <tbody>
-                {newUsersData.map((user, index) => (
+                {userActivity?.newUsersThisWeek?.map((user, index) => (
                   <tr
                     key={index}
                     className="border-b border-gray-200 last:border-0"
@@ -99,12 +99,12 @@ export default function UserActivity() {
                 </tr>
               </thead>
               <tbody>
-                {highActivityData.map((user, index) => (
+                {userActivity?.highActivityUsers?.map((user, index) => (
                   <tr
                     key={index}
                     className="border-b border-gray-200 last:border-0"
                   >
-                    <td className="py-3 px-2 text-sm">{user.name}</td>
+                    <td className="py-3 px-2 text-sm">{user.user}</td>
                     <td className="py-3 px-2 text-sm">{user.thisWeek}</td>
                     <td className="py-3 px-2 text-sm font-semibold">
                       {user.winRate}

@@ -16,11 +16,16 @@ import {
   ClipboardList,
   NotebookTabs,
   MailQuestionMark,
+  CircleFadingPlus,
+  Combine,
+  NotebookPen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import Image from "next/image";
+import logo from "../../assets/logo.svg";
 
 interface SidebarProps {
   className?: string;
@@ -68,9 +73,19 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       icon: <Users className="h-5 w-5" />,
     },
     {
+      name: "Manual Contest",
+      href: "/dashboard/manual-contest",
+      icon: <CircleFadingPlus className="h-5 w-5" />,
+    },
+    {
       name: "Price Types & Units",
       href: "/dashboard/types-units",
-      icon: <Users className="h-5 w-5" />,
+      icon: <Combine className="h-5 w-5" />,
+    },
+    {
+      name: "Social Media Links",
+      href: "/dashboard/manage-social-media-links",
+      icon: <NotebookPen className="h-5 w-5" />,
     },
     {
       name: "Terms & Conditions",
@@ -130,9 +145,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
           <div className="flex items-center justify-between px-4 py-[12px] border-b">
             <Link href="/dashboard" className="flex items-center">
               {!isCollapsed && (
-                <span className="text-xl font-semibold text-gray-900">
-                  Lira
-                </span>
+                <Image src={logo} alt="Lira" width={80} height={60} />
               )}
               {isCollapsed && <span className="text-xl font-bold">L</span>}
             </Link>

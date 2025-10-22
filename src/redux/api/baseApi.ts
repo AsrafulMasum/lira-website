@@ -67,6 +67,7 @@ const api = createApi({
     "users",
     "help",
     "settings",
+    "faqs",
   ],
 });
 

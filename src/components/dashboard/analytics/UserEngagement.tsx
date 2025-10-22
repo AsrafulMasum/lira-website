@@ -2,15 +2,34 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, RefreshCw, Target, Eye, Clock } from "lucide-react";
 
-interface UserEngagementProps {
-  filters: any;
-}
+type UserEngagementAndGrowth = {
+  activeUsers: {
+    value: number;
+    change: string;
+  };
+  repeatUsers: {
+    value: number;
+    change: string;
+  };
+  conversionRate: {
+    value: number;
+    change: string;
+  };
+  abandonmentRate: {
+    value: number;
+    change: string;
+  };
+  avgTimeToFirst: {
+    value: number;
+    change: string;
+  };
+};
 
-const UserEngagement: React.FC<UserEngagementProps> = (
-  {
-    // filters,
-  }
-) => {
+const UserEngagement = ({
+  userEngagementAndGrowth,
+}: {
+  userEngagementAndGrowth: UserEngagementAndGrowth;
+}) => {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
@@ -27,10 +46,13 @@ const UserEngagement: React.FC<UserEngagementProps> = (
                   <Users className="h-4 w-4 text-blue-600" />
                 </div>
                 <span className="flex items-center text-sm font-medium text-green-600">
-                  +6.7% <span className="ml-1 text-xs">ⓘ</span>
+                  {userEngagementAndGrowth?.activeUsers?.change}{" "}
+                  <span className="ml-1 text-xs">ⓘ</span>
                 </span>
               </div>
-              <div className="text-3xl font-bold">2,156</div>
+              <div className="text-3xl font-bold">
+                {userEngagementAndGrowth?.activeUsers?.value}
+              </div>
               <div className="text-sm text-muted-foreground">Active Users</div>
             </div>
           </CardContent>
@@ -44,10 +66,13 @@ const UserEngagement: React.FC<UserEngagementProps> = (
                   <RefreshCw className="h-4 w-4 text-blue-600" />
                 </div>
                 <span className="flex items-center text-sm font-medium text-green-600">
-                  +5.2% <span className="ml-1 text-xs">ⓘ</span>
+                  {userEngagementAndGrowth?.repeatUsers?.change}{" "}
+                  <span className="ml-1 text-xs">ⓘ</span>
                 </span>
               </div>
-              <div className="text-3xl font-bold">68%</div>
+              <div className="text-3xl font-bold">
+                {userEngagementAndGrowth?.repeatUsers?.value}%
+              </div>
               <div className="text-sm text-muted-foreground">Repeat Users</div>
             </div>
           </CardContent>
@@ -61,10 +86,13 @@ const UserEngagement: React.FC<UserEngagementProps> = (
                   <Target className="h-4 w-4 text-orange-600" />
                 </div>
                 <span className="flex items-center text-sm font-medium text-green-600">
-                  +0.4% <span className="ml-1 text-xs">ⓘ</span>
+                  {userEngagementAndGrowth?.conversionRate?.change}{" "}
+                  <span className="ml-1 text-xs">ⓘ</span>
                 </span>
               </div>
-              <div className="text-3xl font-bold">3.8%</div>
+              <div className="text-3xl font-bold">
+                {userEngagementAndGrowth?.conversionRate?.value}%
+              </div>
               <div className="text-sm text-muted-foreground">
                 Conversion Rate
               </div>
@@ -80,10 +108,13 @@ const UserEngagement: React.FC<UserEngagementProps> = (
                   <Eye className="h-4 w-4 text-red-600" />
                 </div>
                 <span className="flex items-center text-sm font-medium text-red-600">
-                  -2.1% <span className="ml-1 text-xs">ⓘ</span>
+                  {userEngagementAndGrowth?.abandonmentRate?.change}{" "}
+                  <span className="ml-1 text-xs">ⓘ</span>
                 </span>
               </div>
-              <div className="text-3xl font-bold">12.3%</div>
+              <div className="text-3xl font-bold">
+                {userEngagementAndGrowth?.abandonmentRate?.value}%
+              </div>
               <div className="text-sm text-muted-foreground">
                 Abandonment Rate
               </div>
@@ -99,10 +130,13 @@ const UserEngagement: React.FC<UserEngagementProps> = (
                   <Clock className="h-4 w-4 text-teal-600" />
                 </div>
                 <span className="flex items-center text-sm font-medium text-red-600">
-                  -0.3 days <span className="ml-1 text-xs">ⓘ</span>
+                  {userEngagementAndGrowth?.avgTimeToFirst?.change}{" "}
+                  <span className="ml-1 text-xs">ⓘ</span>
                 </span>
               </div>
-              <div className="text-3xl font-bold">2.4 days</div>
+              <div className="text-3xl font-bold">
+                {userEngagementAndGrowth?.avgTimeToFirst?.value} days
+              </div>
               <div className="text-sm text-muted-foreground">
                 Avg Time to First
               </div>
