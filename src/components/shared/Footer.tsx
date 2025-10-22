@@ -3,6 +3,8 @@ import { Linkedin, Instagram } from "lucide-react";
 import Link from "next/link";
 import logo from "@/assets/logo.svg";
 import Image from "next/image";
+import { Dialog, DialogTrigger } from "../ui/dialog";
+import HowItWorksModalContent from "./HowItWorksModalContent";
 
 export function Footer() {
   return (
@@ -42,18 +44,18 @@ export function Footer() {
             <div className="flex justify-between lg:gap-28">
               {/* Middle Section - Product */}
               <div>
-                <h3 className="text-gray text-xs mb-5">
-                  Product
-                </h3>
+                <h3 className="text-gray text-xs mb-5">Product</h3>
                 <nav className="space-y-3">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button className="text-dark-primary text-sm font-bold cursor-pointer">
+                        How it works
+                      </button>
+                    </DialogTrigger>
+                    <HowItWorksModalContent />
+                  </Dialog>
                   <Link
-                    href="#"
-                    className="block text-sm font-bold text-dark-primary hover:text-primary transition-colors"
-                  >
-                    How it works
-                  </Link>
-                  <Link
-                    href="#"
+                    href="/faq"
                     className="block text-sm font-bold text-dark-primary hover:text-primary transition-colors"
                   >
                     FAQs
@@ -75,9 +77,7 @@ export function Footer() {
 
               {/* Right Section - Company */}
               <div>
-                <h3 className="text-gray text-xs mb-5">
-                  Company
-                </h3>
+                <h3 className="text-gray text-xs mb-5">Company</h3>
                 <nav className="space-y-3">
                   <Link
                     href="#"
@@ -86,19 +86,19 @@ export function Footer() {
                     Carrers
                   </Link>
                   <Link
-                    href="#"
+                    href="/about-us"
                     className="block text-sm font-bold text-dark-primary hover:text-primary transition-colors"
                   >
                     About us
                   </Link>
                   <Link
-                    href="#"
+                    href="/privacy-and-policy"
                     className="block text-sm font-bold text-dark-primary hover:text-primary transition-colors"
                   >
                     Privacy policy
                   </Link>
                   <Link
-                    href="#"
+                    href="/terms-and-conditions"
                     className="block text-sm font-bold text-dark-primary hover:text-primary transition-colors"
                   >
                     Terms of Service
@@ -118,9 +118,9 @@ export function Footer() {
               fees. You should carefully consider whether trading on Lira is
               appropriate for you in light of your investment experience and
               financial resources. Information is provided for convenience only
-              and &#34;AS IS&#34; basis. Past performance is not necessarily indicative
-              of future results. Lira is subject to U.S. regulatory oversight by
-              the CFTC.
+              and &#34;AS IS&#34; basis. Past performance is not necessarily
+              indicative of future results. Lira is subject to U.S. regulatory
+              oversight by the CFTC.
             </p>
           </div>
         </div>

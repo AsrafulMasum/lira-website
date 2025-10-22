@@ -31,10 +31,11 @@ type contest = {
   pricing: {
     predictionType: string;
     flatPrice: string;
-  }
+    tiers: { pricePerPrediction: string }[];
+  };
   predictions: {
     minPrediction: number;
-  }
+  };
   category: string;
 };
 
@@ -46,7 +47,7 @@ const Contests = ({ data, category }: { data: any; category: string }) => {
         {category}
       </h4>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
-        {data?.map((contest: contest) => (
+        {data?.result?.map((contest: contest) => (
           <Link key={contest._id} href={`/contests/${contest._id}`}>
             <Card className="w-[390px] lg:w-auto shadow-none">
               <CardHeader>
@@ -101,7 +102,7 @@ const Contests = ({ data, category }: { data: any; category: string }) => {
                     <span className="text-sm font-normal">From</span> $ {" "}
                     {contest?.pricing?.predictionType === "priceOnly"
                       ? `${contest?.pricing?.flatPrice}`
-                      : `${contest?.predictions?.minPrediction}`}
+                      : `${contest?.pricing?.tiers[0]?.pricePerPrediction}`}
                   </p>
                 </CardAction>
               </CardFooter>

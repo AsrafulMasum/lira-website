@@ -27,7 +27,7 @@ export default function AnalyticsPage() {
   });
 
   const { data: analyticsData, isLoading } =
-    useGetDashboardAnalyticsQuery(undefined);
+    useGetDashboardAnalyticsQuery(filters);
 
   if (isLoading) {
     return (
@@ -81,20 +81,16 @@ export default function AnalyticsPage() {
         <PriceSensitivity entryPriceSensitivity={entryPriceSensitivity} />
 
         {/* User Engagement Component */}
-        <UserEngagement
-          filters={filters}
-          userEngagementAndGrowth={userEngagementAndGrowth}
-        />
+        <UserEngagement userEngagementAndGrowth={userEngagementAndGrowth} />
 
         {/* User Activity Component */}
         <UserActivity userActivity={userActivity} />
 
         {/* Loyalty & Streak Component */}
-        <LoyaltyAndStreak filters={filters} loyaltyMetrics={loyaltyMetrics} />
+        <LoyaltyAndStreak loyaltyMetrics={loyaltyMetrics} />
 
         {/* Geographic Distribution Component */}
         <GeographicDistribution
-          filters={filters}
           geographicDistribution={geographicDistribution}
         />
       </div>

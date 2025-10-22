@@ -12,7 +12,7 @@ import AddCustomValue from "./AddCustomValue";
 import SearchSheet from "./sheets/SearchSheet";
 import moment from "moment";
 
-const ContestDetailsMobileView = ({ contest, tiers }: any) => {
+const ContestDetailsMobileView = ({ contest, tiers, livePrice }: any) => {
   return (
     <section className="pt-5">
       <h4 className="text-2xl font-semibold text-[#002913]">
@@ -125,21 +125,25 @@ const ContestDetailsMobileView = ({ contest, tiers }: any) => {
       <div className="mt-8">
         <div className="flex justify-between items-center">
           <h4 className="text-lg text-[#002913] font-semibold">
-            Live Bitcoin Price
+            Live {contest?.category} Price
           </h4>
-          <h4 className="text-primary font-semibold">$118,845.42</h4>
+          <h4 className="text-primary font-semibold">
+            $ {livePrice?.currentValue}
+          </h4>
         </div>
 
         <div className="flex justify-between items-center mb-1">
           <p className="text-sm text-primary font-semibold">
-            24H Change: +1.3%
+            24H Change: {livePrice?.changePercent}%
           </p>
           <p className="text-gray-text text-xs">Current</p>
         </div>
 
-        <p className="text-gray-text text-xs mb-5">Data from CoinGecko API</p>
+        <p className="text-gray-text text-xs mb-5">
+          Data from {livePrice?.metadata?.source} API
+        </p>
 
-        <LiveChart />
+        <LiveChart livePrice={livePrice} category={contest?.category} />
       </div>
 
       <div>

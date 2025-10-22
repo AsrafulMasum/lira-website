@@ -40,7 +40,7 @@ const ContestDetailsRightSection = ({ contest, livePrice }: any) => {
       <div className="mt-8">
         <div className="flex justify-between items-center">
           <h4 className="text-lg text-[#002913] font-semibold">
-            Live Bitcoin Price
+            Live {contest?.category} Price
           </h4>
           <h4 className="text-primary font-semibold">$ {livePrice?.currentValue}</h4>
         </div>
@@ -54,7 +54,7 @@ const ContestDetailsRightSection = ({ contest, livePrice }: any) => {
 
         <p className="text-gray-text text-xs mb-5">Data from {livePrice?.metadata?.source} API</p>
 
-        <LiveChart livePrice={livePrice} />
+        <LiveChart livePrice={livePrice} category={contest?.category} />
       </div>
 
       <div>

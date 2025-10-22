@@ -16,6 +16,9 @@ import {
   ClipboardList,
   NotebookTabs,
   MailQuestionMark,
+  CircleFadingPlus,
+  Combine,
+  NotebookPen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -70,14 +73,19 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       icon: <Users className="h-5 w-5" />,
     },
     {
+      name: "Manual Contest",
+      href: "/dashboard/manual-contest",
+      icon: <CircleFadingPlus className="h-5 w-5" />,
+    },
+    {
       name: "Price Types & Units",
       href: "/dashboard/types-units",
-      icon: <Users className="h-5 w-5" />,
+      icon: <Combine className="h-5 w-5" />,
     },
     {
       name: "Social Media Links",
       href: "/dashboard/manage-social-media-links",
-      icon: <Users className="h-5 w-5" />,
+      icon: <NotebookPen className="h-5 w-5" />,
     },
     {
       name: "Terms & Conditions",

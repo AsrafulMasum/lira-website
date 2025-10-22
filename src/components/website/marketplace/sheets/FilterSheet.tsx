@@ -1,30 +1,23 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { useMediaQuery } from "react-responsive";
 import { ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import RangeBarChart from "@/components/shared/RangeBarChart";
 import { useUpdateSearchParams } from "@/hooks/useUpdateSearchParams";
 
-interface ChartData {
-  value: number;
-  amount: number;
-  height: number;
-}
-
-const chartData: ChartData[] = [
-  { value: 3, amount: 118000, height: 60 },
-  { value: 4, amount: 119000, height: 80 },
-  { value: 6, amount: 120000, height: 100 },
-  { value: 8, amount: 121000, height: 70 },
-  { value: 4, amount: 122000, height: 50 },
-  { value: 3, amount: 124000, height: 40 },
+const chartData = [
+  { value: 1, amount: 50, height: 40 },
+  { value: 2, amount: 500, height: 60 },
+  { value: 3, amount: 1200, height: 100 },
+  { value: 4, amount: 3000, height: 80 },
+  { value: 5, amount: 4800, height: 50 },
 ];
 
-const entriesChartData: ChartData[] = [
+const entriesChartData = [
   { value: 2, amount: 5, height: 40 },
   { value: 5, amount: 10, height: 70 },
   { value: 8, amount: 15, height: 100 },
@@ -33,24 +26,39 @@ const entriesChartData: ChartData[] = [
   { value: 3, amount: 30, height: 50 },
 ];
 
-const FilterSheet = () => {
+const FilterSheet = ({ range }: any) => {
   const updateSearchParams = useUpdateSearchParams();
 
-  const [prizeRangeStart, setPrizeRangeStart] = useState<number>(118000);
-  const [prizeRangeEnd, setPrizeRangeEnd] = useState<number>(120500);
-  const [entriesRangeStart, setEntriesRangeStart] = useState<number>(5);
-  const [entriesRangeEnd, setEntriesRangeEnd] = useState<number>(20);
+  // 🧭 Extract dynamic range from server (with safe fallbacks)
+  const prizeMinValue = range?.minPrize ?? 0;
+  const prizeMaxValue = range?.maxPrize ?? 10000;
+  const entriesMinValue = range?.minPrediction ?? 0;
+  const entriesMaxValue = range?.maxPrediction ?? 100;
+
+  // 🧠 States
+  const [prizeRangeStart, setPrizeRangeStart] = useState<number>(prizeMinValue);
+  const [prizeRangeEnd, setPrizeRangeEnd] = useState<number>(prizeMaxValue);
+  const [entriesRangeStart, setEntriesRangeStart] =
+    useState<number>(entriesMinValue);
+  const [entriesRangeEnd, setEntriesRangeEnd] =
+    useState<number>(entriesMaxValue);
   const [sortBy, setSortBy] = useState<string>("Latest");
   const [prizeType, setPrizeType] = useState<string>("All");
   const [showSortDropdown, setShowSortDropdown] = useState<boolean>(false);
 
-  const prizeMinValue = 118000;
-  const prizeMaxValue = 124000;
-  const entriesMinValue = 5;
-  const entriesMaxValue = 30;
-
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
+  // 🧩 When range updates (from API), sync the filters
+  useEffect(() => {
+    if (range) {
+      setPrizeRangeStart(range.minPrize);
+      setPrizeRangeEnd(range.maxPrize);
+      setEntriesRangeStart(range.minPrediction);
+      setEntriesRangeEnd(range.maxPrediction);
+    }
+  }, [range]);
+
+  // 💰 Formatters
   const formatCurrency = (value: number): string => {
     if (value >= 1000) {
       return `$${(value / 1000).toFixed(value % 1000 === 0 ? 0 : 1)}k`;
@@ -58,10 +66,9 @@ const FilterSheet = () => {
     return `$${value}`;
   };
 
-  const formatEntries = (value: number): string => {
-    return `$${value}`;
-  };
+  const formatEntries = (value: number): string => `$${value}`;
 
+  // 🧮 Handlers
   const handlePrizeRangeChange = (start: number, end: number) => {
     setPrizeRangeStart(start);
     setPrizeRangeEnd(end);
@@ -72,7 +79,7 @@ const FilterSheet = () => {
     setEntriesRangeEnd(end);
   };
 
-  // 🧹 Clear all filters
+  // 🧹 Clear filters
   const handleClear = () => {
     setPrizeRangeStart(prizeMinValue);
     setPrizeRangeEnd(prizeMaxValue);
@@ -91,7 +98,7 @@ const FilterSheet = () => {
     });
   };
 
-  // ✅ Apply filters and update search params
+  // ✅ Apply filters
   const handleApplyFilters = () => {
     updateSearchParams({
       sortBy,
