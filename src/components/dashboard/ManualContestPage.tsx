@@ -80,9 +80,7 @@ const ManualContestPage = () => {
           <CardTitle className="text-2xl font-bold">
             Manual Contest Management
           </CardTitle>
-          <p className="text-muted-foreground">
-            Manage contests that require manual winner selection
-          </p>
+          <p className="text-muted-foreground">Manage contests</p>
         </CardHeader>
       </Card>
 
