@@ -64,6 +64,18 @@ const page = async ({ params }: PageProps) => {
     }
   }
 
+  if (group?.toLowerCase().includes("economic")) {
+    try {
+      const { data: priceData } = await apiRequest(
+        `/contest/economic/data?series=${data?.category}&days=365`,
+        { method: "GET", cache: "no-store" }
+      );
+      livePrice = priceData;
+    } catch (error) {
+      console.error("Error fetching live price:", error);
+    }
+  }
+
   return (
     <section className="bg-[#FAFFFC]">
       <ContainerLayout>
