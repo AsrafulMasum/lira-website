@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign } from "lucide-react";
 
 type EntryPriceSensitivity = {
-  range: string;
+  priceRange: string;
   totalSellRate: number;
   amplifier: number;
   revenue: string;
@@ -48,7 +48,9 @@ export default function PriceSensitivity({
                   key={index}
                   className="border-b border-gray-200 last:border-0"
                 >
-                  <td className="py-3 px-4 text-sm font-medium">{row.range}</td>
+                  <td className="py-3 px-4 text-sm font-medium">
+                    {row.priceRange}
+                  </td>
                   <td className="py-3 px-4 text-sm">{row.totalSellRate}</td>
                   <td className="py-3 px-4 text-sm">{row.amplifier}</td>
                   <td className="py-3 px-4 text-sm font-semibold">
