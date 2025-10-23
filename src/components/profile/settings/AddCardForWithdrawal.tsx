@@ -3,6 +3,8 @@
 import { useState, FormEvent } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { apiRequest } from '@/helpers/apiRequest';
+import { toast } from 'sonner';
+import { revalidateTags } from '@/helpers/revalidateTags';
 interface AddCardForWithdrawalProps {
   onCardAdded?: () => void; // optional callback after adding a card
 }
@@ -51,6 +53,8 @@ const AddCardForWithdrawal: React.FC<AddCardForWithdrawalProps> = ({ onCardAdded
 
       setSuccess(true);
       cardElement.clear();
+      toast.success('Card added successfully!');
+      revalidateTags(['cards']);
 
       // Call parent callback if provided
       onCardAdded?.();
