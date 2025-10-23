@@ -56,7 +56,7 @@ const Payments = ({ cards }: any) => {
       </div> */}
 
       {cards?.map((card: any) => (
-        <div className="flex items-center justify-between border border-border-color rounded-2xl bg-white p-6">
+        <div key={card?._id} className="flex items-center justify-between border border-border-color rounded-2xl bg-white p-6">
           <div className="space-y-1">
             <h3 className="text-sm font-medium text-gray-900 capitalize">
               {card?.brand} ending in {card?.expiryYear}
