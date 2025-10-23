@@ -15,8 +15,16 @@ const LatestNews = ({ liveNews }: any) => {
 
       <div className="space-y-4 mt-5">
         {slicedNews?.map((news: any, index: number) => (
-          <div key={index} className="flex justify-center items-center gap-3 bg-bg p-2 pr-3 rounded-2xl border border-border-color">
-            <Image src={news?.banner_image} alt="Thumbnail" />
+          <div
+            key={index}
+            className="flex justify-center items-center gap-3 bg-bg p-2 pr-3 rounded-2xl border border-border-color"
+          >
+            <Image
+              src={news?.banner_image}
+              width={100}
+              height={100}
+              alt="Thumbnail"
+            />
             <div>
               <h6 className="text-dark-primary font-semibold">
                 Bitcoin Alert: Significant Chang...
