@@ -44,7 +44,10 @@ const LoyaltyAndStreak = ({
             </div>
             <div>
               <div className="text-4xl font-bold">
-                {loyaltyMetrics?.loyaltyAndStreakBehavior?.winRate}%
+                {parseFloat(
+                  loyaltyMetrics?.loyaltyAndStreakBehavior?.winRate
+                ).toFixed(2)}
+                %
               </div>
               <div className="text-sm text-muted-foreground">Win rate</div>
             </div>

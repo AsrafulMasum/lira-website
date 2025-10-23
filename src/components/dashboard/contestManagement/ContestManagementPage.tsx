@@ -41,6 +41,7 @@ import {
   BarChart3,
   Settings,
   Upload,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -346,6 +347,16 @@ const ContestManagementPage = () => {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
+                    <Link href={`/dashboard/contest-results/${contest._id}`}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 bg-bg text-primary cursor-pointer"
+                        title="Copy"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </Link>
                     {contest.status === "Draft" && (
                       <>
                         <Button
@@ -468,9 +479,12 @@ const ContestManagementPage = () => {
       {/* Pagination */}
       <div className="flex items-center justify-between mt-4">
         <p className="text-sm text-gray-600">
-          Showing {((paginationInfo.page - 1) * paginationInfo.limit) + 1} to{" "}
-          {Math.min(paginationInfo.page * paginationInfo.limit, paginationInfo.total)} of{" "}
-          {paginationInfo.total} contests
+          Showing {(paginationInfo.page - 1) * paginationInfo.limit + 1} to{" "}
+          {Math.min(
+            paginationInfo.page * paginationInfo.limit,
+            paginationInfo.total
+          )}{" "}
+          of {paginationInfo.total} contests
         </p>
         <div className="flex items-center gap-2">
           <Button
@@ -481,7 +495,10 @@ const ContestManagementPage = () => {
           >
             &lt;
           </Button>
-          {Array.from({ length: paginationInfo.totalPage }, (_, i) => i + 1).map((page) => (
+          {Array.from(
+            { length: paginationInfo.totalPage },
+            (_, i) => i + 1
+          ).map((page) => (
             <Button
               key={page}
               variant={currentPage === page ? "default" : "outline"}

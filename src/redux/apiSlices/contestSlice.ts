@@ -43,6 +43,14 @@ const contestApi = api.injectEndpoints({
       providesTags: ["contests"],
     }),
 
+    getContestDetails: builder.query({
+      query: (contestId) => ({
+        url: `manually-winner-contest/${contestId}/orders`,
+        method: "GET",
+      }),
+      providesTags: ["contests"],
+    }),
+
     createManualContestWinner: builder.mutation({
       query: ({ contestId, data }) => ({
         url: `/manually-winner-contest/${contestId}/determine-winners`,
@@ -83,6 +91,7 @@ export const {
   useGetContestsQuery,
   useGetContestByCategoryIdQuery,
   useGetManualWinnerContestQuery,
+  useGetContestDetailsQuery,
   useCreateManualContestWinnerMutation,
   useCreateContestMutation,
   usePublishContestMutation,

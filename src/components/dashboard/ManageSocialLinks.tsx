@@ -19,7 +19,10 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useAddSettingsMutation, useGetSettingsQuery } from "@/redux/apiSlices/publicSlice";
+import {
+  useAddSettingsMutation,
+  useGetSettingsQuery,
+} from "@/redux/apiSlices/publicSlice";
 import Loading from "@/app/loading";
 
 interface SocialLinksData {
@@ -44,7 +47,8 @@ const ManageSocialLinks = () => {
   const { data: getSettings, isLoading: isLoadingSettings } =
     useGetSettingsQuery("social");
 
-    const [updateSocialLink, { isLoading: isUpdating }] = useAddSettingsMutation();
+  const [updateSocialLink, { isLoading: isUpdating }] =
+    useAddSettingsMutation();
 
   const socialLinks = getSettings?.data;
   console.log(socialLinks);
@@ -110,7 +114,7 @@ const ManageSocialLinks = () => {
       };
 
       const result = await updateSocialLink(payload).unwrap();
-      
+
       if (result?.success) {
         toast.success("Social links updated successfully!");
         setHasUnsavedChanges(false);
@@ -119,7 +123,9 @@ const ManageSocialLinks = () => {
       }
     } catch (error: any) {
       console.error("Error saving social links:", error);
-      toast.error(error?.data?.message || "Failed to save social links. Please try again.");
+      toast.error(
+        error?.data?.message || "Failed to save social links. Please try again."
+      );
     }
   };
 
@@ -165,7 +171,7 @@ const ManageSocialLinks = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <div className="container mx-auto p-6 max-w-7xl">
       {/* Header Section */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
