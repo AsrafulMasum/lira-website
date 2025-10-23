@@ -1,8 +1,24 @@
-import { Button } from "@/components/ui/button";
-import { Edit, Plus, Trash2 } from "lucide-react";
-import React from "react";
+"use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Edit, Plus, Trash2 } from "lucide-react";
+import React, { useState } from "react";
+import AddCardForWithdrawal from "./AddCardForWithdrawal";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(
+  "pk_test_51OHIrVB5u2A30G2QtLI2flRDD3KmQRlRafCke1GGcAl43X9IXi4Ymislp3NW7bg4NYYVcBrebbPcN17g2EyUqOH2009gKcWQo6"
+);
 const Payments = () => {
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       <div className="flex items-center justify-between border border-border-color rounded-2xl bg-white p-6">
@@ -46,13 +62,25 @@ const Payments = () => {
         </div>
       </div>
 
-      <Button
-        variant="outline"
-        className="w-full text-dark-primary hover:text-primary border-border-color hover:bg-transparent cursor-pointer bg-bg shadow-none"
-      >
-        <Plus className="size-4 text-dark-primary h-10 mr-2" />
-        Add a debit/credit card
-      </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            className="w-full text-dark-primary hover:text-primary border-border-color hover:bg-transparent cursor-pointer bg-bg shadow-none"
+          >
+            <Plus className="size-4 text-dark-primary h-10 mr-2" />
+            Add a debit/credit card
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-md">
+          <DialogTitle>Add Debit Card</DialogTitle>
+          {/* Wrap with Stripe Elements if not already wrapped */}
+
+          <Elements stripe={stripePromise}>
+            <AddCardForWithdrawal onCardAdded={() => setOpen(false)} />
+          </Elements>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

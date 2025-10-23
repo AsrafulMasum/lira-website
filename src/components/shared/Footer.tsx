@@ -5,8 +5,11 @@ import logo from "@/assets/logo.svg";
 import Image from "next/image";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import HowItWorksModalContent from "./HowItWorksModalContent";
+import { apiRequest } from "@/helpers/apiRequest";
 
-export function Footer() {
+export async function Footer() {
+  const links = await apiRequest("/settings?key=social", { method: "GET" });
+
   return (
     <footer className="bg-bg py-11 border-t border-border-color">
       <ContainerLayout>
@@ -23,14 +26,14 @@ export function Footer() {
 
               <div className="flex space-x-3">
                 <Link
-                  href="#"
+                  href={links?.data?.linkedin || "#"}
                   className="p-1 bg-dark-primary rounded flex items-center justify-center hover:bg-gray-700 transition-colors"
                   aria-label="LinkedIn"
                 >
                   <Linkedin className="w-4 h-4 text-white" />
                 </Link>
                 <Link
-                  href="#"
+                  href={links?.data?.instagram || "#"}
                   className="p-1 bg-dark-primary rounded flex items-center justify-center hover:bg-gray-700 transition-colors"
                   aria-label="Instagram"
                 >
@@ -38,7 +41,7 @@ export function Footer() {
                 </Link>
               </div>
 
-              <p className="text-gray-text text-xs">Boston, MA, USA</p>
+              <p className="text-gray-text text-xs">{links?.data?.address}</p>
             </div>
 
             <div className="flex justify-between lg:gap-28">
