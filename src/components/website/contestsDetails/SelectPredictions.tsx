@@ -236,7 +236,7 @@ export function SelectPredictions({
                     </div>
                   )}
 
-                  <span>{item?.value}</span>
+                  <span>{item?.value?.toLocaleString()}</span>
                 </button>
               );
             })}

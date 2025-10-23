@@ -30,7 +30,7 @@ export function OngoingContests({
   ongoingContests: Contest[];
   meta?: any;
 }) {
-  console.log(ongoingContests);
+
   const statsData = [
     {
       value: ongoingAnalytics?.totalEntries,

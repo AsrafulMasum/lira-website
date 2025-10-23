@@ -84,12 +84,24 @@ const page = async ({ params, searchParams }: PageProps) => {
     }
   }
 
-  if (category?.toLowerCase().includes("bitcoin")) {
+  if (category?.toLowerCase().includes("oil")) {
     try {
-      const { data: newsData } = await apiRequest(
-        `/contest/contest/news`,
+      const { data: priceData } = await apiRequest(
+        `/contest/energy/data?days=365`,
         { method: "GET", cache: "no-store" }
       );
+      livePrice = priceData;
+    } catch (error) {
+      console.error("Error fetching live news:", error);
+    }
+  }
+
+  if (category?.toLowerCase().includes("bitcoin")) {
+    try {
+      const { data: newsData } = await apiRequest(`/contest/contest/news`, {
+        method: "GET",
+        cache: "no-store",
+      });
       liveNews = newsData;
     } catch (error) {
       console.error("Error fetching live news:", error);
@@ -108,7 +120,11 @@ const page = async ({ params, searchParams }: PageProps) => {
           />
 
           {/* right */}
-          <ContestDetailsRightSection contest={data} livePrice={livePrice} liveNews={liveNews} />
+          <ContestDetailsRightSection
+            contest={data}
+            livePrice={livePrice}
+            liveNews={liveNews}
+          />
         </div>
 
         <div className="lg:hidden">
