@@ -37,7 +37,7 @@ export const apiRequest = async (
     tags,
     token,
     headers = {},
-    cache = "force-cache",
+    cache = "no-store",
   }: FetchOptions = {}
 ): Promise<FetchResponse> => {
   const accessToken = await getAccessToken();

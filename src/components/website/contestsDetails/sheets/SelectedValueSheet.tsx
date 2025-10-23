@@ -1,32 +1,50 @@
 "use client";
-
 import React from "react";
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
 import { useMediaQuery } from "react-responsive";
 
-const listItems = [
-  "118k",
-  "118.1k",
-  "118.2k",
-  "118.3k",
-  "118.35k",
-  "118.4k",
-  "118.5k",
-  "118.6k",
-];
+interface SelectedItem {
+  _id: string;
+  price: number;
+  value: number;
+}
 
-const SelectedValueSheet = () => {
+const SelectedValueSheet = ({
+  selectedItems,
+  customValue,
+}: {
+  selectedItems: SelectedItem[];
+  customValue: string | undefined;
+}) => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
+  const [items, setItems] = React.useState<SelectedItem[]>(selectedItems);
+  const [customValues, setCustomValues] = React.useState<number[]>([]);
 
-  const [items, setItems] = React.useState(listItems);
+  // ✅ Convert "522,455" → [522, 455]
+  React.useEffect(() => {
+    if (customValue) {
+      const parsed = customValue
+        .split(",")
+        .map((v) => v.trim())
+        .filter((v) => v !== "")
+        .map((v) => Number(v));
+      setCustomValues(parsed);
+    } else {
+      setCustomValues([]);
+    }
+  }, [customValue]);
+
+  React.useEffect(() => {
+    setItems(selectedItems);
+  }, [selectedItems]);
 
   const removeItem = (index: number) => {
-    setItems(items.filter((_, i) => i !== index));
+    setItems((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleRemoveAll = () => {
     setItems([]);
+    setCustomValues([]);
   };
 
   return (
@@ -40,43 +58,63 @@ const SelectedValueSheet = () => {
         </SheetTitle>
       </SheetHeader>
 
+      {/* ✅ Items List */}
       <div className="flex-1 overflow-y-auto space-y-3 pb-6 scrollbar-hide">
-        {items.map((item, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between bg-gray-100 rounded-lg px-4 py-3"
-          >
-            <span className="text-dark-primary font-medium">{item}</span>
-            <button onClick={() => removeItem(index)}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <path
-                  d="M12 2C6.47 2 2 6.47 2 12C2 17.53 6.47 22 12 22C17.53 22 22 17.53 22 12C22 6.47 17.53 2 12 2ZM16.3 16.3C16.2075 16.3927 16.0976 16.4663 15.9766 16.5164C15.8557 16.5666 15.726 16.5924 15.595 16.5924C15.464 16.5924 15.3343 16.5666 15.2134 16.5164C15.0924 16.4663 14.9825 16.3927 14.89 16.3L12 13.41L9.11 16.3C8.92302 16.487 8.66943 16.592 8.405 16.592C8.14057 16.592 7.88698 16.487 7.7 16.3C7.51302 16.113 7.40798 15.8594 7.40798 15.595C7.40798 15.4641 7.43377 15.3344 7.48387 15.2135C7.53398 15.0925 7.60742 14.9826 7.7 14.89L10.59 12L7.7 9.11C7.51302 8.92302 7.40798 8.66943 7.40798 8.405C7.40798 8.14057 7.51302 7.88698 7.7 7.7C7.88698 7.51302 8.14057 7.40798 8.405 7.40798C8.66943 7.40798 8.92302 7.51302 9.11 7.7L12 10.59L14.89 7.7C14.9826 7.60742 15.0925 7.53398 15.2135 7.48387C15.3344 7.43377 15.4641 7.40798 15.595 7.40798C15.7259 7.40798 15.8556 7.43377 15.9765 7.48387C16.0975 7.53398 16.2074 7.60742 16.3 7.7C16.3926 7.79258 16.466 7.90249 16.5161 8.02346C16.5662 8.14442 16.592 8.27407 16.592 8.405C16.592 8.53593 16.5662 8.66558 16.5161 8.78654C16.466 8.90751 16.3926 9.01742 16.3 9.11L13.41 12L16.3 14.89C16.68 15.27 16.68 15.91 16.3 16.3Z"
-                  fill="#004721"
-                />
-              </svg>
-            </button>
-          </div>
-        ))}
+        {/* Selected Items */}
+        {items.length > 0 &&
+          items.map((item, index) => (
+            <div
+              key={item._id || index}
+              className="flex items-center justify-between bg-gray-100 rounded-lg px-4 py-3"
+            >
+              <span className="text-dark-primary font-medium">
+                {item.value}
+              </span>
+              <button onClick={() => removeItem(index)}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                >
+                  <path
+                    d="M10 0C4.47 0 0 4.47 0 10C0 15.53 4.47 20 10 20C15.53 20 20 15.53 20 10C20 4.47 15.53 0 10 0ZM14.3 14.3C14.2075 14.3927 14.0976 14.4663 13.9766 14.5164C13.8557 14.5666 13.726 14.5924 13.595 14.5924C13.464 14.5924 13.3343 14.5666 13.2134 14.5164C13.0924 14.4663 12.9825 14.3927 12.89 14.3L10 11.41L7.11 14.3C6.92302 14.487 6.66943 14.592 6.405 14.592C6.14057 14.592 5.88698 14.487 5.7 14.3C5.51302 14.113 5.40798 13.8594 5.40798 13.595C5.40798 13.4641 5.43377 13.3344 5.48387 13.2135C5.53398 13.0925 5.60742 12.9826 5.7 12.89L8.59 10L5.7 7.11C5.51302 6.92302 5.40798 6.66943 5.40798 6.405C5.40798 6.14057 5.51302 5.88698 5.7 5.7C5.88698 5.51302 6.14057 5.40798 6.405 5.40798C6.66943 5.40798 6.92302 5.51302 7.11 5.7L10 8.59L12.89 5.7C12.9826 5.60742 13.0925 5.53398 13.2135 5.48387C13.3344 5.43377 13.4641 5.40798 13.595 5.40798C13.7259 5.40798 13.8556 5.43377 13.9765 5.48387C14.0975 5.53398 14.2074 5.60742 14.3 5.7C14.3926 5.79258 14.466 5.90249 14.5161 6.02346C14.5662 6.14442 14.592 6.27407 14.592 6.405C14.592 6.53593 14.5662 6.66558 14.5161 6.78654C14.466 6.90751 14.3926 7.01742 14.3 7.11L11.41 10L14.3 12.89C14.68 13.27 14.68 13.91 14.3 14.3Z"
+                    fill="#004721"
+                  />
+                </svg>
+              </button>
+            </div>
+          ))}
+
+        {/* Custom Values */}
+        {customValues.length > 0 &&
+          customValues.map((val, index) => (
+            <div
+              key={`custom-${index}`}
+              className="flex items-center justify-between bg-gray-100 rounded-lg px-4 py-3"
+            >
+              <span className="text-dark-primary font-medium">{val}</span>
+              <span className="text-sm text-gray-500">(Custom)</span>
+            </div>
+          ))}
+
+        {items.length === 0 && customValues.length === 0 && (
+          <p className="text-gray-500 text-center py-8">No items selected</p>
+        )}
       </div>
 
+      {/* ✅ Summary Section */}
       <div
         className="bg-white p-2 rounded-2xl mb-6"
-        style={{
-          boxShadow: "0 0 48px 0 rgba(45, 51, 48, 0.20)",
-        }}
+        style={{ boxShadow: "0 0 48px 0 rgba(45, 51, 48, 0.20)" }}
       >
         <div className="flex items-center justify-between pl-4">
           <div className="flex items-center gap-2">
             <span className="text-dark-primary text-lg font-semibold">
-              {items.length}
+              {items.length + customValues.length}
             </span>
-            <button className="cursor-pointer" onClick={handleRemoveAll}>
+            <button onClick={handleRemoveAll}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"
@@ -91,16 +129,12 @@ const SelectedValueSheet = () => {
               </svg>
             </button>
           </div>
+
           <div className="flex items-center gap-4">
-            <div className="text-primary font-semibold text-lg">
-              {items.length * 3}
+            <div className="text-primary font-semibold text-lg pr-4">
+              {/* Total of selected item prices only */}
+              {items.reduce((acc, cur) => acc + cur.price, 0)}
             </div>
-            <Button
-              className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer"
-              disabled={!items.length}
-            >
-              Continue
-            </Button>
           </div>
         </div>
       </div>

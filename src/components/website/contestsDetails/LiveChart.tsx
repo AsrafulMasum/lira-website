@@ -21,7 +21,6 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function LiveChart({ livePrice, category }: any) {
-  console.log(livePrice)
   const [timeRange, setTimeRange] = React.useState("1W");
 
   // ✅ Map livePrice.history → chartData

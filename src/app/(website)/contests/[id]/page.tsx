@@ -43,8 +43,10 @@ const page = async ({ params, searchParams }: PageProps) => {
   });
 
   const group = data?.group;
+  const category = data?.category;
 
   let livePrice = null;
+  let liveNews = null;
 
   if (group?.toLowerCase().includes("crypto")) {
     try {
@@ -82,6 +84,18 @@ const page = async ({ params, searchParams }: PageProps) => {
     }
   }
 
+  if (category?.toLowerCase().includes("bitcoin")) {
+    try {
+      const { data: newsData } = await apiRequest(
+        `/contest/contest/news`,
+        { method: "GET", cache: "no-store" }
+      );
+      liveNews = newsData;
+    } catch (error) {
+      console.error("Error fetching live news:", error);
+    }
+  }
+
   return (
     <section className="bg-[#FAFFFC]">
       <ContainerLayout>
@@ -94,7 +108,7 @@ const page = async ({ params, searchParams }: PageProps) => {
           />
 
           {/* right */}
-          <ContestDetailsRightSection contest={data} livePrice={livePrice} />
+          <ContestDetailsRightSection contest={data} livePrice={livePrice} liveNews={liveNews} />
         </div>
 
         <div className="lg:hidden">

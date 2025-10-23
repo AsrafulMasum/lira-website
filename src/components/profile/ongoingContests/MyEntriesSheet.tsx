@@ -4,18 +4,7 @@ import React from "react";
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useMediaQuery } from "react-responsive";
 
-const listItems = [
-  "118k",
-  "118.1k",
-  "118.2k",
-  "118.3k",
-  "118.35k",
-  "118.4k",
-  "118.5k",
-  "118.6k",
-];
-
-const MyEntriesSheet = ({ items }: any) => {
+const MyEntriesSheet = ({ items, customItems }: any) => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
   return (
@@ -31,6 +20,16 @@ const MyEntriesSheet = ({ items }: any) => {
 
       <div className="flex-1 overflow-y-auto space-y-3 pb-6 scrollbar-hide">
         {items.map((item: any) => (
+          <div
+            key={item?._id}
+            className="flex items-center justify-between bg-gray-100 rounded-lg px-4 py-3"
+          >
+            <span className="text-dark-primary font-medium">
+              {item?.predictionValue}
+            </span>
+          </div>
+        ))}
+        {customItems?.map((item: any) => (
           <div
             key={item?._id}
             className="flex items-center justify-between bg-gray-100 rounded-lg px-4 py-3"

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSearchParams } from "next/navigation";
 import { useUpdateSearchParams } from "@/hooks/useUpdateSearchParams";
+import { toast } from "sonner";
 
 const AddCustomValue = () => {
   const updateSearchParams = useUpdateSearchParams();
@@ -28,6 +29,7 @@ const AddCustomValue = () => {
 
     updateSearchParams({ customValue: values.join(",") });
     setValue("");
+    toast.success("Custom value added to your predictions!");
   };
 
   const handleCancel = () => {

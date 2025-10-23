@@ -17,6 +17,7 @@ interface Contest {
   contestId: any;
   contestName: string;
   predictions: any[];
+  customPrediction: any[];
 }
 
 export function OngoingContests({
@@ -29,6 +30,7 @@ export function OngoingContests({
   ongoingContests: Contest[];
   meta?: any;
 }) {
+  console.log(ongoingContests);
   const statsData = [
     {
       value: ongoingAnalytics?.totalEntries,
@@ -185,10 +187,10 @@ export function OngoingContests({
                             fill="#004721"
                           />
                         </svg>
-                        {contest?.predictions?.length} Entries
+                        {contest?.predictions?.length + contest?.customPrediction?.length} Entries
                       </button>
                     </SheetTrigger>
-                    <MyEntriesSheet items={contest?.predictions} />
+                    <MyEntriesSheet items={contest?.predictions} customItems={contest?.customPrediction} />
                   </Sheet>
 
                   <Link
