@@ -40,7 +40,7 @@ export default function AnalyticsFilters({
           <FilterIcon className="h-8 w-8" />
           <span className="font-semibold text-lg">Filters</span>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
           <div className="space-y-3">
             <label className="text-xs font-medium">Date Range</label>
             <Select
@@ -73,7 +73,7 @@ export default function AnalyticsFilters({
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-3">
+          {/* <div className="space-y-3">
             <label className="text-xs font-medium">Game Type</label>
             <Select
               value={filters.gameType}
@@ -122,7 +122,7 @@ export default function AnalyticsFilters({
                 <SelectItem value="product2">Product 2</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
           <div className="space-y-3">
             <label className="text-xs font-medium">Region</label>
             <Select

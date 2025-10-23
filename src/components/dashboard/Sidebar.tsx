@@ -63,14 +63,14 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       icon: <ChartLine className="h-5 w-5" />,
     },
     {
-      name: "Organize Contests",
-      href: "/dashboard/organize",
-      icon: <BarChart3 className="h-5 w-5" />,
-    },
-    {
       name: "Users",
       href: "/dashboard/all-users",
       icon: <Users className="h-5 w-5" />,
+    },
+    {
+      name: "Organize Contests",
+      href: "/dashboard/organize",
+      icon: <BarChart3 className="h-5 w-5" />,
     },
     {
       name: "Manual Contest",
