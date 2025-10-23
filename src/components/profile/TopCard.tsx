@@ -1,5 +1,7 @@
 "use client";
 
+import { apiRequest } from "@/helpers/apiRequest";
+import { revalidateTags } from "@/helpers/revalidateTags";
 import React, { useRef } from "react";
 import { toast } from "sonner";
 
@@ -26,12 +28,36 @@ const TopCard = ({ referral, profile }: any) => {
         });
     }
   };
+
+  const handleWithdraw = async () => {
+    const payload = {
+      amount: profile?.points,
+      cardId: profile?.savedCards[0]?.cardId,
+      withdrawalMethod: "card",
+    };
+    try {
+      const res = await apiRequest("/withdrawals/request", {
+        method: "POST",
+        body: payload,
+      });
+      console.log(res);
+
+      if (res?.success) {
+        toast.success("Withdrawal successful");
+        revalidateTags(["user-profile"]);
+      }
+    } catch (error) {
+      console.error("Failed to withdraw: ", error);
+      toast.error("Failed to withdraw");
+    }
+  };
+
   return (
     <div className="mt-12 bg-[#007A3914] p-2 rounded-3xl flex flex-col lg:flex-row items-center gap-2">
-      <div className="w-full lg:w-[320px] flex justify-between items-center bg-[#FAFFFC] py-6 pl-8 pr-6 rounded-2xl">
+      <div className="w-full lg:w-[400px] flex justify-between items-center bg-[#FAFFFC] py-6 pl-6 pr-6 rounded-2xl">
         <div>
           <h4 className="text-primary text-3xl font-semibold pb-2">
-            {profile?.points}
+            {profile?.points?.toLocaleString()}
           </h4>
           <p className="flex items-center gap-1 text-gray-text text-sm font-semibold">
             Credits balance{" "}
@@ -49,8 +75,11 @@ const TopCard = ({ referral, profile }: any) => {
             </svg>
           </p>
         </div>
-        <button className="py-3 px-4 border border-border-color bg-bg rounded-xl text-dark-primary text-sm font-bold cursor-pointer">
-          Buy credits
+        <button
+          onClick={handleWithdraw}
+          className="py-3 px-4 border border-border-color bg-bg rounded-xl text-dark-primary text-sm font-bold cursor-pointer text-nowrap"
+        >
+          Withdraw credits
         </button>
       </div>
 

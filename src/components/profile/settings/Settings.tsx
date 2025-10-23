@@ -5,9 +5,16 @@ import Notifications from "./Notifications";
 import Security from "./Security";
 import Payments from "./Payments";
 import getProfile from "@/helpers/getProfile";
+import { apiRequest } from "@/helpers/apiRequest";
 
 const Settings = async () => {
   const profile = await getProfile();
+
+  const { data } = await apiRequest("/withdrawals/cards", {
+    method: "GET",
+    cache: "no-store",
+    tags: ["cards"],
+  });
 
   return (
     <div className="pt-10 min-h-[calc(100vh-64px)]">
@@ -70,7 +77,7 @@ const Settings = async () => {
           </TabsContent>
 
           <TabsContent value="payments">
-            <Payments />
+            <Payments cards={data} />
           </TabsContent>
         </Tabs>
       </div>

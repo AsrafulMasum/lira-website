@@ -57,10 +57,10 @@ export async function middleware(request: NextRequest) {
   // ✅ Example: redirect root "/" to first group/tab
   if (pathname === "/") {
     try {
-      const { data: groups } = await apiRequest("/groups", { method: "GET" });
+      const { data: groups } = await apiRequest("/groups", { method: "GET", cache: "no-store" });
       const { data: tabs } = await apiRequest(
         `/categories/?groupId=${groups?.[0]?._id}`,
-        { method: "GET" }
+        { method: "GET", cache: "no-store" }
       );
 
       if (groups?.length && tabs?.length) {

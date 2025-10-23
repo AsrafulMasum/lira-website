@@ -22,13 +22,6 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
-interface PriceRange {
-  id: string;
-  label: string;
-  min: number;
-  max: number;
-}
-
 interface SelectableItem {
   _id: string;
   price: string;
@@ -92,9 +85,13 @@ export function SelectPredictions({
     }
   }, [contestId, activeRange]);
 
-  const toggleItem = (item: { _id: string; price: string }) => {
+  const toggleItem = (item: { _id: string; price: string; value: number }) => {
     const newSelected = new Set(selectedItems);
-    const key = JSON.stringify({ _id: item._id, price: Number(item.price) });
+    const key = JSON.stringify({
+      _id: item._id,
+      price: Number(item.price),
+      value: item.value,
+    });
 
     if (newSelected.has(key)) {
       newSelected.delete(key);
@@ -239,7 +236,7 @@ export function SelectPredictions({
                     </div>
                   )}
 
-                  <span>{item?.value}</span>
+                  <span>{item?.value?.toLocaleString()}</span>
                 </button>
               );
             })}
@@ -270,7 +267,12 @@ export function SelectPredictions({
                     </svg>
                   </button>
                 </SheetTrigger>
-                <SelectedValueSheet />
+                <SelectedValueSheet
+                  selectedItems={Array.from(selectedItems).map((item) =>
+                    JSON.parse(item)
+                  )}
+                  customValue={customValue}
+                />
               </Sheet>
             </div>
             <div className="flex items-center gap-4">
@@ -337,7 +339,12 @@ export function SelectPredictions({
                 </svg>
               </button>
             </SheetTrigger>
-            <SelectedValueSheet />
+            <SelectedValueSheet
+              selectedItems={Array.from(selectedItems).map((item) =>
+                JSON.parse(item)
+              )}
+              customValue={customValue}
+            />
           </Sheet>
         </div>
         <div className="flex items-center gap-4">

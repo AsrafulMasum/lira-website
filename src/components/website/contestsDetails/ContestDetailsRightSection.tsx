@@ -5,7 +5,7 @@ import ContestCountdown from "@/hooks/ContestCountdown";
 import { CircleQuestionMark } from "lucide-react";
 import Image from "next/image";
 
-const ContestDetailsRightSection = ({ contest, livePrice }: any) => {
+const ContestDetailsRightSection = ({ contest, livePrice, liveNews }: any) => {
 
   return (
     <div className="col-span-1">
@@ -58,7 +58,7 @@ const ContestDetailsRightSection = ({ contest, livePrice }: any) => {
       </div>
 
       <div>
-        <LatestNews />
+        <LatestNews liveNews={liveNews} />
       </div>
     </div>
   );
