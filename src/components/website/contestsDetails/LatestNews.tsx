@@ -2,6 +2,7 @@ import React from "react";
 import img from "@/assets/crpytocoins-news.svg";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 const LatestNews = ({ liveNews }: any) => {
   const slicedNews = liveNews?.slice(0, 3) || [];
@@ -15,7 +16,7 @@ const LatestNews = ({ liveNews }: any) => {
 
       <div className="space-y-4 mt-5">
         {slicedNews?.map((news: any, index: number) => (
-          <div
+          <Link href={news?.url}
             key={index}
             className="flex justify-center items-center gap-3 bg-bg p-2 pr-3 rounded-2xl border border-border-color"
           >
@@ -24,18 +25,19 @@ const LatestNews = ({ liveNews }: any) => {
               width={100}
               height={100}
               alt="Thumbnail"
+              className="w-12 h-12 object-cover rounded-md"
             />
             <div>
               <h6 className="text-dark-primary font-semibold">
-                Bitcoin Alert: Significant Chang...
+                {news?.title}
               </h6>
               <p className="text-sm text-gray ">
-                Meteorologists predict unusual weathe...
+                {news?.summary?.slice(0, 25)}...
               </p>
             </div>
-          </div>
+          </Link>
         ))}
-        <div className="flex justify-center items-center gap-3 bg-bg p-2 pr-3 rounded-2xl border border-border-color">
+        {/* <div className="flex justify-center items-center gap-3 bg-bg p-2 pr-3 rounded-2xl border border-border-color">
           <Image src={img} alt="Thumbnail" />
           <div>
             <h6 className="text-dark-primary font-semibold">
@@ -69,7 +71,7 @@ const LatestNews = ({ liveNews }: any) => {
               Meteorologists predict unusual weathe...
             </p>
           </div>
-        </div>
+        </div> */}
 
         <button
           className={`w-full flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-primary border-border-color bg-bg`}
