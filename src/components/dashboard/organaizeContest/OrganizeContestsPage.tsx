@@ -38,7 +38,11 @@ import {
   DragEndEvent,
   TouchSensor,
 } from "@dnd-kit/core";
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 // Import separated components
 import { SortableCategory } from "./SortableCategory";
@@ -53,6 +57,8 @@ import {
   useGetAllGroupQuery,
   useGetCategoriesByGroupIdQuery,
   useUpdateGroupMutation,
+  useShuffleCategoryMutation,
+  useShuffleGroupSerialMutation,
 } from "@/redux/apiSlices/categoryUnitTypeSlice";
 import { useGetContestByCategoryIdQuery } from "@/redux/apiSlices/contestSlice";
 
@@ -92,20 +98,14 @@ const OrganizeContestsPage = () => {
 
   // Fetch categories based on the active group ID
   const { data: getCategoriesByGroupId, isLoading: isLoadingCategories } =
-    useGetCategoriesByGroupIdQuery(
-      activeGroup,
-      { skip: !activeGroup } // Skip the query if activeGroup is empty
-    );
+    useGetCategoriesByGroupIdQuery(activeGroup, { skip: !activeGroup });
 
   // State to track the active category for contest fetching
   const [activeCategory, setActiveCategory] = useState("");
 
   // Fetch contests based on the active category ID
   const { data: getContestByCategoryId, isLoading: isLoadingContests } =
-    useGetContestByCategoryIdQuery(
-      activeCategory,
-      { skip: !activeCategory } // Skip the query if activeCategory is empty
-    );
+    useGetContestByCategoryIdQuery(activeCategory, { skip: !activeCategory });
 
   // Get categories for the active group
   const categoriesForActiveGroup = React.useMemo(() => {
@@ -132,14 +132,19 @@ const OrganizeContestsPage = () => {
     })
   );
 
-  const [createCategory, { isLoading: isLoadingCreateCategory }] = useCreateCategoryMutation();
-  const [updateCategory, { isLoading: isLoadingUpdateCategory }] = useUpdateCategoryMutation();
+  const [createCategory, { isLoading: isLoadingCreateCategory }] =
+    useCreateCategoryMutation();
+  const [updateCategory, { isLoading: isLoadingUpdateCategory }] =
+    useUpdateCategoryMutation();
   const [deleteCategoryApi] = useDeleteCategoryMutation();
+  const [shuffleCategoryApi] = useShuffleCategoryMutation();
+
   const [createGroup, { isLoading: isLoadingCreateGroup }] =
     useCreateGroupMutation();
   const [updateGroup, { isLoading: isLoadingUpdateGroup }] =
     useUpdateGroupMutation();
   const [deleteGroup] = useDeleteGroupMutation();
+  const [shuffleGroupSerial] = useShuffleGroupSerialMutation();
 
   if (isLoadingGroups) {
     return <div>Loading groups...</div>;
@@ -157,8 +162,44 @@ const OrganizeContestsPage = () => {
 
   const allGroups = getAllGroups?.data || [];
 
-  const handleDragEnd = (_event: DragEndEvent) => {
-    // Sorting is visual-only for now; no server-side reordering implemented
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      // Get the current categories array
+      const oldCategories = [...categoriesForActiveGroup];
+
+      // Find the indices of the dragged item and the drop target
+      const oldIndex = oldCategories.findIndex(
+        (cat: any) => cat._id === active.id
+      );
+      const newIndex = oldCategories.findIndex(
+        (cat: any) => cat._id === over?.id
+      );
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        // Create a new array with the updated order
+        const newCategories = [...oldCategories];
+        const [movedItem] = newCategories.splice(oldIndex, 1);
+        newCategories.splice(newIndex, 0, movedItem);
+
+        // Prepare the payload for the API
+        const payload = newCategories.map((category: any, index: number) => ({
+          _id: category._id,
+          serial: index + 1,
+        }));
+
+        // Call the API to update the order
+        shuffleCategoryApi(payload)
+          .unwrap()
+          .then((res) => {
+            toast.success(res?.message || "Categories reordered successfully");
+          })
+          .catch((err) => {
+            toast.error(err?.data?.message || "Failed to reorder categories");
+          });
+      }
+    }
   };
 
   const handleToggleExpand = (categoryId: string) => {
@@ -211,7 +252,9 @@ const OrganizeContestsPage = () => {
       const res = await deleteCategoryApi(categoryId).unwrap();
       toast.success(res?.message || "Category deleted successfully");
     } catch (e: any) {
-      toast.error(e?.data?.message || "Failed to delete category. Please try again.");
+      toast.error(
+        e?.data?.message || "Failed to delete category. Please try again."
+      );
     }
   };
 
@@ -247,8 +290,40 @@ const OrganizeContestsPage = () => {
   // };
 
   // Handle drag end for groups in Edit Groups Sheet
-  const handleGroupDragEnd = (_event: DragEndEvent) => {
-    // Visual drag only; no persistence implemented
+  const handleGroupDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      // Get the current groups array
+      const oldGroups = [...allGroups];
+
+      // Find the indices of the dragged item and the drop target
+      const oldIndex = oldGroups.findIndex((group: any) => group._id === active.id);
+      const newIndex = oldGroups.findIndex((group: any) => group._id === over?.id);
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        // Create a new array with the updated order
+        const newGroups = [...oldGroups];
+        const [movedItem] = newGroups.splice(oldIndex, 1);
+        newGroups.splice(newIndex, 0, movedItem);
+
+        // Prepare the payload for the API
+        const payload = newGroups.map((group: any, index: number) => ({
+          _id: group._id,
+          serial: index + 1,
+        }));
+
+        // Call the API to update the order
+        shuffleGroupSerial(payload)
+          .unwrap()
+          .then((res) => {
+            toast.success(res?.message || "Groups reordered successfully");
+          })
+          .catch((err) => {
+            toast.error(err?.data?.message || "Failed to reorder groups");
+          });
+      }
+    }
   };
 
   return (
@@ -385,9 +460,13 @@ const OrganizeContestsPage = () => {
                         onDelete={async (id) => {
                           try {
                             const res = await deleteGroup(id).unwrap();
-                            toast.success(res?.message || "Group deleted successfully");
+                            toast.success(
+                              res?.message || "Group deleted successfully"
+                            );
                           } catch (e: any) {
-                            toast.error(e?.data?.message || "Failed to delete group");
+                            toast.error(
+                              e?.data?.message || "Failed to delete group"
+                            );
                           }
                         }}
                       />
@@ -494,7 +573,9 @@ const OrganizeContestsPage = () => {
                       id: selectedCategory.id,
                       name: categoryTitle,
                     }).unwrap();
-                    toast.success(res?.message || "Category updated successfully");
+                    toast.success(
+                      res?.message || "Category updated successfully"
+                    );
                   } else {
                     if (!selectedGroup) return;
                     const res = await createCategory({
@@ -502,11 +583,15 @@ const OrganizeContestsPage = () => {
                       groupId: selectedGroup,
                       url: dataSource,
                     }).unwrap();
-                    toast.success(res?.message || "Category created successfully");
+                    toast.success(
+                      res?.message || "Category created successfully"
+                    );
                   }
                   handleCloseModal();
                 } catch (e: any) {
-                  toast.error(e?.data?.message || "Action failed. Please try again.");
+                  toast.error(
+                    e?.data?.message || "Action failed. Please try again."
+                  );
                 }
               }}
               disabled={
@@ -564,7 +649,10 @@ const OrganizeContestsPage = () => {
                 if (!groupName.trim()) return;
                 try {
                   if (editingGroupId) {
-                    const res = await updateGroup({ id: editingGroupId, name: groupName }).unwrap();
+                    const res = await updateGroup({
+                      id: editingGroupId,
+                      name: groupName,
+                    }).unwrap();
                     toast.success(res?.message || "Group updated successfully");
                   } else {
                     const res = await createGroup({ name: groupName }).unwrap();
@@ -572,7 +660,9 @@ const OrganizeContestsPage = () => {
                   }
                   handleCloseModal();
                 } catch (e: any) {
-                  toast.error(e?.data?.message || "Action failed. Please try again.");
+                  toast.error(
+                    e?.data?.message || "Action failed. Please try again."
+                  );
                 }
               }}
               disabled={

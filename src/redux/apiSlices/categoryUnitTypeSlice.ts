@@ -27,6 +27,15 @@ const categoryUnitTypeApi = api.injectEndpoints({
       invalidatesTags: ["Category"],
     }),
 
+    shuffleCategory: builder.mutation({
+      query: (data) => ({
+        url: `categories/shuffle-serial`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Category"],
+    }),
+
     updateCategory: builder.mutation({
       query: (data) => ({
         url: `/categories/${data.id}`,
@@ -52,7 +61,7 @@ const categoryUnitTypeApi = api.injectEndpoints({
       }),
       providesTags: ["UnitOrType"],
     }),
-    
+
     createUnitOrType: builder.mutation({
       query: (data) => ({
         url: "/unit-type/create",
@@ -61,15 +70,15 @@ const categoryUnitTypeApi = api.injectEndpoints({
       }),
       invalidatesTags: ["UnitOrType"],
     }),
-  
-  updateUnitOrType: builder.mutation({
-    query: (data) => ({
-      url: `/unit-type/update/${data.id}`,
-      method: "PATCH",
-      body: { content: data.content },
+
+    updateUnitOrType: builder.mutation({
+      query: (data) => ({
+        url: `/unit-type/update/${data.id}`,
+        method: "PATCH",
+        body: { content: data.content },
+      }),
+      invalidatesTags: ["UnitOrType"],
     }),
-    invalidatesTags: ["UnitOrType"],
-  }),
 
     // group
 
@@ -84,6 +93,15 @@ const categoryUnitTypeApi = api.injectEndpoints({
     createGroup: builder.mutation({
       query: (data) => ({
         url: "/groups/create",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Group"],
+    }),
+
+    shuffleGroupSerial: builder.mutation({
+      query: (data) => ({
+        url: `/groups/shuffle-group-serial`,
         method: "POST",
         body: data,
       }),
@@ -114,6 +132,7 @@ export const {
   useGetAllCategoryQuery,
   useGetCategoriesByGroupIdQuery,
   useCreateCategoryMutation,
+  useShuffleCategoryMutation,
   useUpdateCategoryMutation,
   useDeleteCategoryMutation,
 
@@ -125,6 +144,7 @@ export const {
   //group
   useGetAllGroupQuery,
   useCreateGroupMutation,
+  useShuffleGroupSerialMutation,
   useUpdateGroupMutation,
   useDeleteGroupMutation,
 } = categoryUnitTypeApi;
