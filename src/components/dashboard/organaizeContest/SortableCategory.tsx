@@ -43,16 +43,19 @@ export const SortableCategory = ({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.7 : 1,
     zIndex: isDragging ? 1000 : 1,
+    position: isDragging ? "relative" : "static",
   };
 
   return (
     <div
       ref={setNodeRef}
-      style={style}
+      style={style as React.CSSProperties}
       className={`bg-white rounded-lg border border-gray-200 transition-all duration-200 ${
-        isDragging ? "shadow-2xl scale-105 rotate-2" : "hover:shadow-md"
+        isDragging
+          ? "shadow-2xl scale-105 rotate-1 border-blue-400 border-2"
+          : "hover:shadow-md"
       }`}
     >
       {/* Category Header */}

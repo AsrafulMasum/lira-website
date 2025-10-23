@@ -1,7 +1,10 @@
 "use client";
 
 import Loading from "@/app/loading";
-import { useGetManualWinnerContestQuery } from "@/redux/apiSlices/contestSlice";
+import {
+  useCreateManualContestWinnerMutation,
+  useGetManualWinnerContestQuery,
+} from "@/redux/apiSlices/contestSlice";
 import {
   Table,
   TableBody,
@@ -13,6 +16,18 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface Contest {
   id: string;
@@ -25,11 +40,39 @@ interface Contest {
 }
 
 const ManualContestPage = () => {
+  const [open, setOpen] = useState(false);
+  const [selectedContest, setSelectedContest] = useState<Contest | null>(null);
+  const [categoryValueAtEndTime, setCategoryValueAtEndTime] = useState("");
+
   const {
     data: getManualWinnerContest,
     isLoading,
     error,
   } = useGetManualWinnerContestQuery({ page: 1, limit: 10 });
+  const [manuallyGiveCategoryValue, { isLoading: isCreating }] =
+    useCreateManualContestWinnerMutation();
+
+  const handleViewDetails = (contest: Contest) => {
+    setSelectedContest(contest);
+    setCategoryValueAtEndTime("");
+    setOpen(true);
+  };
+
+  const handleSaveCategory = async () => {
+    const res = await manuallyGiveCategoryValue({
+      contestId: selectedContest?.id || "",
+      data: {
+        actualValue: categoryValueAtEndTime,
+      },
+    });
+
+    if (res?.data?.success) {
+      toast.success("Category value saved successfully");
+      setOpen(false);
+    } else {
+      toast.error(res?.data?.message || "Failed to save category value");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -129,7 +172,11 @@ const ManualContestPage = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewDetails(contest)}
+                      >
                         View Details
                       </Button>
                     </div>
@@ -140,6 +187,62 @@ const ManualContestPage = () => {
           </Table>
         </div>
       )}
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-5xl">
+          <DialogHeader>
+            <DialogTitle>Contest Details</DialogTitle>
+            <DialogDescription>
+              Enter the category value at the end time of the contest
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right font-medium">Contest Name</Label>
+              <div className="col-span-3 text-sm">{selectedContest?.name}</div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right font-medium">Category</Label>
+              <div className="col-span-3 text-sm">
+                <Badge variant="secondary">{selectedContest?.category}</Badge>
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right font-medium">End Time</Label>
+              <div className="col-span-3 text-sm">
+                {selectedContest && formatDate(selectedContest.endTime)}
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label
+                htmlFor="categoryAtEndTime"
+                className="text-right font-medium"
+              >
+                Category Value at End Time
+              </Label>
+              <Input
+                id="categoryAtEndTime"
+                value={categoryValueAtEndTime}
+                onChange={(e) => setCategoryValueAtEndTime(e.target.value)}
+                placeholder="Enter category value at end time"
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="button" onClick={handleSaveCategory}>
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
