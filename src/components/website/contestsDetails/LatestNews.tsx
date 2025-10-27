@@ -1,5 +1,4 @@
 import React from "react";
-import img from "@/assets/crpytocoins-news.svg";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";

@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useCallback, useRef, useEffect } from "react"
-import { Bar, BarChart, ResponsiveContainer, XAxis, Cell } from "recharts"
+import type React from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { Bar, BarChart, ResponsiveContainer, XAxis, Cell } from "recharts";
 
 interface ChartDataItem {
-  value: number
-  amount: number
-  height: number
+  value: number;
+  amount: number;
+  height: number;
 }
 
 interface RangeBarChartProps {
-  data: ChartDataItem[]
-  rangeStart: number
-  rangeEnd: number
-  onRangeChange: (start: number, end: number) => void
-  minValue: number
-  maxValue: number
-  formatValue: (value: number) => string
-  title?: string
-  className?: string
+  data: ChartDataItem[];
+  rangeStart: number;
+  rangeEnd: number;
+  onRangeChange: (start: number, end: number) => void;
+  minValue: number;
+  maxValue: number;
+  formatValue: (value: number) => string;
+  title?: string;
+  className?: string;
 }
 
 const RangeBarChart: React.FC<RangeBarChartProps> = ({
@@ -33,98 +33,147 @@ const RangeBarChart: React.FC<RangeBarChartProps> = ({
   title,
   className = "",
 }) => {
-  const [isDragging, setIsDragging] = useState<"start" | "end" | null>(null)
-  const sliderRef = useRef<HTMLDivElement>(null)
+  const [isDragging, setIsDragging] = useState<"start" | "end" | null>(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
 
   const isInRange = useCallback(
     (amount: number) => {
-      return amount >= rangeStart && amount <= rangeEnd
+      return amount >= rangeStart && amount <= rangeEnd;
     },
-    [rangeStart, rangeEnd],
-  )
+    [rangeStart, rangeEnd]
+  );
 
   const getPositionFromValue = (value: number) => {
-    return ((value - minValue) / (maxValue - minValue)) * 100
-  }
+    return ((value - minValue) / (maxValue - minValue)) * 100;
+  };
 
-  const getValueFromPosition = (position: number) => {
-    return Math.round(minValue + (position / 100) * (maxValue - minValue))
-  }
+  // const getValueFromPosition = (position: number) => {
+  //   return Math.round(minValue + (position / 100) * (maxValue - minValue));
+  // };
 
-  const handleMouseDown = (handle: "start" | "end") => (e: React.MouseEvent) => {
-    e.preventDefault()
-    setIsDragging(handle)
-  }
+  const getValueFromPosition = useCallback(
+    (position: number) => {
+      return Math.round(minValue + (position / 100) * (maxValue - minValue));
+    },
+    [minValue, maxValue]
+  );
+
+  const handleMouseDown =
+    (handle: "start" | "end") => (e: React.MouseEvent) => {
+      e.preventDefault();
+      setIsDragging(handle);
+    };
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
-      if (!isDragging || !sliderRef.current) return
+      if (!isDragging || !sliderRef.current) return;
 
-      const rect = sliderRef.current.getBoundingClientRect()
-      const position = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100))
-      const value = getValueFromPosition(position)
+      const rect = sliderRef.current.getBoundingClientRect();
+      const position = Math.max(
+        0,
+        Math.min(100, ((e.clientX - rect.left) / rect.width) * 100)
+      );
+      const value = getValueFromPosition(position);
 
       if (isDragging === "start") {
-        const newStart = Math.max(minValue, Math.min(value, rangeEnd - (maxValue > 1000 ? 1000 : 1)))
-        onRangeChange(newStart, rangeEnd)
+        const newStart = Math.max(
+          minValue,
+          Math.min(value, rangeEnd - (maxValue > 1000 ? 1000 : 1))
+        );
+        onRangeChange(newStart, rangeEnd);
       } else {
-        const newEnd = Math.min(maxValue, Math.max(value, rangeStart + (maxValue > 1000 ? 1000 : 1)))
-        onRangeChange(rangeStart, newEnd)
+        const newEnd = Math.min(
+          maxValue,
+          Math.max(value, rangeStart + (maxValue > 1000 ? 1000 : 1))
+        );
+        onRangeChange(rangeStart, newEnd);
       }
     },
-    [isDragging, rangeStart, rangeEnd, minValue, maxValue, onRangeChange],
-  )
+    [
+      isDragging,
+      rangeStart,
+      rangeEnd,
+      minValue,
+      maxValue,
+      onRangeChange,
+      getValueFromPosition,
+    ]
+  );
 
   const handleMouseUp = useCallback(() => {
-    setIsDragging(null)
-  }, [])
+    setIsDragging(null);
+  }, []);
 
-  const handleTouchStart = (handle: "start" | "end") => (e: React.TouchEvent) => {
-    e.preventDefault()
-    setIsDragging(handle)
-  }
+  const handleTouchStart =
+    (handle: "start" | "end") => (e: React.TouchEvent) => {
+      e.preventDefault();
+      setIsDragging(handle);
+    };
 
   const handleTouchMove = useCallback(
     (e: TouchEvent) => {
-      if (!isDragging || !sliderRef.current) return
+      if (!isDragging || !sliderRef.current) return;
 
-      const rect = sliderRef.current.getBoundingClientRect()
-      const position = Math.max(0, Math.min(100, ((e.touches[0].clientX - rect.left) / rect.width) * 100))
-      const value = getValueFromPosition(position)
+      const rect = sliderRef.current.getBoundingClientRect();
+      const position = Math.max(
+        0,
+        Math.min(100, ((e.touches[0].clientX - rect.left) / rect.width) * 100)
+      );
+      const value = getValueFromPosition(position);
 
       if (isDragging === "start") {
-        const newStart = Math.max(minValue, Math.min(value, rangeEnd - (maxValue > 1000 ? 1000 : 1)))
-        onRangeChange(newStart, rangeEnd)
+        const newStart = Math.max(
+          minValue,
+          Math.min(value, rangeEnd - (maxValue > 1000 ? 1000 : 1))
+        );
+        onRangeChange(newStart, rangeEnd);
       } else {
-        const newEnd = Math.min(maxValue, Math.max(value, rangeStart + (maxValue > 1000 ? 1000 : 1)))
-        onRangeChange(rangeStart, newEnd)
+        const newEnd = Math.min(
+          maxValue,
+          Math.max(value, rangeStart + (maxValue > 1000 ? 1000 : 1))
+        );
+        onRangeChange(rangeStart, newEnd);
       }
     },
-    [isDragging, rangeStart, rangeEnd, minValue, maxValue, onRangeChange],
-  )
+    [
+      isDragging,
+      rangeStart,
+      rangeEnd,
+      minValue,
+      maxValue,
+      onRangeChange,
+      getValueFromPosition,
+    ]
+  );
 
   const handleTouchEnd = useCallback(() => {
-    setIsDragging(null)
-  }, [])
+    setIsDragging(null);
+  }, []);
 
   useEffect(() => {
     if (isDragging) {
-      document.addEventListener("mousemove", handleMouseMove)
-      document.addEventListener("mouseup", handleMouseUp)
-      document.addEventListener("touchmove", handleTouchMove)
-      document.addEventListener("touchend", handleTouchEnd)
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("touchmove", handleTouchMove);
+      document.addEventListener("touchend", handleTouchEnd);
 
       return () => {
-        document.removeEventListener("mousemove", handleMouseMove)
-        document.removeEventListener("mouseup", handleMouseUp)
-        document.removeEventListener("touchmove", handleTouchMove)
-        document.removeEventListener("touchend", handleTouchEnd)
-      }
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+        document.removeEventListener("touchmove", handleTouchMove);
+        document.removeEventListener("touchend", handleTouchEnd);
+      };
     }
-  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd])
+  }, [
+    isDragging,
+    handleMouseMove,
+    handleMouseUp,
+    handleTouchMove,
+    handleTouchEnd,
+  ]);
 
-  const startPosition = getPositionFromValue(rangeStart)
-  const endPosition = getPositionFromValue(rangeEnd)
+  const startPosition = getPositionFromValue(rangeStart);
+  const endPosition = getPositionFromValue(rangeEnd);
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -133,11 +182,17 @@ const RangeBarChart: React.FC<RangeBarChartProps> = ({
       {/* Bar Chart */}
       <div className="h-24 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+          <BarChart
+            data={data}
+            margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+          >
             <XAxis hide />
             <Bar dataKey="height" radius={[2, 2, 0, 0]}>
               {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={isInRange(entry.amount) ? "#0047217A" : "#e5e7eb"} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={isInRange(entry.amount) ? "#0047217A" : "#e5e7eb"}
+                />
               ))}
             </Bar>
           </BarChart>
@@ -185,12 +240,18 @@ const RangeBarChart: React.FC<RangeBarChartProps> = ({
 
       {/* Range Value labels */}
       <div className="flex justify-between text-sm">
-        <span className="text-primary font-semibold">{formatValue(rangeStart)}</span>
-        <span className="text-primary font-semibold text-lg">{formatValue(rangeEnd)}</span>
-        <span className="text-muted-foreground font-semibold">{formatValue(maxValue)}</span>
+        <span className="text-primary font-semibold">
+          {formatValue(rangeStart)}
+        </span>
+        <span className="text-primary font-semibold text-lg">
+          {formatValue(rangeEnd)}
+        </span>
+        <span className="text-muted-foreground font-semibold">
+          {formatValue(maxValue)}
+        </span>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default RangeBarChart
+export default RangeBarChart;

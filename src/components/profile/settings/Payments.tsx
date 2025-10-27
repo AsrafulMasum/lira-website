@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Edit, Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import React, { useState } from "react";
 import AddCardForWithdrawal from "./AddCardForWithdrawal";
 import { Elements } from "@stripe/react-stripe-js";

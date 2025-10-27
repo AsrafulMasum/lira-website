@@ -5,7 +5,6 @@ import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import FilterSheet from "../sheets/FilterSheet";
 import Link from "next/link";
 import SearchInput from "./SearchInput";
-import { apiRequest } from "@/helpers/apiRequest";
 
 interface Tab {
   _id: string;

@@ -2,7 +2,6 @@ import { Card } from "@/components/ui/card";
 import { Clock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import AllOngoingContests from "./AllOngoingContests";
 import moment from "moment";
 import ContestCountdown from "@/hooks/ContestCountdown";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";

@@ -6,21 +6,6 @@ import ContestDetailsLeftSection from "@/components/website/contestsDetails/Cont
 import ContestDetailsMobileView from "@/components/website/contestsDetails/ContestDetailsMobileView";
 import { apiRequest } from "@/helpers/apiRequest";
 
-const contest = {
-  _id: "c1a7f2e9-8b91-4a23-9f3c-1f9e12d92b10",
-  contestName: "Predict the BTC price on July 1 at 9:00 PM",
-  endsIn: "2025-11-01T21:00:00Z",
-  totalEntries: 325,
-  entryPrice: 10,
-  category: "BTC",
-  prize: {
-    name: "Rolex Submariner Black",
-    price: 12000,
-    image:
-      "https://tse1.mm.bing.net/th/id/OIP.rf1_aUmpxrXLqyRdfs1b-AHaE7?pid=Api",
-  },
-};
-
 type PageProps = {
   params: Promise<{ id: string }>;
   searchParams: Promise<{

@@ -1,5 +1,4 @@
 import CommunityTabs from "@/components/website/community/CommunityTabs";
-import ContainerLayout from "@/layout/ContainerLayout";
 import React from "react";
 
 const page = () => {

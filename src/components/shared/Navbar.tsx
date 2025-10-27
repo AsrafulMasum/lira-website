@@ -7,10 +7,6 @@ import { ChevronRight } from "lucide-react";
 import getProfile from "@/helpers/getProfile";
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
 import HowItWorksModalContent from "./HowItWorksModalContent";

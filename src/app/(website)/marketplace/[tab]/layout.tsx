@@ -3,13 +3,6 @@ import ContainerLayout from "@/layout/ContainerLayout";
 import React, { ReactNode } from "react";
 import { apiRequest } from "@/helpers/apiRequest";
 
-const tabs = [
-  { key: "all", label: "All" },
-  { key: "crypto", label: "Crypto Market" },
-  { key: "weather", label: "Weather" },
-  { key: "stock", label: "Stock Market" },
-];
-
 interface LayoutProps {
   children: ReactNode;
   params: Promise<{ tab?: string }>;

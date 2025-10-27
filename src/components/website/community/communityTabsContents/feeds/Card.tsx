@@ -78,6 +78,7 @@ export default function Card({ post }: { post: Post }) {
       await navigator.clipboard.writeText(shareUrl);
       toast.success("Link copied to clipboard!");
     } catch (error) {
+      console.log(error)
       toast.error("Failed to copy link!");
     }
   };

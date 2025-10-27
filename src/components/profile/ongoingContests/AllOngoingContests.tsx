@@ -1,13 +1,9 @@
-"use client";
-
 import {
   ChevronDown,
-  ChevronLeft,
   ChevronRight,
   Clock,
   Search,
 } from "lucide-react";
-import React, { useState } from "react";
 import { Button } from "../../ui/button";
 import Image from "next/image";
 import { Card } from "../../ui/card";

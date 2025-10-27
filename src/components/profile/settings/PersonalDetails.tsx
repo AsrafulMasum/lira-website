@@ -6,6 +6,7 @@ import { Upload, Check } from "lucide-react";
 import { toast } from "sonner";
 import { apiRequest } from "@/helpers/apiRequest";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 const PersonalDetails = ({ profile }: any) => {
   const [formData, setFormData] = useState({
@@ -119,7 +120,9 @@ const PersonalDetails = ({ profile }: any) => {
             >
               <div className="w-24 h-24 rounded-lg overflow-hidden bg-gradient-to-br from-primary-light to-neutral-100 border-2 border-neutral-200 flex items-center justify-center">
                 {formData.image ? (
-                  <img
+                  <Image
+                    height={100}
+                    width={100}
                     src={formData.image}
                     alt="Profile preview"
                     className="w-full h-full object-cover"
