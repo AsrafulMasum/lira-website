@@ -1,7 +1,11 @@
 "use client";
 
 import Loading from "@/app/loading";
-import { useGetAllUnitOrTypeQuery, useCreateUnitOrTypeMutation, useUpdateUnitOrTypeMutation } from "@/redux/apiSlices/categoryUnitTypeSlice";
+import {
+  useGetAllUnitOrTypeQuery,
+  useCreateUnitOrTypeMutation,
+  useUpdateUnitOrTypeMutation,
+} from "@/redux/apiSlices/categoryUnitTypeSlice";
 import {
   Table,
   TableBody,
@@ -11,7 +15,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { PenLineIcon, Trash, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -28,25 +31,26 @@ import { toast } from "sonner";
 
 const UnitManagement = () => {
   const { data: getAllUnits, isLoading } = useGetAllUnitOrTypeQuery("unit");
-  const [createUnitOrType, { isLoading: isCreating }] = useCreateUnitOrTypeMutation();
-  const [updateUnitOrType, { isLoading: isUpdating }] = useUpdateUnitOrTypeMutation();
-  
+  const [createUnitOrType] = useCreateUnitOrTypeMutation();
+  const [updateUnitOrType, { isLoading: isUpdating }] =
+    useUpdateUnitOrTypeMutation();
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newUnitTitle, setNewUnitTitle] = useState("");
-  
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editUnitTitle, setEditUnitTitle] = useState("");
   const [editUnitId, setEditUnitId] = useState("");
 
   const handleAddUnit = async () => {
     if (!newUnitTitle.trim()) return;
-    
+
     try {
-      await createUnitOrType({ 
+      await createUnitOrType({
         content: newUnitTitle,
-        key: "unit"
+        key: "unit",
       }).unwrap();
-      
+
       toast.success("Unit added successfully");
       setNewUnitTitle("");
       setIsAddModalOpen(false);
@@ -54,22 +58,22 @@ const UnitManagement = () => {
       toast.error(error?.data?.message || "Failed to add unit");
     }
   };
-  
+
   const openEditModal = (id: string, title: string) => {
     setEditUnitId(id);
     setEditUnitTitle(title);
     setIsEditModalOpen(true);
   };
-  
+
   const handleEditUnit = async () => {
     if (!editUnitTitle.trim()) return;
-    
+
     try {
       await updateUnitOrType({
         id: editUnitId,
-        content: editUnitTitle
+        content: editUnitTitle,
       }).unwrap();
-      
+
       toast.success("Unit updated successfully");
       setEditUnitTitle("");
       setEditUnitId("");
@@ -93,7 +97,7 @@ const UnitManagement = () => {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Units Management</CardTitle>
-        <Button 
+        <Button
           onClick={() => setIsAddModalOpen(true)}
           className="flex items-center gap-1"
         >
@@ -121,16 +125,16 @@ const UnitManagement = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex gap-2 justify-end">
-                        <button 
-                          className="px-3 py-1 cursor-pointer text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
-                          onClick={() => openEditModal(unit._id, unit.content)}
-                        >
-                          <PenLineIcon className="w-5 h-5" />
-                        </button>
-                        <button className="px-3 py-1 cursor-pointer text-sm bg-red-600 text-white rounded hover:bg-red-700">
-                          <Trash className="w-5 h-5" />
-                        </button>
-                      </div>
+                      <button
+                        className="px-3 py-1 cursor-pointer text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                        onClick={() => openEditModal(unit._id, unit.content)}
+                      >
+                        <PenLineIcon className="w-5 h-5" />
+                      </button>
+                      <button className="px-3 py-1 cursor-pointer text-sm bg-red-600 text-white rounded hover:bg-red-700">
+                        <Trash className="w-5 h-5" />
+                      </button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -189,7 +193,11 @@ const UnitManagement = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" onClick={handleEditUnit} disabled={isUpdating}>
+            <Button
+              type="submit"
+              onClick={handleEditUnit}
+              disabled={isUpdating}
+            >
               {isUpdating ? "Updating..." : "Update"}
             </Button>
           </DialogFooter>

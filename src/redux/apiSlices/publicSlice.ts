@@ -72,16 +72,22 @@ const publicApi = api.injectEndpoints({
 
     getDashboardAnalytics: builder.query({
       query: (filters = {}) => {
-        const { dateRange, category, gameType, userSegment, product, region } = filters;
+        const { dateRange, category, gameType, userSegment, product, region } =
+          filters;
         const queryParams = new URLSearchParams();
-        
-        if (dateRange && dateRange !== "all") queryParams.append("dateRange", dateRange);
-        if (category && category !== "all") queryParams.append("category", category);
-        if (gameType && gameType !== "all") queryParams.append("gameType", gameType);
-        if (userSegment && userSegment !== "all") queryParams.append("userSegment", userSegment);
-        if (product && product !== "all") queryParams.append("product", product);
+
+        if (dateRange && dateRange !== "all")
+          queryParams.append("dateRange", dateRange);
+        if (category && category !== "all")
+          queryParams.append("category", category);
+        if (gameType && gameType !== "all")
+          queryParams.append("gameType", gameType);
+        if (userSegment && userSegment !== "all")
+          queryParams.append("userSegment", userSegment);
+        if (product && product !== "all")
+          queryParams.append("product", product);
         if (region && region !== "all") queryParams.append("region", region);
-        
+
         const queryString = queryParams.toString();
         return {
           url: `/dashboard/analytics${queryString ? `?${queryString}` : ""}`,

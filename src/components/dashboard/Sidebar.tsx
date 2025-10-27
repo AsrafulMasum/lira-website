@@ -29,16 +29,21 @@ import logo from "../../assets/logo.svg";
 
 interface SidebarProps {
   className?: string;
+  onCollapse?: (collapsed: boolean) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ className }) => {
+const Sidebar: React.FC<SidebarProps> = ({ className, onCollapse }) => {
   const pathname = usePathname();
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
+    const newCollapsedState = !isCollapsed;
+    setIsCollapsed(newCollapsedState);
+    if (onCollapse) {
+      onCollapse(newCollapsedState);
+    }
   };
 
   const toggleMobileSidebar = () => {
@@ -147,7 +152,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
               {!isCollapsed && (
                 <Image src={logo} alt="Lira" width={80} height={60} />
               )}
-              {isCollapsed && <span className="text-xl font-bold">L</span>}
+              {isCollapsed && <span className="text-xl font-bold"></span>}
             </Link>
             <div className="flex items-center">
               <Button
