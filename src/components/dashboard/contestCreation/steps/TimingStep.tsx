@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 interface ContestData {
   predictionEventDate: string;
@@ -87,6 +88,7 @@ const TimingStep: React.FC<TimingStepProps> = ({ data, onUpdate }) => {
       const endTime = date.toTimeString().slice(0, 5);
       return `${endDate} ${endTime}`;
     } catch (error) {
+      toast.error("Error formatting endOffsetTime");
       return "";
     }
   }, [endOffsetTime]);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Sheet,
   SheetContent,
@@ -17,6 +17,7 @@ interface StatesSelectionModalProps {
   children: React.ReactNode;
 }
 
+// List of US states
 const US_STATES = [
   "Alabama",
   "Alaska",
@@ -70,6 +71,18 @@ const US_STATES = [
   "Wyoming",
 ];
 
+// Function to convert state name to camelCase
+const toCamelCase = (stateName: string): string => {
+  return stateName
+    .split(" ")
+    .map((word, index) =>
+      index === 0
+        ? word.toLowerCase()
+        : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    )
+    .join("");
+};
+
 const StatesSelectionModal: React.FC<StatesSelectionModalProps> = ({
   selectedStates,
   onStatesChange,
@@ -79,9 +92,18 @@ const StatesSelectionModal: React.FC<StatesSelectionModalProps> = ({
   const [tempSelectedStates, setTempSelectedStates] =
     useState<string[]>(selectedStates);
 
-  const handleStateToggle = (state: string) => {
+  // Create a function to check if a state is selected
+  const isStateSelected = (stateName: string): boolean => {
+    const camelCaseState = toCamelCase(stateName);
+    return tempSelectedStates.includes(camelCaseState);
+  };
+
+  const handleStateToggle = (stateName: string) => {
+    const camelCaseState = toCamelCase(stateName);
     setTempSelectedStates((prev) =>
-      prev.includes(state) ? prev.filter((s) => s !== state) : [...prev, state]
+      prev.includes(camelCaseState)
+        ? prev.filter((s) => s !== camelCaseState)
+        : [...prev, camelCaseState]
     );
   };
 
@@ -96,7 +118,7 @@ const StatesSelectionModal: React.FC<StatesSelectionModalProps> = ({
   // };
 
   const handleSelectAll = () => {
-    setTempSelectedStates([...US_STATES]);
+    setTempSelectedStates(US_STATES.map(toCamelCase));
   };
 
   const handleUnselectAll = () => {
@@ -137,17 +159,17 @@ const StatesSelectionModal: React.FC<StatesSelectionModalProps> = ({
 
         <div className="flex-1 overflow-y-auto pr-2">
           <div className="space-y-4">
-            {US_STATES.map((state) => (
+            {US_STATES.map((stateName) => (
               <div
-                key={state}
+                key={stateName}
                 className="flex items-center justify-between py-2"
               >
                 <span className="text-sm font-medium text-gray-700">
-                  {state}
+                  {stateName}
                 </span>
                 <Switch
-                  checked={tempSelectedStates.includes(state)}
-                  onCheckedChange={() => handleStateToggle(state)}
+                  checked={isStateSelected(stateName)}
+                  onCheckedChange={() => handleStateToggle(stateName)}
                   className="data-[state=checked]:bg-green-600 cursor-pointer"
                 />
               </div>

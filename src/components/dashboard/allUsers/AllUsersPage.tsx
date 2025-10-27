@@ -154,12 +154,14 @@ const AllUsersPage = () => {
                       <Image
                         src={user.image}
                         alt={user.name}
+                        width={40}
+                        height={40}
                         className="h-full w-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src =
-                            "https://ui-avatars.com/api/?name=" +
-                            encodeURIComponent(user.name);
-                        }}
+                        // onError={(e) => {
+                        //   (e.target as HTMLImageElement).src =
+                        //     "https://ui-avatars.com/api/?name=" +
+                        //     encodeURIComponent(user.name);
+                        // }}
                       />
                     </div>
                   ) : (

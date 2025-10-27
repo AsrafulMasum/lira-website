@@ -49,8 +49,7 @@ const ManualContestPage = () => {
     isLoading,
     error,
   } = useGetManualWinnerContestQuery({ page: 1, limit: 10 });
-  const [manuallyGiveCategoryValue, { isLoading: isCreating }] =
-    useCreateManualContestWinnerMutation();
+  const [manuallyGiveCategoryValue] = useCreateManualContestWinnerMutation();
 
   const handleViewDetails = (contest: Contest) => {
     setSelectedContest(contest);

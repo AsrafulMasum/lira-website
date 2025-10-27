@@ -10,6 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Dispatch, SetStateAction } from "react";
+import { useGetAllCategoryQuery } from "@/redux/apiSlices/categoryUnitTypeSlice";
+import Loading from "@/app/loading";
 
 export interface FilterState {
   dateRange: string;
@@ -33,6 +35,20 @@ export default function AnalyticsFilters({
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  const { data: getAllCategories, isLoading } =
+    useGetAllCategoryQuery(undefined);
+
+  if (isLoading) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+  }
+
+  const categories = getAllCategories?.data || [];
+  console.log(categories);
+
   return (
     <Card>
       <CardContent className="pt-6">
@@ -51,9 +67,10 @@ export default function AnalyticsFilters({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="last-month">Last Month</SelectItem>
-                <SelectItem value="last-week">Last Week</SelectItem>
-                <SelectItem value="last-year">Last Year</SelectItem>
+                <SelectItem value="lastDay">Last Day</SelectItem>
+                <SelectItem value="lastWeek">Last Week</SelectItem>
+                <SelectItem value="lastMonth">Last Month</SelectItem>
+                <SelectItem value="lastYear">Last Year</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -66,10 +83,13 @@ export default function AnalyticsFilters({
               <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="h-[300px] overflow-auto">
                 <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="sports">Sports</SelectItem>
-                <SelectItem value="games">Games</SelectItem>
+                {categories?.map((category: any) => (
+                  <SelectItem key={category._id} value={category._id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -133,9 +153,56 @@ export default function AnalyticsFilters({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Regions</SelectItem>
-                <SelectItem value="us">United States</SelectItem>
-                <SelectItem value="eu">Europe</SelectItem>
+                <SelectItem value="alabama">Alabama</SelectItem>
+                <SelectItem value="alaska">Alaska</SelectItem>
+                <SelectItem value="arizona">Arizona</SelectItem>
+                <SelectItem value="arkansas">Arkansas</SelectItem>
+                <SelectItem value="california">California</SelectItem>
+                <SelectItem value="colorado">Colorado</SelectItem>
+                <SelectItem value="connecticut">Connecticut</SelectItem>
+                <SelectItem value="delaware">Delaware</SelectItem>
+                <SelectItem value="florida">Florida</SelectItem>
+                <SelectItem value="georgia">Georgia</SelectItem>
+                <SelectItem value="hawaii">Hawaii</SelectItem>
+                <SelectItem value="idaho">Idaho</SelectItem>
+                <SelectItem value="illinois">Illinois</SelectItem>
+                <SelectItem value="indiana">Indiana</SelectItem>
+                <SelectItem value="iowa">Iowa</SelectItem>
+                <SelectItem value="kansas">Kansas</SelectItem>
+                <SelectItem value="kentucky">Kentucky</SelectItem>
+                <SelectItem value="louisiana">Louisiana</SelectItem>
+                <SelectItem value="maine">Maine</SelectItem>
+                <SelectItem value="maryland">Maryland</SelectItem>
+                <SelectItem value="massachusetts">Massachusetts</SelectItem>
+                <SelectItem value="michigan">Michigan</SelectItem>
+                <SelectItem value="minnesota">Minnesota</SelectItem>
+                <SelectItem value="mississippi">Mississippi</SelectItem>
+                <SelectItem value="missouri">Missouri</SelectItem>
+                <SelectItem value="montana">Montana</SelectItem>
+                <SelectItem value="nebraska">Nebraska</SelectItem>
+                <SelectItem value="nevada">Nevada</SelectItem>
+                <SelectItem value="newHampshire">New Hampshire</SelectItem>
+                <SelectItem value="newJersey">New Jersey</SelectItem>
+                <SelectItem value="newMexico">New Mexico</SelectItem>
+                <SelectItem value="newYork">New York</SelectItem>
+                <SelectItem value="northCarolina">North Carolina</SelectItem>
+                <SelectItem value="northDakota">North Dakota</SelectItem>
+                <SelectItem value="ohio">Ohio</SelectItem>
+                <SelectItem value="oklahoma">Oklahoma</SelectItem>
+                <SelectItem value="oregon">Oregon</SelectItem>
+                <SelectItem value="pennsylvania">Pennsylvania</SelectItem>
+                <SelectItem value="rhodeIsland">Rhode Island</SelectItem>
+                <SelectItem value="southCarolina">South Carolina</SelectItem>
+                <SelectItem value="southDakota">South Dakota</SelectItem>
+                <SelectItem value="tennessee">Tennessee</SelectItem>
+                <SelectItem value="texas">Texas</SelectItem>
+                <SelectItem value="utah">Utah</SelectItem>
+                <SelectItem value="vermont">Vermont</SelectItem>
+                <SelectItem value="virginia">Virginia</SelectItem>
+                <SelectItem value="washington">Washington</SelectItem>
+                <SelectItem value="westVirginia">West Virginia</SelectItem>
+                <SelectItem value="wisconsin">Wisconsin</SelectItem>
+                <SelectItem value="wyoming">Wyoming</SelectItem>
               </SelectContent>
             </Select>
           </div>
