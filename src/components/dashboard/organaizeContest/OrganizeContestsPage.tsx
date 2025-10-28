@@ -218,15 +218,15 @@ const OrganizeContestsPage = () => {
     }
 
     // Toggle the expanded state in the UI
-    const updatedCategories = categoriesForActiveGroup.map((cat: any) => {
-      if (cat._id === categoryId) {
-        return { ...cat, isExpanded: !isCurrentlyExpanded };
-      }
-      // Collapse other categories when expanding this one
-      return cat._id !== categoryId && !isCurrentlyExpanded
-        ? { ...cat, isExpanded: false }
-        : cat;
-    });
+    // const updatedCategories = categoriesForActiveGroup.map((cat: any) => {
+    //   if (cat._id === categoryId) {
+    //     return { ...cat, isExpanded: !isCurrentlyExpanded };
+    //   }
+    //   // Collapse other categories when expanding this one
+    //   return cat._id !== categoryId && !isCurrentlyExpanded
+    //     ? { ...cat, isExpanded: false }
+    //     : cat;
+    // });
   };
 
   const handleEditCategory = (categoryId: string) => {
@@ -298,8 +298,12 @@ const OrganizeContestsPage = () => {
       const oldGroups = [...allGroups];
 
       // Find the indices of the dragged item and the drop target
-      const oldIndex = oldGroups.findIndex((group: any) => group._id === active.id);
-      const newIndex = oldGroups.findIndex((group: any) => group._id === over?.id);
+      const oldIndex = oldGroups.findIndex(
+        (group: any) => group._id === active.id
+      );
+      const newIndex = oldGroups.findIndex(
+        (group: any) => group._id === over?.id
+      );
 
       if (oldIndex !== -1 && newIndex !== -1) {
         // Create a new array with the updated order

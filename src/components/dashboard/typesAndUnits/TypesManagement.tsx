@@ -1,7 +1,11 @@
 "use client";
 
 import Loading from "@/app/loading";
-import { useGetAllUnitOrTypeQuery, useCreateUnitOrTypeMutation, useUpdateUnitOrTypeMutation } from "@/redux/apiSlices/categoryUnitTypeSlice";
+import {
+  useGetAllUnitOrTypeQuery,
+  useCreateUnitOrTypeMutation,
+  useUpdateUnitOrTypeMutation,
+} from "@/redux/apiSlices/categoryUnitTypeSlice";
 import {
   Table,
   TableBody,
@@ -11,7 +15,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { PenLineIcon, Trash, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -28,25 +31,26 @@ import { toast } from "sonner";
 
 const TypesManagement = () => {
   const { data: getAllTypes, isLoading } = useGetAllUnitOrTypeQuery("type");
-  const [createUnitOrType, { isLoading: isCreating }] = useCreateUnitOrTypeMutation();
-  const [updateUnitOrType, { isLoading: isUpdating }] = useUpdateUnitOrTypeMutation();
-  
+  const [createUnitOrType] = useCreateUnitOrTypeMutation();
+  const [updateUnitOrType, { isLoading: isUpdating }] =
+    useUpdateUnitOrTypeMutation();
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newTypeTitle, setNewTypeTitle] = useState("");
-  
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editTypeTitle, setEditTypeTitle] = useState("");
   const [editTypeId, setEditTypeId] = useState("");
 
   const handleAddType = async () => {
     if (!newTypeTitle.trim()) return;
-    
+
     try {
-      await createUnitOrType({ 
+      await createUnitOrType({
         content: newTypeTitle,
-        key: "type"
+        key: "type",
       }).unwrap();
-      
+
       toast.success("Type added successfully");
       setNewTypeTitle("");
       setIsAddModalOpen(false);
@@ -54,22 +58,22 @@ const TypesManagement = () => {
       toast.error(error?.data?.message || "Failed to add type");
     }
   };
-  
+
   const openEditModal = (id: string, title: string) => {
     setEditTypeId(id);
     setEditTypeTitle(title);
     setIsEditModalOpen(true);
   };
-  
+
   const handleEditType = async () => {
     if (!editTypeTitle.trim()) return;
-    
+
     try {
       await updateUnitOrType({
         id: editTypeId,
-        content: editTypeTitle
+        content: editTypeTitle,
       }).unwrap();
-      
+
       toast.success("Type updated successfully");
       setEditTypeTitle("");
       setEditTypeId("");
@@ -93,7 +97,7 @@ const TypesManagement = () => {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Types Management</CardTitle>
-        <Button 
+        <Button
           onClick={() => setIsAddModalOpen(true)}
           className="flex items-center gap-1"
         >
@@ -121,7 +125,7 @@ const TypesManagement = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex gap-2 justify-end">
-                      <button 
+                      <button
                         className="px-3 py-1 cursor-pointer text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
                         onClick={() => openEditModal(type._id, type.content)}
                       >
@@ -189,7 +193,11 @@ const TypesManagement = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" onClick={handleEditType} disabled={isUpdating}>
+            <Button
+              type="submit"
+              onClick={handleEditType}
+              disabled={isUpdating}
+            >
               {isUpdating ? "Updating..." : "Update"}
             </Button>
           </DialogFooter>

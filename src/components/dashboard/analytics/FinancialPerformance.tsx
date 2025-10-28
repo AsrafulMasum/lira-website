@@ -28,7 +28,7 @@ export default function FinancialPerformance({
               {/* <span className="text-sm text-green-500">+24.5% ↑</span> */}
             </div>
             <div className="text-3xl font-bold">
-              ${financialPerformance.totalRevenue.toLocaleString()}
+              ${financialPerformance?.totalRevenue?.toLocaleString()}
             </div>
             <p className="text-xs text-gray-600 mt-1">Total Revenue</p>
           </CardContent>
@@ -40,7 +40,7 @@ export default function FinancialPerformance({
               {/* <span className="text-sm text-green-500">+8.3% ↑</span> */}
             </div>
             <div className="text-3xl font-bold">
-              ${financialPerformance.avgRevenuePerUser.toFixed(2)}
+              ${financialPerformance?.avgRevenuePerUser?.toFixed(2)}
             </div>
             <p className="text-xs text-gray-600 mt-1">Avg Revenue per User</p>
           </CardContent>
@@ -52,7 +52,7 @@ export default function FinancialPerformance({
               {/* <span className="text-sm text-green-500">+4.2% ↑</span> */}
             </div>
             <div className="text-3xl font-bold">
-              ${financialPerformance.avgOrderValue.toFixed(2)}
+              ${financialPerformance?.avgOrderValue?.toFixed(2)}
             </div>
             <p className="text-xs text-gray-600 mt-1">Avg Order Value</p>
           </CardContent>

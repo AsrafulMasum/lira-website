@@ -18,7 +18,7 @@ import Loading from "@/app/loading";
 export default function AnalyticsPage() {
   // State for filters that will be shared with all components
   const [filters, setFilters] = useState<FilterState>({
-    dateRange: "last-month",
+    dateRange: "lastWeek",
     category: "all",
     gameType: "all",
     userSegment: "all",
@@ -26,6 +26,7 @@ export default function AnalyticsPage() {
     region: "all",
   });
 
+  // Pass all filters to the query, the API endpoint will handle filtering out 'all' values
   const { data: analyticsData, isLoading } =
     useGetDashboardAnalyticsQuery(filters);
 
