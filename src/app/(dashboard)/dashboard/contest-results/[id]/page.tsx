@@ -1,9 +1,13 @@
 import ContestResultPage from "@/components/dashboard/contestManagement/ContestResultPage";
 
-const page = ({ params }: { params: { id: string } }) => {
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+const page = async ({ params }: PageProps) => {
+  const paramsData = await params;
   return (
     <div>
-      <ContestResultPage contestId={params.id} />
+      <ContestResultPage params={paramsData} />
     </div>
   );
 };
