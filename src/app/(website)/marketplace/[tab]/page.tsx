@@ -55,7 +55,7 @@ export default async function TabPage({ params, searchParams }: PageProps) {
     entriesMax,
   ].some(Boolean);
 
-  if (!hasFilters) {
+  if (!hasFilters && activeTab !== "All") {
     queryParams.append("categoryId", activeTab);
   }
 

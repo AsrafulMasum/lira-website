@@ -5,10 +5,7 @@ import ContainerLayout from "@/layout/ContainerLayout";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import getProfile from "@/helpers/getProfile";
-import {
-  Dialog,
-  DialogTrigger,
-} from "../ui/dialog";
+import { Dialog, DialogTrigger } from "../ui/dialog";
 import HowItWorksModalContent from "./HowItWorksModalContent";
 
 const Navbar = async () => {
@@ -41,14 +38,16 @@ const Navbar = async () => {
                   <HowItWorksModalContent />
                 </Dialog>
               </li>
-              <li>
-                <Link
-                  href="/my-entries"
-                  className="text-dark-primary text-sm font-bold"
-                >
-                  My Entries
-                </Link>
-              </li>
+              {profile?.role !== "SUPER_ADMIN" && (
+                <li>
+                  <Link
+                    href="/my-entries"
+                    className="text-dark-primary text-sm font-bold"
+                  >
+                    My Entries
+                  </Link>
+                </li>
+              )}
               {profile?.role === "SUPER_ADMIN" && (
                 <li>
                   <Link
