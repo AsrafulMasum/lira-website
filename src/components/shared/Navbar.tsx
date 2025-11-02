@@ -5,8 +5,7 @@ import ContainerLayout from "@/layout/ContainerLayout";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import getProfile from "@/helpers/getProfile";
-import { Dialog, DialogTrigger } from "../ui/dialog";
-import HowItWorksModalContent from "./HowItWorksModalContent";
+import NavLinks from "./NavLinks";
 
 const Navbar = async () => {
   const profile = await getProfile();
@@ -18,47 +17,8 @@ const Navbar = async () => {
           <Link href="/">
             <Image className="w-16" src={logo} alt="Logo" />
           </Link>
-          <div className="flex justify-center items-center gap-10">
-            <ul className="hidden md:flex justify-center items-center gap-12">
-              <li>
-                <Link
-                  href="/community"
-                  className="text-dark-primary text-sm font-bold"
-                >
-                  Community
-                </Link>
-              </li>
-              <li>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <button className="text-dark-primary text-sm font-bold cursor-pointer">
-                      How it works
-                    </button>
-                  </DialogTrigger>
-                  <HowItWorksModalContent />
-                </Dialog>
-              </li>
-              {profile?.role !== "SUPER_ADMIN" && (
-                <li>
-                  <Link
-                    href="/my-entries"
-                    className="text-dark-primary text-sm font-bold"
-                  >
-                    My Entries
-                  </Link>
-                </li>
-              )}
-              {profile?.role === "SUPER_ADMIN" && (
-                <li>
-                  <Link
-                    href="/dashboard"
-                    className="text-[#004721] text-sm font-bold"
-                  >
-                    Dashboard
-                  </Link>
-                </li>
-              )}
-            </ul>
+          <div className="flex flex-row-reverse md:flex-row justify-center items-center gap-4 md:gap-10">
+            <NavLinks profile={profile} />
 
             <div>
               {profile ? (

@@ -236,7 +236,7 @@ const PastContests = ({
                                   fill="#004721"
                                 />
                               </svg>
-                              <span className="text-sm font-bold text-dark-primary">
+                              <span className="text-xs md:text-sm font-bold text-dark-primary">
                                 {contest?.predictions?.length}
                               </span>
                             </button>
