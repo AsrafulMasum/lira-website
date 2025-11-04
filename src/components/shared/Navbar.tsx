@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import getProfile from "@/helpers/getProfile";
 import NavLinks from "./NavLinks";
+import MobileBottomNavLinks from "./MobileBottomNavLinks";
 
 const Navbar = async () => {
   const profile = await getProfile();
@@ -17,10 +18,13 @@ const Navbar = async () => {
           <Link href="/">
             <Image className="w-16" src={logo} alt="Logo" />
           </Link>
-          <div className="flex flex-row-reverse md:flex-row justify-center items-center gap-4 md:gap-10">
+          <div className="flex flex-row-reverse md:flex-row justify-center items-center gap-0 md:gap-10">
             <NavLinks profile={profile} />
+            <div className="md:hidden">
+              <MobileBottomNavLinks profile={profile} />
+            </div>
 
-            <div>
+            <div className="hidden md:flex gap-4">
               {profile ? (
                 profile?.role !== "SUPER_ADMIN" && (
                   <Link

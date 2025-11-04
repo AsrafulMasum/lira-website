@@ -7,7 +7,7 @@ import HowItWorksModalContent from "./HowItWorksModalContent";
 import { Menu, X } from "lucide-react";
 
 const NavLinks = ({ profile }: any) => {
-  const [menuOpen, setMenuOpen] = useState(false);
+  // const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <div className="relative">
@@ -54,16 +54,16 @@ const NavLinks = ({ profile }: any) => {
       </ul>
 
       {/* Mobile Hamburger Icon */}
-      <button
+      {/* <button
         className="md:hidden text-dark-primary"
         onClick={() => setMenuOpen(!menuOpen)}
         aria-label="Toggle menu"
       >
         {menuOpen ? <X size={28} /> : <Menu size={28} />}
-      </button>
+      </button> */}
 
       {/* Mobile Dropdown Menu */}
-      {menuOpen && (
+      {/* {menuOpen && (
         <div className="absolute right-0 mt-3 w-48 bg-white shadow-lg rounded-xl border border-gray-100 py-4 animate-slideDown z-50">
           <ul className="flex flex-col items-start gap-3 px-4">
             <li>
@@ -112,7 +112,7 @@ const NavLinks = ({ profile }: any) => {
             )}
           </ul>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

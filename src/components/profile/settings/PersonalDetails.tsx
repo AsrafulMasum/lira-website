@@ -89,7 +89,7 @@ const PersonalDetails = ({ profile }: any) => {
       }
     } catch (err) {
       toast.error("An unexpected error occurred. Please try again.");
-      console.error("[v0] Submit error:", err);
+      console.error("Submit error:", err);
     } finally {
       setIsLoading(false);
     }

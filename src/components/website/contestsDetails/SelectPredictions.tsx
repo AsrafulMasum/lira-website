@@ -117,34 +117,49 @@ export function SelectPredictions({
     router.push(`?${params.toString()}`);
   };
 
+  // const handlePayment = async () => {
+  //   const ids = Array.from(selectedItems).map((item) => {
+  //     const parsed = JSON.parse(item);
+  //     return { id: parsed._id };
+  //   });
+
+  //   const customPredictions =
+  //     customValue && customValue.length > 0
+  //       ? customValue.split(",").map((v) => ({ value: Number(v) }))
+  //       : [];
+
+  //   const payload = {
+  //     contestId,
+  //     generatedPredictionsIds: ids,
+  //     customPredictions,
+  //   };
+
+  //   const res = await apiRequest("/orders/create-and-checkout", {
+  //     method: "POST",
+  //     body: payload,
+  //   });
+
+  //   if (res?.success) {
+  //     globalThis.location.href = res?.data?.url;
+  //   } else {
+  //     toast.error(res?.message || "Failed to initiate payment.");
+  //   }
+  // };
+
   const handlePayment = async () => {
-    const ids = Array.from(selectedItems).map((item) => {
-      const parsed = JSON.parse(item);
-      return { id: parsed._id };
-    });
-
-    const customPredictions =
-      customValue && customValue.length > 0
-        ? customValue.split(",").map((v) => ({ value: Number(v) }))
-        : [];
-
+    toast.error("Payment feature is not available yet.");
     const payload = {
       contestId,
-      generatedPredictionsIds: ids,
-      customPredictions,
     };
 
-    const res = await apiRequest("/orders/create-and-checkout", {
+    const res = await apiRequest("/wait-list/create", {
       method: "POST",
       body: payload,
     });
-
     console.log(res);
-
-    if (res?.success) {
-      globalThis.location.href = res?.data?.url;
-    } else {
-      toast.error(res?.message || "Failed to initiate payment.");
+    if(res?.success){
+      toast.success("You have been added to the WaitList.");
+      router.push("/profile");
     }
   };
 
