@@ -172,7 +172,7 @@ export function OngoingContests({
                   <Sheet>
                     <SheetTrigger asChild>
                       <button
-                        className={`text-sm lg:text-base px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg text-nowrap`}
+                        className={`text-xs md:text-base px-2.5 md:px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg text-nowrap`}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -194,7 +194,7 @@ export function OngoingContests({
 
                   <Link
                     href={`/contests/${contest?.contestId?._id}`}
-                    className={`text-sm lg:text-base px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg text-nowrap`}
+                    className={`text-xs lg:text-base px-2.5 md:px-4 flex justify-center items-center gap-2 font-bold cursor-pointer h-12 border rounded-2xl transition text-dark-primary border-border-color bg-bg text-nowrap`}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

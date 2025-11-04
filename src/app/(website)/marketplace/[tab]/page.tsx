@@ -26,9 +26,12 @@ export default async function TabPage({ params, searchParams }: PageProps) {
   const entriesMin = searchParamsValue?.entriesMin || null;
   const entriesMax = searchParamsValue?.entriesMax || null;
 
-  const { data: tabs } = await apiRequest(`/categories/?groupId=${tab}`, {
-    method: "GET",
-  });
+  const { data: tabs } = await apiRequest(
+    `/categories${tab !== "All" ? `?groupId=${tab}` : ""}`,
+    {
+      method: "GET",
+    }
+  );
 
   const activeTab = searchParamsValue?.tab ?? tabs[0]?._id;
 
@@ -55,8 +58,10 @@ export default async function TabPage({ params, searchParams }: PageProps) {
     entriesMax,
   ].some(Boolean);
 
-  if (!hasFilters) {
+  if (!hasFilters && activeTab !== "All") {
     queryParams.append("categoryId", activeTab);
+  } else if (!hasFilters && activeTab === "All") {
+    queryParams.append("groupId", tab);
   }
 
   const { data } = await apiRequest(

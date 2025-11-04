@@ -49,7 +49,7 @@ const Contests = ({ data, category }: { data: any; category: string }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
         {data?.result?.map((contest: contest) => (
           <Link key={contest._id} href={`/contests/${contest._id}`}>
-            <Card className="w-[390px] lg:w-auto shadow-none">
+            <Card className="max-w-[390px] lg:w-auto shadow-none">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-[#002913] leading-[132%]">
                   {contest?.name} on{" "}

@@ -10,7 +10,7 @@ const CommunityTabs = () => {
     <section>
       <div>
         <Tabs defaultValue="feeds" className="w-full">
-          <div className="border-b border-border-color sticky top-16 z-50 bg-[#FAFFFC]">
+          <div className="border-b border-border-color sticky top-16 z-40 bg-[#FAFFFC]">
             <ContainerLayout>
               <h4 className="text-lg text-[#002913] font-semibold mb-4">
                 Community

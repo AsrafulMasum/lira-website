@@ -73,7 +73,7 @@ const Settings = async () => {
           </TabsContent>
 
           <TabsContent value="security">
-            <Security />
+            <Security profile={profile} />
           </TabsContent>
 
           <TabsContent value="payments">

@@ -148,7 +148,7 @@ const SignUp = () => {
         "max-h-screen flex items-center justify-center lg:overflow-hidden"
       )}
     >
-      <div className="w-full lg:w-1/2 min-h-screen p-6">
+      <div className="w-full lg:w-1/2 min-h-screen md:p-6">
         <Card className="h-full py-10 xl:px-[100px] shadow-none border-none">
           <CardHeader className="text-center">
             <figure className="flex justify-center mb-7">

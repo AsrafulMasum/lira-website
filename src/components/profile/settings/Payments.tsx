@@ -39,21 +39,6 @@ const Payments = ({ cards }: any) => {
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
-      {/* <div className="flex items-center justify-between border border-border-color rounded-2xl bg-white p-6">
-        <div className="space-y-1">
-          <h3 className="text-sm font-medium text-gray-900">
-            Visa ending in 4242
-          </h3>
-          <p className="text-sm text-gray-500">Primary payment method</p>
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-gray-500 hover:text-gray-700"
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
-      </div> */}
 
       {cards?.map((card: any) => (
         <div key={card?._id} className="flex items-center justify-between border border-border-color rounded-2xl bg-white p-6">

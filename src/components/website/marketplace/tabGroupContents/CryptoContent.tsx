@@ -44,6 +44,18 @@ const CryptoContent: React.FC<CryptoContentProps> = async ({
           </div>
 
           <div className="flex items-center gap-3 w-full overflow-x-auto scrollbar-hide">
+            <Link
+              href={`?tab=All`}
+              className={`px-4 font-bold cursor-pointer h-10 lg:h-12 border rounded-2xl transition text-nowrap flex items-center
+                  ${
+                    activeTab === "All"
+                      ? "text-primary border-primary"
+                      : "text-neutral-500"
+                  }
+                `}
+            >
+              All
+            </Link>
             {tabs?.map((tab) => (
               <Link
                 key={tab?._id}
