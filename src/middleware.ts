@@ -37,15 +37,20 @@ export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value;
 
   // ✅ Protected routes
-  const protectedRoutes = ["/contests", "/profile", "/community"];
+  const protectedRoutes = ["/contests", "/profile", "/community", "/dashboard"];
 
   // Check if current path matches any protected route
   const isProtected = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   );
 
-  // ✅ If route is protected and no accessToken → redirect to /login
+  // ✅ If route is protected and no accessToken
+  // - For dashboard: redirect to home
+  // - For others: redirect to login
   if (isProtected && !accessToken) {
+    if (pathname.startsWith("/dashboard")) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -91,7 +96,7 @@ export const config = {
     "/login", // for login redirect logic
     "/contests/:path*", // protect contest pages
     "/community/:path*", // protected community pages
-    // "/dashboard/:path*", // protected admin pages
+    "/dashboard/:path*", // protected admin pages
     "/profile", // protect profile page
   ],
 };

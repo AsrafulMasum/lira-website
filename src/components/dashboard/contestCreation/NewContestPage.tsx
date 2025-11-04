@@ -101,7 +101,7 @@ const NewContestPage = () => {
     endOffset: "",
     endOffsetTime: "",
   });
-  
+
   // Force client-side rendering
   useEffect(() => {
     setIsClient(true);
@@ -350,7 +350,7 @@ const NewContestPage = () => {
             onClick={handleSaveAndExit}
             className="text-gray-600 border-gray-300"
           >
-            Save & Exit
+            Exit
           </Button>
 
           {!isFirstStep && (
