@@ -20,6 +20,7 @@ import {
   Combine,
   NotebookPen,
 } from "lucide-react";
+import { RiCommunityLine } from "react-icons/ri";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -86,6 +87,11 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onCollapse }) => {
       name: "Price Types & Units",
       href: "/dashboard/types-units",
       icon: <Combine className="h-5 w-5" />,
+    },
+    {
+      name: "Community Posts",
+      href: "/dashboard/community-posts",
+      icon: <RiCommunityLine className="h-5 w-5" />,
     },
     {
       name: "Social Media Links",
