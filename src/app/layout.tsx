@@ -29,7 +29,7 @@ export default function RootLayout({
         <Suspense fallback={<Loading />}>
           <main>{children}</main>
         </Suspense>
-        <Toaster position="top-right" />
+        <Toaster position="top-right" duration={1500} />
       </body>
     </html>
   );

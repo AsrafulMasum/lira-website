@@ -8,27 +8,6 @@ import { toast } from "sonner";
 const TopCard = ({ referral, profile }: any) => {
   const textRef = useRef<HTMLSpanElement>(null);
 
-  // const handleCopy = () => {
-  //   if (
-  //     typeof navigator !== "undefined" &&
-  //     navigator.clipboard &&
-  //     textRef.current
-  //   ) {
-  //     navigator.clipboard
-  //       .writeText(textRef.current.innerText)
-  //       .then(() => {
-  //         toast(`Copied: ${textRef.current?.innerText}`, {
-  //           position: "top-right",
-  //           duration: 1000,
-  //         });
-  //       })
-  //       .catch((err) => {
-  //         console.error("Failed to copy: ", err);
-  //         toast("Failed to copy: ", err);
-  //       });
-  //   }
-  // };
-
   const handleCopy = () => {
     if (!textRef.current) return;
 
@@ -49,7 +28,7 @@ const TopCard = ({ referral, profile }: any) => {
       // fallback for insecure contexts
       const textArea = document.createElement("textarea");
       textArea.value = textRef.current.innerText;
-      textArea.style.position = "fixed"; // avoid scrolling
+      textArea.style.position = "fixed";
       document.body.appendChild(textArea);
       textArea.focus();
       textArea.select();
@@ -68,27 +47,31 @@ const TopCard = ({ referral, profile }: any) => {
     }
   };
 
-  const handleWithdraw = async () => {
-    const payload = {
-      amount: profile?.points,
-      cardId: profile?.savedCards[0]?.cardId,
-      withdrawalMethod: "card",
-    };
-    try {
-      const res = await apiRequest("/withdrawals/request", {
-        method: "POST",
-        body: payload,
-      });
-      console.log(res);
+  // const handleWithdraw = async () => {
+  //   const payload = {
+  //     amount: profile?.points,
+  //     cardId: profile?.savedCards[0]?.cardId,
+  //     withdrawalMethod: "card",
+  //   };
+  //   try {
+  //     const res = await apiRequest("/withdrawals/request", {
+  //       method: "POST",
+  //       body: payload,
+  //     });
+  //     console.log(res);
 
-      if (res?.success) {
-        toast.success("Withdrawal successful");
-        revalidateTags(["user-profile"]);
-      }
-    } catch (error) {
-      console.error("Failed to withdraw: ", error);
-      toast.error("Failed to withdraw");
-    }
+  //     if (res?.success) {
+  //       toast.success("Withdrawal successful");
+  //       revalidateTags(["user-profile"]);
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to withdraw: ", error);
+  //     toast.error("Failed to withdraw");
+  //   }
+  // };
+
+  const handleWithdraw = async () => {
+    toast.info("Withdrawal will be available soon.");
   };
 
   return (

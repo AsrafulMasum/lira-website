@@ -60,7 +60,7 @@ export default async function TabPage({ params, searchParams }: PageProps) {
 
   if (!hasFilters && activeTab !== "All") {
     queryParams.append("categoryId", activeTab);
-  } else if (!hasFilters && activeTab === "All") {
+  } else if (!hasFilters && activeTab === "All" && tab !== "All") {
     queryParams.append("groupId", tab);
   }
 

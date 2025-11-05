@@ -147,7 +147,6 @@ export function SelectPredictions({
   // };
 
   const handlePayment = async () => {
-    toast.error("Payment feature is not available yet.");
     const payload = {
       contestId,
     };
@@ -156,8 +155,8 @@ export function SelectPredictions({
       method: "POST",
       body: payload,
     });
-    console.log(res);
-    if(res?.success){
+
+    if (res?.success) {
       toast.success("You have been added to the WaitList.");
       router.push("/profile");
     }

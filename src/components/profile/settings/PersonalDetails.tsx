@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { apiRequest } from "@/helpers/apiRequest";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { revalidateTags } from "@/helpers/revalidateTags";
 
 const PersonalDetails = ({ profile }: any) => {
   const [formData, setFormData] = useState({
@@ -84,6 +85,7 @@ const PersonalDetails = ({ profile }: any) => {
 
       if (result.success) {
         toast.success(result.message || "Profile updated successfully!");
+        revalidateTags(["user-profile"]);
       } else {
         toast.error(result.error || "Failed to update profile");
       }
