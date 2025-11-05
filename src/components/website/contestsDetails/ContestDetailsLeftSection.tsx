@@ -8,6 +8,7 @@ import RangeSheet from "./sheets/RangeSheet";
 import ContestCountdown from "@/hooks/ContestCountdown";
 import SearchSheet from "./sheets/SearchSheet";
 import moment from "moment";
+import { apiRequest } from "@/helpers/apiRequest";
 
 const ContestDetailsLeftSection = ({
   contest,
@@ -53,7 +54,7 @@ const ContestDetailsLeftSection = ({
                     <Search size={16} /> Search
                   </button>
                 </SheetTrigger>
-                <SearchSheet />
+                <SearchSheet tiers={tiers} contestId={contest?._id} />
               </Sheet>
 
               <Sheet>
