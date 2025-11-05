@@ -5,6 +5,7 @@ import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import FilterSheet from "../sheets/FilterSheet";
 import Link from "next/link";
 import SearchInput from "./SearchInput";
+import CategoryTabs from "./CategoryTabs";
 
 interface Tab {
   _id: string;
@@ -43,7 +44,7 @@ const CryptoContent: React.FC<CryptoContentProps> = async ({
             </div>
           </div>
 
-          <div className="flex items-center gap-3 w-full overflow-x-auto scrollbar-hide">
+          {/* <div className="flex items-center gap-3 w-full overflow-x-auto scrollbar-hide">
             <Link
               href={`?tab=All`}
               className={`px-4 font-bold cursor-pointer h-10 lg:h-12 border rounded-2xl transition text-nowrap flex items-center
@@ -71,7 +72,8 @@ const CryptoContent: React.FC<CryptoContentProps> = async ({
                 {tab?.name}
               </Link>
             ))}
-          </div>
+          </div> */}
+          <CategoryTabs tabs={tabs} activeTab={activeTab} />
         </div>
 
         {/* Tab Content */}
