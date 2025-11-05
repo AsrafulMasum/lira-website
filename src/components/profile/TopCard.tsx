@@ -8,24 +8,63 @@ import { toast } from "sonner";
 const TopCard = ({ referral, profile }: any) => {
   const textRef = useRef<HTMLSpanElement>(null);
 
+  // const handleCopy = () => {
+  //   if (
+  //     typeof navigator !== "undefined" &&
+  //     navigator.clipboard &&
+  //     textRef.current
+  //   ) {
+  //     navigator.clipboard
+  //       .writeText(textRef.current.innerText)
+  //       .then(() => {
+  //         toast(`Copied: ${textRef.current?.innerText}`, {
+  //           position: "top-right",
+  //           duration: 1000,
+  //         });
+  //       })
+  //       .catch((err) => {
+  //         console.error("Failed to copy: ", err);
+  //         toast("Failed to copy: ", err);
+  //       });
+  //   }
+  // };
+
   const handleCopy = () => {
-    if (
-      typeof navigator !== "undefined" &&
-      navigator.clipboard &&
-      textRef.current
-    ) {
+    if (!textRef.current) return;
+
+    if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard
         .writeText(textRef.current.innerText)
-        .then(() => {
+        .then(() =>
           toast(`Copied: ${textRef.current?.innerText}`, {
             position: "top-right",
             duration: 1000,
-          });
-        })
+          })
+        )
         .catch((err) => {
           console.error("Failed to copy: ", err);
-          toast("Failed to copy: ", err);
+          toast("Failed to copy");
         });
+    } else {
+      // fallback for insecure contexts
+      const textArea = document.createElement("textarea");
+      textArea.value = textRef.current.innerText;
+      textArea.style.position = "fixed"; // avoid scrolling
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        toast(`Copied: ${textRef.current?.innerText}`, {
+          position: "top-right",
+          duration: 1000,
+        });
+      } catch (err) {
+        console.error("Fallback copy failed: ", err);
+        toast("Failed to copy");
+      } finally {
+        document.body.removeChild(textArea);
+      }
     }
   };
 
