@@ -50,9 +50,9 @@ const AllOngoingContests = ({
       {/* Breadcrumb Navigation */}
       <div className="py-4">
         <div className="flex items-center gap-0.5 text-sm text-gray-600">
-          <span className="text-primary cursor-pointer hover:underline">
+          <Link href="/profile" className="text-primary cursor-pointer hover:underline">
             Profile
-          </span>
+          </Link>
           <ChevronRight className="size-4 text-primary" />
         </div>
 

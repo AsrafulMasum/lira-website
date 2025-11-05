@@ -6,6 +6,7 @@ import Security from "./Security";
 import Payments from "./Payments";
 import getProfile from "@/helpers/getProfile";
 import { apiRequest } from "@/helpers/apiRequest";
+import Link from "next/link";
 
 const Settings = async () => {
   const profile = await getProfile();
@@ -21,9 +22,9 @@ const Settings = async () => {
       {/* Breadcrumb Navigation */}
       <div className="py-4">
         <div className="flex items-center gap-0.5 text-sm text-gray-600">
-          <span className="text-primary cursor-pointer hover:underline">
+          <Link href="/profile" className="text-primary cursor-pointer hover:underline">
             Profile
-          </span>
+          </Link>
           <ChevronRight className="size-4 text-primary" />
         </div>
         <div className="flex justify-between items-center">

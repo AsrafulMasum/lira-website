@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useUpdateSearchParams } from "@/hooks/useUpdateSearchParams";
