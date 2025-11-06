@@ -1,55 +1,65 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useMediaQuery } from "react-responsive";
 import { Input } from "@/components/ui/input";
+import { apiRequest } from "@/helpers/apiRequest";
+import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
-const listItems = [
-  "118k",
-  "118.1k",
-  "118.2k",
-  "118.3k",
-  "118.35k",
-  "118.4k",
-  "118.5k",
-  "118.6k",
-];
+type Prediction = {
+  value: string;
+};
 
-const predictionValues = [
-  "118k",
-  "118.1k",
-  "118.2k",
-  "118.3k",
-  "118.35k",
-  "118.4k",
-  "118.5k",
-  "118.6k",
-  "119k",
-  "119.1k",
-  "119.2k",
-  "119.5k",
-  "120k",
-  "120.5k",
-  "121k",
-  "125k",
-  "130k",
-];
+type SearchSheetProps = {
+  contestId: string;
+  tiers: {
+    tiers: { _id: string }[];
+  };
+};
 
-const SearchSheet = () => {
+const SearchSheet = ({ contestId, tiers }: SearchSheetProps) => {
+  const searchParams = useSearchParams();
+  const activeRange = searchParams.get("range") || tiers?.tiers[0]._id;
+  const [apiResult, setApiResult] = useState<Prediction[]>([]);
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
-  const [items, setItems] = React.useState(listItems);
-  const [searchValue, setSearchValue] = React.useState("");
-  const [filteredPredictions, setFilteredPredictions] = React.useState<
-    string[]
-  >([]);
+  const [items, setItems] = useState<string[]>([]);
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [filteredPredictions, setFilteredPredictions] = useState<string[]>([]);
 
-  React.useEffect(() => {
+  // ✅ Fetch data dynamically
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await apiRequest(
+          `/contest/contest/prediction/${contestId}/tiers/${activeRange}`,
+          {
+            method: "GET",
+            cache: "no-store",
+          }
+        );
+        setApiResult(response.data || []);
+      } catch (error) {
+        console.error("Failed to fetch prediction data:", error);
+      }
+    };
+
+    if (contestId && activeRange) {
+      fetchData();
+    }
+  }, [contestId, activeRange]);
+
+  // ✅ Dynamic filtering based on backend data
+  useEffect(() => {
     if (searchValue.trim() === "") {
       setFilteredPredictions([]);
-    } else {
+    } else if (apiResult?.length > 0) {
+      // convert apiResult values to readable strings for display
+      const predictionValues = apiResult.map((item) => item.value.toString());
+
       const filtered = predictionValues.filter(
         (value) =>
           value.toLowerCase().includes(searchValue.toLowerCase()) &&
@@ -57,7 +67,7 @@ const SearchSheet = () => {
       );
       setFilteredPredictions(filtered.slice(0, 5));
     }
-  }, [searchValue, items]);
+  }, [searchValue, items, apiResult]);
 
   const removeItem = (index: number) => {
     setItems(items.filter((_, i) => i !== index));
@@ -75,6 +85,10 @@ const SearchSheet = () => {
     }
   };
 
+  const handlePayment = () => {
+    toast.info("Payment will be available soon.");
+  };
+
   return (
     <SheetContent
       className="w-full h-[75%] lg:h-full sm:max-w-md px-6 rounded-t-2xl lg:rounded-t-none lg:rounded-l-2xl pt-10 bg-[#FAFFFC] flex flex-col overflow-y-auto scrollbar-hide"
@@ -86,6 +100,7 @@ const SearchSheet = () => {
         </SheetTitle>
       </SheetHeader>
 
+      {/* 🔍 Search Input */}
       <div className="mb-4 relative">
         <Input
           type="text"
@@ -103,13 +118,16 @@ const SearchSheet = () => {
                 onClick={() => addPrediction(prediction)}
                 className="w-full text-left px-4 py-3 hover:bg-bg border-b border-border-color last:border-b-0 transition-colors"
               >
-                <span className="text-dark-primary font-medium">{prediction}</span>
+                <span className="text-dark-primary font-medium">
+                  {prediction}
+                </span>
               </button>
             ))}
           </div>
         )}
       </div>
 
+      {/* 🧾 Selected Items */}
       <div className="flex-1 overflow-y-auto space-y-3 pb-6 scrollbar-hide">
         {items.map((item, index) => (
           <div
@@ -135,6 +153,7 @@ const SearchSheet = () => {
         ))}
       </div>
 
+      {/* ⚙️ Bottom Summary */}
       <div
         className="bg-white p-2 rounded-2xl mb-6"
         style={{
@@ -166,6 +185,7 @@ const SearchSheet = () => {
               {items.length * 3}
             </div>
             <Button
+              onClick={handlePayment}
               className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer"
               disabled={!items.length}
             >
