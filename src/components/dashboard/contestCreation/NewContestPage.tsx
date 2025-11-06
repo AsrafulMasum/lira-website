@@ -177,14 +177,24 @@ const NewContestPage = () => {
       predictionType = "percentage";
     }
 
-    // Format tiers data
-    const tiers = contestData.tiers.map((tier, index) => ({
-      name: `Tier ${index + 1}`,
-      min: Number(tier.minValue) || 0,
-      max: Number(tier.maxValue) || 0,
-      pricePerPrediction: Number(tier.pricePerPrediction) || 0,
-      isActive: true,
-    }));
+    // Format tiers data (map fields based on pricing model)
+    const tiers = contestData.tiers.map((tier, index) => {
+      const isPercentage = contestData.pricingModel === "tiered-percent";
+      const min = isPercentage
+        ? Number(tier.fromPercent) || 0
+        : Number(tier.minValue) || 0;
+      const max = isPercentage
+        ? Number(tier.toPercent) || 0
+        : Number(tier.maxValue) || 0;
+
+      return {
+        name: `Tier ${index + 1}`,
+        min,
+        max,
+        pricePerPrediction: Number(tier.pricePerPrediction) || 0,
+        isActive: true,
+      };
+    });
 
     // Combine event date and time in UTC format
     const eventDateTime = `${contestData.predictionEventDate}T${contestData.predictionEventTime}:00.000Z`;
