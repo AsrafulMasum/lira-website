@@ -77,7 +77,10 @@ const ContestDetailsLeftSection = ({
                     Range
                   </button>
                 </SheetTrigger>
-                <RangeSheet minValue={contest?.minValue} maxValue={contest?.maxValue} />
+                <RangeSheet
+                  minValue={contest?.minValue}
+                  maxValue={contest?.maxValue}
+                />
               </Sheet>
 
               <Dialog>

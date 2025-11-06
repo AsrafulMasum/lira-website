@@ -196,12 +196,12 @@ const RangeSheet = ({
           >
             Clear
           </Button>
-          <Button
+          {/* <Button
             variant="outline"
             className="bg-bg h-12 px-4 text-base font-bold text-primary rounded-2xl cursor-pointer flex-1"
           >
             View list
-          </Button>
+          </Button> */}
           <Button
             onClick={handleSelect}
             className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer flex-1"
