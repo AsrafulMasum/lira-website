@@ -174,17 +174,20 @@ const ManageSocialLinks = () => {
     <div className="container mx-auto p-6 max-w-7xl">
       {/* Header Section */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold flex items-center gap-2">
               <Globe className="w-8 h-8 text-green-600" />
               Manage Social Links
-            </h1>
-            <p className="text-gray-600 mt-2">
+            </CardTitle>
+            <p className="text-muted-foreground">
+              {" "}
               Update your website&apos;s contact information and social media
               links.
             </p>
-          </div>
+          </CardHeader>
+        </Card>
+        <div className="flex items-center justify-between mb-4">
           {hasUnsavedChanges && (
             <Badge
               variant="secondary"

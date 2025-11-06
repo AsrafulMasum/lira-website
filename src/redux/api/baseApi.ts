@@ -69,6 +69,7 @@ const api = createApi({
     "settings",
     "faqs",
     "communityPosts",
+    "waitingList",
   ],
 });
 

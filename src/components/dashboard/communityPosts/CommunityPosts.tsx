@@ -1,7 +1,10 @@
 "use client";
 
 import Loading from "@/app/loading";
-import { useGetCommunityPostsQuery } from "@/redux/apiSlices/communitySlice";
+import {
+  useChangeCommunityPostStatusMutation,
+  useGetCommunityPostsQuery,
+} from "@/redux/apiSlices/communitySlice";
 import {
   Table,
   TableBody,
@@ -18,14 +21,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Eye } from "lucide-react";
+import { Eye, CheckCircle2, XCircle } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
 
 const CommunityPosts = () => {
-  const { data: posts, isLoading } = useGetCommunityPostsQuery(undefined);
+  const {
+    data: posts,
+    isLoading,
+    refetch,
+  } = useGetCommunityPostsQuery(undefined);
   const [selectedPost, setSelectedPost] = useState<any | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  const [changeCommunityPostStatus, { isLoading: isActionLoading }] =
+    useChangeCommunityPostStatusMutation();
 
   if (isLoading)
     return (
@@ -45,17 +57,48 @@ const CommunityPosts = () => {
     return text.length > length ? text.slice(0, length) + "…" : text;
   };
 
+  const handleApprove = async () => {
+    if (!selectedPost?._id) return;
+    try {
+      await changeCommunityPostStatus({
+        postId: selectedPost._id,
+        status: "approved",
+      }).unwrap();
+      toast.success("Post approved");
+      setSelectedPost({ ...selectedPost, status: "approved" });
+      await refetch();
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to approve post");
+    }
+    setIsOpen(false);
+  };
+
+  const handleReject = async () => {
+    if (!selectedPost?._id) return;
+    try {
+      await changeCommunityPostStatus({
+        postId: selectedPost._id,
+        status: "rejected",
+      }).unwrap();
+      toast.success("Post rejected");
+      setSelectedPost({ ...selectedPost, status: "rejected" });
+      await refetch();
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to reject post");
+    }
+    setIsOpen(false);
+  };
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Community Posts</h2>
-        <div className="text-sm text-gray-500">
-          Total: {posts?.data?.meta?.total ?? communityPosts.length} • Page{" "}
-          {posts?.data?.meta?.page ?? 1} of {posts?.data?.meta?.totalPage ?? 1}
-        </div>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">Community Posts</CardTitle>
+          <p className="text-muted-foreground">Manage community posts</p>
+        </CardHeader>
+      </Card>
 
-      <div className="rounded-md border">
+      <div className="bg-white shadow-md rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -96,11 +139,13 @@ const CommunityPosts = () => {
                   <TableCell>
                     <Badge
                       variant={
-                        post?.status === "approved"
+                        post?.status === "pending"
+                          ? "secondary"
+                          : post?.status === "approved"
                           ? "default"
                           : post?.status === "rejected"
                           ? "destructive"
-                          : "outline"
+                          : "secondary"
                       }
                     >
                       {post?.status}
@@ -108,7 +153,34 @@ const CommunityPosts = () => {
                   </TableCell>
                   <TableCell>
                     {post?.createdAt
-                      ? format(new Date(post.createdAt), "yyyy-MM-dd HH:mm")
+                      ? (() => {
+                          const now = new Date();
+                          const created = new Date(post.createdAt);
+                          const diffSec = Math.floor(
+                            (now.getTime() - created.getTime()) / 1000
+                          );
+                          if (diffSec < 60) return `${diffSec}s ago`;
+                          const diffMin = Math.floor(diffSec / 60);
+                          if (diffMin < 60)
+                            return `${diffMin} min${
+                              diffMin > 1 ? "s" : ""
+                            } ago`;
+                          const diffHr = Math.floor(diffMin / 60);
+                          if (diffHr < 24)
+                            return `${diffHr} hour${diffHr > 1 ? "s" : ""} ago`;
+                          const diffDay = Math.floor(diffHr / 24);
+                          if (diffDay < 30)
+                            return `${diffDay} day${
+                              diffDay > 1 ? "s" : ""
+                            } ago`;
+                          const diffMon = Math.floor(diffDay / 30);
+                          if (diffMon < 12)
+                            return `${diffMon} month${
+                              diffMon > 1 ? "s" : ""
+                            } ago`;
+                          const diffYr = Math.floor(diffDay / 365);
+                          return `${diffYr} year${diffYr > 1 ? "s" : ""} ago`;
+                        })()
                       : "-"}
                   </TableCell>
                   <TableCell className="text-right">
@@ -137,13 +209,15 @@ const CommunityPosts = () => {
           </DialogHeader>
           {selectedPost && (
             <div className="space-y-3 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="font-medium">Title:</span>{" "}
-                {selectedPost?.title}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-medium">Description:</span>{" "}
-                {selectedPost?.description}
+              <div className="">
+                <div className="flex flex-col font-semibold gap-2 bg-gray-50 p-2 rounded-md mb-2">
+                  <span className="font-medium">Title:</span>{" "}
+                  {selectedPost?.title}
+                </div>
+                <div className="flex flex-col font-semibold gap-2 bg-gray-50 p-2 rounded-md">
+                  <span className="font-medium">Description:</span>{" "}
+                  {selectedPost?.description}
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -170,11 +244,13 @@ const CommunityPosts = () => {
                   <span className="font-medium">Status:</span>{" "}
                   <Badge
                     variant={
-                      selectedPost?.status === "approved"
+                      selectedPost?.status === "pending"
+                        ? "secondary"
+                        : selectedPost?.status === "approved"
                         ? "default"
                         : selectedPost?.status === "rejected"
                         ? "destructive"
-                        : "outline"
+                        : "secondary"
                     }
                   >
                     {selectedPost?.status}
@@ -192,8 +268,33 @@ const CommunityPosts = () => {
               </div>
 
               <div className="pt-2 flex justify-end gap-2">
-                {/* Placeholder for future actions like Approve/Reject */}
-                <Button variant="outline" onClick={() => setIsOpen(false)}>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={handleApprove}
+                  disabled={
+                    isActionLoading || selectedPost?.status === "approved"
+                  }
+                  className="inline-flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <CheckCircle2 className="h-4 w-4" /> Approve
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleReject}
+                  disabled={
+                    isActionLoading || selectedPost?.status === "rejected"
+                  }
+                  className="inline-flex items-center gap-1"
+                >
+                  <XCircle className="h-4 w-4" /> Reject
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsOpen(false)}
+                >
                   Close
                 </Button>
               </div>

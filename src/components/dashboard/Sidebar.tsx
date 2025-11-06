@@ -21,6 +21,7 @@ import {
   NotebookPen,
 } from "lucide-react";
 import { RiCommunityLine } from "react-icons/ri";
+import { FaRegHourglassHalf } from "react-icons/fa6";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -92,6 +93,11 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onCollapse }) => {
       name: "Community Posts",
       href: "/dashboard/community-posts",
       icon: <RiCommunityLine className="h-5 w-5" />,
+    },
+    {
+      name: "Waiting List",
+      href: "/dashboard/waiting-list",
+      icon: <FaRegHourglassHalf className="h-5 w-5" />,
     },
     {
       name: "Social Media Links",
@@ -186,7 +192,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onCollapse }) => {
 
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto p-4">
-            <ul className="space-y-2">
+            <ul className="space-y-1">
               {navItems.map((item) => (
                 <li key={item.href}>
                   <Link
