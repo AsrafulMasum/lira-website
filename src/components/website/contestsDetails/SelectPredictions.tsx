@@ -59,6 +59,8 @@ export function SelectPredictions({
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
   const activeRange = searchParams.get("range") || tiers?.tiers[0]._id;
+  const minValue = searchParams.get("rangeStart") || "";
+  const maxValue = searchParams.get("rangeEnd") || "";
   const activeTier = tiersArr?.find((tier) => tier._id === activeRange);
 
   const [apiResult, setApiResult] = useState<any>(null);
@@ -67,13 +69,28 @@ export function SelectPredictions({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiRequest(
-          `/contest/contest/prediction/${contestId}/tiers/${activeRange}`,
-          {
-            method: "GET",
-            cache: "no-store",
-          }
-        );
+        let url = `/contest/contest/prediction/${contestId}/tiers/${activeRange}`;
+
+        const queryParams = new URLSearchParams();
+
+        if (minValue !== undefined && minValue !== null && minValue !== "") {
+          queryParams.append("minValue", minValue);
+        }
+
+        if (maxValue !== undefined && maxValue !== null && maxValue !== "") {
+          queryParams.append("maxValue", maxValue);
+        }
+
+        // Append query params only if there are any
+        if ([...queryParams].length > 0) {
+          url += `?${queryParams.toString()}`;
+        }
+
+        const response = await apiRequest(url, {
+          method: "GET",
+          cache: "no-store",
+        });
+
         setApiResult(response.data);
       } catch (error) {
         console.error("Failed to fetch prediction data:", error);
@@ -83,7 +100,7 @@ export function SelectPredictions({
     if (contestId && activeRange) {
       fetchData();
     }
-  }, [contestId, activeRange]);
+  }, [contestId, activeRange, minValue, maxValue]);
 
   const toggleItem = (item: { _id: string; price: string; value: number }) => {
     const newSelected = new Set(selectedItems);

@@ -8,7 +8,7 @@ import getProfile from "@/helpers/getProfile";
 import { apiRequest } from "@/helpers/apiRequest";
 import Link from "next/link";
 
-const Settings = async () => {
+const Settings = async ({ notificationData }: any) => {
   const profile = await getProfile();
 
   const { data } = await apiRequest("/withdrawals/cards", {
@@ -22,7 +22,10 @@ const Settings = async () => {
       {/* Breadcrumb Navigation */}
       <div className="py-4">
         <div className="flex items-center gap-0.5 text-sm text-gray-600">
-          <Link href="/profile" className="text-primary cursor-pointer hover:underline">
+          <Link
+            href="/profile"
+            className="text-primary cursor-pointer hover:underline"
+          >
             Profile
           </Link>
           <ChevronRight className="size-4 text-primary" />
@@ -70,7 +73,7 @@ const Settings = async () => {
           </TabsContent>
 
           <TabsContent value="notifications">
-            <Notifications />
+            <Notifications notificationData={notificationData} />
           </TabsContent>
 
           <TabsContent value="security">

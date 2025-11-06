@@ -100,7 +100,10 @@ const ContestDetailsMobileView = ({ contest, tiers, livePrice }: any) => {
               Range
             </button>
           </SheetTrigger>
-          <RangeSheet />
+          <RangeSheet
+            minValue={contest?.minValue}
+            maxValue={contest?.maxValue}
+          />
         </Sheet>
 
         <Dialog>

@@ -1,73 +1,127 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
-import { useMediaQuery } from "react-responsive"
-import RangeBarChart from "@/components/shared/RangeBarChart"
+import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState, useEffect } from "react";
+import { useMediaQuery } from "react-responsive";
+import { useSearchParams } from "next/navigation";
+import RangeBarChart from "@/components/shared/RangeBarChart";
+import { useUpdateSearchParams } from "@/hooks/useUpdateSearchParams";
 
-// Sample data for the chart
-const chartData = [
-  { value: 3, amount: 118000, height: 60 },
-  { value: 4, amount: 119000, height: 80 },
-  { value: 6, amount: 120000, height: 100 },
-  { value: 8, amount: 121000, height: 70 },
-  { value: 4, amount: 122000, height: 50 },
-  { value: 3, amount: 124000, height: 40 },
-]
+function generateChartData(minAmount: number, maxAmount: number) {
+  const fixedHeights = [60, 80, 100, 70, 50];
+  const numberOfPoints = 5;
+  const step = (maxAmount - minAmount) / (numberOfPoints - 1);
 
-const RangeSheet = () => {
-  const [rangeStart, setRangeStart] = useState(118000)
-  const [rangeEnd, setRangeEnd] = useState(120500)
+  const data = [];
 
-  const minValue = 118000
-  const maxValue = 124000
+  for (let i = 0; i < numberOfPoints; i++) {
+    const amount = Math.round(minAmount + step * i);
+    const value = Math.floor(Math.random() * 6) + 1;
+    const height = fixedHeights[i];
 
-  const isMobile = useMediaQuery({ maxWidth: 767 })
+    data.push({ value, amount, height });
+  }
+
+  return data;
+}
+
+const RangeSheet = ({
+  minValue,
+  maxValue,
+}: {
+  minValue: number;
+  maxValue: number;
+}) => {
+  const searchParams = useSearchParams();
+  const updateSearchParams = useUpdateSearchParams();
+  const chartData = generateChartData(minValue, maxValue);
+
+  const [rangeStart, setRangeStart] = useState<number | null>(null);
+  const [rangeEnd, setRangeEnd] = useState<number | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const paramStart = searchParams.get("rangeStart");
+    const paramEnd = searchParams.get("rangeEnd");
+
+    if (paramStart && paramEnd) {
+      setRangeStart(Number(paramStart));
+      setRangeEnd(Number(paramEnd));
+    } else {
+      setRangeStart(minValue);
+      setRangeEnd(maxValue);
+    }
+    setIsLoaded(true);
+  }, [minValue, maxValue]);
+
+  const isMobile = useMediaQuery({ maxWidth: 767 });
 
   const formatCurrency = (value: number) => {
     if (value >= 1000) {
-      return `$${(value / 1000).toFixed(value % 1000 === 0 ? 0 : 1)}k`
+      return `$${(value / 1000).toFixed(value % 1000 === 0 ? 0 : 1)}k`;
     }
-    return `$${value}`
-  }
+    return `$${value}`;
+  };
 
-  const formatInputValue = (value: number) => {
-    return value.toLocaleString()
-  }
+  const formatInputValue = (value: number | null) => {
+    if (value === null || value === undefined) return "";
+    return value.toLocaleString();
+  };
 
   const handleFromChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const cleanValue = e.target.value.replace(/,/g, "")
-    const numericValue = Number(cleanValue)
+    const cleanValue = e.target.value.replace(/,/g, "");
+    const numericValue = Number(cleanValue);
 
     if (!isNaN(numericValue) && numericValue >= minValue) {
-      const clampedValue = Math.min(numericValue, rangeEnd - 1000)
-      setRangeStart(clampedValue)
+      const clampedValue = Math.min(
+        numericValue,
+        rangeEnd ? rangeEnd - 1000 : maxValue
+      );
+      setRangeStart(clampedValue);
     }
-  }
+  };
 
   const handleToChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const cleanValue = e.target.value.replace(/,/g, "")
-    const numericValue = Number(cleanValue)
+    const cleanValue = e.target.value.replace(/,/g, "");
+    const numericValue = Number(cleanValue);
 
     if (!isNaN(numericValue) && numericValue <= maxValue) {
-      const clampedValue = Math.max(numericValue, rangeStart + 1000)
-      setRangeEnd(clampedValue)
+      const clampedValue = Math.max(
+        numericValue,
+        rangeStart ? rangeStart + 1000 : minValue
+      );
+      setRangeEnd(clampedValue);
     }
-  }
+  };
 
   const handleClear = () => {
-    setRangeStart(minValue)
-    setRangeEnd(maxValue)
-  }
+    setRangeStart(minValue);
+    setRangeEnd(maxValue);
+  };
+
+  const handleSelect = () => {
+    updateSearchParams({
+      rangeStart: String(rangeStart),
+      rangeEnd: String(rangeEnd),
+    });
+  };
 
   const takenValues = chartData
-    .filter((item) => item.amount >= rangeStart && item.amount <= rangeEnd)
-    .map((item) => formatCurrency(item.amount))
+    .filter(
+      (item) =>
+        item.amount >= (rangeStart || 0) &&
+        item.amount <= (rangeEnd || maxValue)
+    )
+    .map((item) => formatCurrency(item.amount));
+
+  if (!isLoaded) {
+    return null;
+  }
 
   return (
     <SheetContent
@@ -75,7 +129,9 @@ const RangeSheet = () => {
       side={isMobile ? "bottom" : "right"}
     >
       <SheetHeader className="space-y-0 p-0 pb-16">
-        <SheetTitle className="text-xl font-semibold text-[#002913]">Choose a range</SheetTitle>
+        <SheetTitle className="text-xl font-semibold text-[#002913]">
+          Choose a range
+        </SheetTitle>
       </SheetHeader>
 
       <div className="space-y-6 h-full flex flex-col justify-between">
@@ -83,11 +139,11 @@ const RangeSheet = () => {
           <div className="space-y-4">
             <RangeBarChart
               data={chartData}
-              rangeStart={rangeStart}
-              rangeEnd={rangeEnd}
+              rangeStart={rangeStart ?? minValue}
+              rangeEnd={rangeEnd ?? maxValue}
               onRangeChange={(start, end) => {
-                setRangeStart(start)
-                setRangeEnd(end)
+                setRangeStart(start);
+                setRangeEnd(end);
               }}
               minValue={minValue}
               maxValue={maxValue}
@@ -140,19 +196,22 @@ const RangeSheet = () => {
           >
             Clear
           </Button>
-          <Button
+          {/* <Button
             variant="outline"
             className="bg-bg h-12 px-4 text-base font-bold text-primary rounded-2xl cursor-pointer flex-1"
           >
             View list
-          </Button>
-          <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer flex-1">
+          </Button> */}
+          <Button
+            onClick={handleSelect}
+            className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer flex-1"
+          >
             Select
           </Button>
         </div>
       </div>
     </SheetContent>
-  )
-}
+  );
+};
 
-export default RangeSheet
+export default RangeSheet;
