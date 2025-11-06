@@ -9,7 +9,19 @@ const communityApi = api.injectEndpoints({
       }),
       providesTags: ["communityPosts"],
     }),
+
+    changeCommunityPostStatus: builder.mutation({
+      query: ({ postId, status }) => ({
+        url: `/community/approve/${postId}`,
+        method: "PATCH",
+        body: { status },
+      }),
+      invalidatesTags: ["communityPosts"],
+    }),
   }),
 });
 
-export const { useGetCommunityPostsQuery } = communityApi;
+export const {
+  useGetCommunityPostsQuery,
+  useChangeCommunityPostStatusMutation,
+} = communityApi;

@@ -95,6 +95,24 @@ const publicApi = api.injectEndpoints({
         };
       },
     }),
+
+    // wait list
+
+    getAllWaitingList: builder.query({
+      query: ({ page, limit }) => ({
+        url: `/wait-list?page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["waitingList"],
+    }),
+
+    deleteWaitingList: builder.mutation({
+      query: (id) => ({
+        url: `/wait-list/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["waitingList"],
+    }),
   }),
 });
 
@@ -110,4 +128,7 @@ export const {
   useDeleteFaqMutation,
 
   useGetDashboardAnalyticsQuery,
+
+  useGetAllWaitingListQuery,
+  useDeleteWaitingListMutation,
 } = publicApi;

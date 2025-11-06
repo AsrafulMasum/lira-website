@@ -1,15 +1,24 @@
 import TypesManagement from "@/components/dashboard/typesAndUnits/TypesManagement";
 import UnitManagement from "@/components/dashboard/typesAndUnits/UnitManagement";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Page = () => {
   return (
-    <div className="space-y-6 bg-white rounded-md p-6 min-h-screen">
-      <h1 className="text-2xl font-semibold text-primary">
-        Unit & Types Management
-      </h1>
+    <div className="space-y-6 rounded-md p-6 min-h-screen">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">
+            Unit & Types Management
+          </CardTitle>
+          <p className="text-muted-foreground">Manage unit types and units</p>
+        </CardHeader>
+      </Card>
 
-      <Tabs defaultValue="types" className="w-full">
+      <Tabs
+        defaultValue="types"
+        className="w-full bg-white rounded-lg p-4 border border-gray-200 shadow-md"
+      >
         <TabsList className="mb-4">
           <TabsTrigger value="types">Types</TabsTrigger>
           <TabsTrigger value="units">Units</TabsTrigger>

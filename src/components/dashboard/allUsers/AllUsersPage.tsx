@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import Image from "next/image";
 import { toast } from "sonner";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface User {
   _id: string;
@@ -124,10 +125,17 @@ const AllUsersPage = () => {
   };
 
   return (
-    <div className="container mx-auto py-6">
-      <h1 className="text-2xl font-bold mb-6">All Users</h1>
+    <div className="container mx-auto">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">All Users</CardTitle>
+          <p className="text-muted-foreground">
+            Manage all users in the system
+          </p>
+        </CardHeader>
+      </Card>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="rounded-lg bg-white shadow mt-10 overflow-hidden">
         <Table>
           <TableHeader className="bg-green-50">
             <TableRow>

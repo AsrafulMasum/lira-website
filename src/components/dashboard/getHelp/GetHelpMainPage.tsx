@@ -27,6 +27,7 @@ import {
 } from "@/redux/apiSlices/publicSlice";
 import Loading from "@/app/loading";
 import { toast } from "sonner";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
 const GetHelpMainPage = () => {
   const [selectedMessage, setSelectedMessage] = useState<any>(null);
@@ -142,15 +143,20 @@ const GetHelpMainPage = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-white rounded-md min-h-screen">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Help Messages</h1>
-      </div>
+    <div className="p-6 space-y-6 rounded-md min-h-screen">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">Help Messages</CardTitle>
+          <p className="text-muted-foreground">
+            View and manage help messages from users
+          </p>
+        </CardHeader>
+      </Card>
 
-      <div className="rounded-md border">
+      <div className="rounded-md bg-white border">
         <Table>
-          <TableHeader className="bg-green-50">
-            <TableRow>
+          <TableHeader className="bg-green-50 rounded-t-2xl">
+            <TableRow className="">
               <TableHead>Serial</TableHead>
               <TableHead>User</TableHead>
               <TableHead>Email</TableHead>
