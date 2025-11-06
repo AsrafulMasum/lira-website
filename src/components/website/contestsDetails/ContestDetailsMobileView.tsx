@@ -77,7 +77,7 @@ const ContestDetailsMobileView = ({ contest, tiers, livePrice }: any) => {
               <Search size={16} /> Search
             </button>
           </SheetTrigger>
-          <SearchSheet />
+          <SearchSheet contestId={contest?._id} tiers={tiers} />
         </Sheet>
 
         <Sheet>
