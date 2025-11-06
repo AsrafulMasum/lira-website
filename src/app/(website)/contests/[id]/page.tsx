@@ -29,7 +29,7 @@ const page = async ({ params, searchParams }: PageProps) => {
 
   const group = data?.group;
   const category = data?.category;
-
+  console.log(data);
   let livePrice = null;
   let liveNews = null;
 
