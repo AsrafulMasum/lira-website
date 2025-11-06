@@ -1,12 +1,17 @@
 import Settings from "@/components/profile/settings/Settings";
+import { apiRequest } from "@/helpers/apiRequest";
 import ContainerLayout from "@/layout/ContainerLayout";
 import React from "react";
 
-const page = () => {
+const page = async () => {
+  const { data:notificationData } = await apiRequest("/notifications/user-preferences", {
+    method: "GET",
+  });
+  
   return (
     <section className="bg-[#FAFFFC]">
       <ContainerLayout>
-        <Settings />
+        <Settings notificationData={notificationData} />
       </ContainerLayout>
     </section>
   );
