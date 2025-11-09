@@ -8,7 +8,6 @@ import RangeSheet from "./sheets/RangeSheet";
 import ContestCountdown from "@/hooks/ContestCountdown";
 import SearchSheet from "./sheets/SearchSheet";
 import moment from "moment";
-import { apiRequest } from "@/helpers/apiRequest";
 
 const ContestDetailsLeftSection = ({
   contest,

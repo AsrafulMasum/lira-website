@@ -5,7 +5,7 @@ import Upvotes from "./communityTabsContents/Upvotes";
 import MyIdeas from "./communityTabsContents/MyIdeas";
 import ContainerLayout from "@/layout/ContainerLayout";
 
-const CommunityTabs = () => {
+const CommunityTabs = ({ posts, voted, myPosts }: any) => {
   return (
     <section>
       <div>
@@ -44,15 +44,15 @@ const CommunityTabs = () => {
 
 
             <TabsContent value="feeds">
-              <Feeds />
+              <Feeds posts={posts} />
             </TabsContent>
 
             <TabsContent value="upvotes">
-              <Upvotes />
+              <Upvotes voted={voted} />
             </TabsContent>
 
             <TabsContent value="my-ideas">
-              <MyIdeas />
+              <MyIdeas myPosts={myPosts} />
             </TabsContent>
 
         </Tabs>

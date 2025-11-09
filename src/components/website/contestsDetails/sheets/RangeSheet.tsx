@@ -57,7 +57,7 @@ const RangeSheet = ({
       setRangeEnd(maxValue);
     }
     setIsLoaded(true);
-  }, [minValue, maxValue]);
+  }, [minValue, maxValue, searchParams]);
 
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
