@@ -85,7 +85,7 @@ const Contests = ({ data, category }: { data: any; category: string }) => {
                       {contest?.prize?.title}
                     </p>
                     <p className="text-primary text-sm font-semibold">
-                      $ {contest?.prize?.prizePool}{" "}
+                      $ {contest?.prize?.prizePool?.toLocaleString()}{" "}
                       <span className="text-gray-text font-normal pl-1.5">
                         Prize pool
                       </span>

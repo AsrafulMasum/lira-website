@@ -178,7 +178,7 @@ const SignUp = () => {
                       id="userName"
                       name="userName"
                       type="text"
-                      placeholder="Md. Atik"
+                      placeholder="John Doe"
                       required
                       className="bg-white shadow-none h-10"
                     />
