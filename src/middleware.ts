@@ -1,52 +1,45 @@
-// import { NextResponse } from "next/server";
-// import type { NextRequest } from "next/server";
-// import { apiRequest } from "./helpers/apiRequest";
-
-// // This middleware runs before every request
-// export async function middleware(request: NextRequest) {
-//   const { data: groups } = await apiRequest("/groups", { method: "GET" });
-//   const { data: tabs } = await apiRequest(
-//     `/categories/?groupId=${groups[0]?._id}`,
-//     {
-//       method: "GET",
-//     }
-//   );
-//   const { pathname } = request.nextUrl;
-
-//   // Example 1: Redirect root "/" to another route
-//   if (pathname === "/") {
-//     return NextResponse.redirect(
-//       new URL(`/marketplace/${groups[0]?._id}?tab=${tabs[0]?._id}`, request.url)
-//     );
-//   }
-// }
-
-// // Configure which routes run through this middleware
-// export const config = {
-//   matcher: ["/"],
-// };
-
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { apiRequest } from "./helpers/apiRequest";
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
 
-  // ✅ Get accessToken from cookies
+  // Check if we're on the callback route
+  if (pathname === "/auth/callback") {
+    const accessToken = searchParams.get("accessToken");
+    const refreshToken = searchParams.get("refreshToken");
+    const success = searchParams.get("success");
+
+    if (accessToken && refreshToken && success === "true") {
+      // Store tokens in cookies (secure & HTTP-only)
+      const response = NextResponse.redirect(new URL("/", request.url));
+
+      response.cookies.set("accessToken", accessToken, {
+        httpOnly: false,
+        path: "/",
+      });
+
+      response.cookies.set("refreshToken", refreshToken, {
+        httpOnly: false,
+        path: "/",
+      });
+
+      return response;
+    }
+
+    // If something’s missing, redirect to login
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // Get accessToken from cookies for protected routes
   const accessToken = request.cookies.get("accessToken")?.value;
-
-  // ✅ Protected routes
   const protectedRoutes = ["/contests", "/profile", "/community", "/dashboard"];
-
-  // Check if current path matches any protected route
   const isProtected = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   );
 
-  // ✅ If route is protected and no accessToken
-  // - For dashboard: redirect to home
-  // - For others: redirect to login
+  // Block access if not authenticated
   if (isProtected && !accessToken) {
     if (pathname.startsWith("/dashboard")) {
       return NextResponse.redirect(new URL("/", request.url));
@@ -54,15 +47,18 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // ✅ If logged in and trying to go to login page → redirect to home
+  // Prevent logged-in users from visiting /login
   if (accessToken && pathname === "/login") {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // ✅ Example: redirect root "/" to first group/tab
+  // Root redirection logic
   if (pathname === "/") {
     try {
-      const { data: groups } = await apiRequest("/groups", { method: "GET", cache: "no-store" });
+      const { data: groups } = await apiRequest("/groups", {
+        method: "GET",
+        cache: "no-store",
+      });
       const { data: tabs } = await apiRequest(
         `/categories/?groupId=${groups?.[0]?._id}`,
         { method: "GET", cache: "no-store" }
@@ -77,7 +73,6 @@ export async function middleware(request: NextRequest) {
         );
       }
 
-      // fallback if data missing
       return NextResponse.redirect(new URL("/marketplace", request.url));
     } catch (err) {
       console.error("Middleware error:", err);
@@ -85,18 +80,18 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // ✅ Allow request to continue
+  // Let the request continue
   return NextResponse.next();
 }
 
-// ✅ Configure matcher for routes that use this middleware
 export const config = {
   matcher: [
-    "/", // for home redirection
-    "/login", // for login redirect logic
-    "/contests/:path*", // protect contest pages
-    "/community/:path*", // protected community pages
-    "/dashboard/:path*", // protected admin pages
-    "/profile", // protect profile page
+    "/",
+    "/login",
+    "/auth/callback", // include callback route
+    "/contests/:path*",
+    "/community/:path*",
+    "/dashboard/:path*",
+    "/profile",
   ],
 };

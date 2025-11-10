@@ -33,7 +33,11 @@ const Navbar = async () => {
                   >
                     {profile?.image ? (
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${profile?.image}`}
+                        src={
+                          profile?.image?.startsWith("http")
+                            ? profile?.image
+                            : `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${profile?.image}`
+                        }
                         alt="Profile Picture"
                         width={36}
                         height={36}

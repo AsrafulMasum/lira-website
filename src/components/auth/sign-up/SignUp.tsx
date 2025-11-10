@@ -90,7 +90,6 @@ const states = US_STATES.map((state) => ({
     .replace(/^./, (str) => str.toUpperCase()),
 }));
 
-
 const SignUp = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
@@ -140,6 +139,14 @@ const SignUp = () => {
       console.log("Error fetching data:", error);
       toast.error("Sign up failed", { id: "signUp" });
     }
+  };
+
+  const handleGoogle = async () => {
+    // redirect to google auth page
+    const params = new URLSearchParams({
+      from: "register",
+    });
+    router.push(`https://rakibur5000.binarybards.online/api/v1/auth/google`);
   };
 
   return (
@@ -302,7 +309,20 @@ const SignUp = () => {
                         htmlFor="terms"
                         className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
-                        I agree with terms of service and privacy policy
+                        I agree with{" "}
+                        <Link
+                          href="/terms-and-conditions"
+                          className="hover:underline hover:text-primary"
+                        >
+                          terms of service
+                        </Link>{" "}
+                        and{" "}
+                        <Link
+                          href="/privacy-and-policy"
+                          className="hover:underline hover:text-primary"
+                        >
+                          privacy policy
+                        </Link>
                       </label>
                     </div>
                   </div>
@@ -312,36 +332,36 @@ const SignUp = () => {
                     Sign Up
                   </Button>
                 </div>
-
-                {/* social button */}
-                <div className="flex justify-center items-center gap-4 md:mt-10">
-                  <Button
-                    className="bg-transparent hover:bg-transparent h-10 px-5 shadow-none"
-                    style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.10)" }}
-                  >
-                    <FcGoogle />
-                    <span className="text-[#606060]">Continue with Google</span>
-                  </Button>
-                </div>
-
-                <div className="flex justify-center items-center gap-3">
-                  <Separator className={`!w-[145px]`} />
-                  <p>OR</p>
-                  <Separator className={`!w-[145px]`} />
-                </div>
-
-                {/* link to sign up */}
-                <div className="text-center text-sm">
-                  Already have an account?{" "}
-                  <Link
-                    href="/login"
-                    className="font-medium text-primary hover:underline underline-offset-4"
-                  >
-                    Log In
-                  </Link>
-                </div>
               </div>
             </form>
+            {/* social button */}
+            <div className="flex justify-center items-center gap-4 md:mt-10 mb-4">
+              <Button
+                onClick={handleGoogle}
+                className="bg-transparent hover:bg-transparent h-10 px-5 shadow-none cursor-pointer"
+                style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.10)" }}
+              >
+                <FcGoogle />
+                <span className="text-[#606060]">Continue with Google</span>
+              </Button>
+            </div>
+
+            <div className="flex justify-center items-center gap-3">
+              <Separator className={`!w-[145px]`} />
+              <p>OR</p>
+              <Separator className={`!w-[145px]`} />
+            </div>
+
+            {/* link to sign up */}
+            <div className="text-center text-sm mt-4">
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className="font-medium text-primary hover:underline underline-offset-4"
+              >
+                Log In
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>
