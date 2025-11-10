@@ -146,7 +146,7 @@ const SignUp = () => {
     const params = new URLSearchParams({
       from: "register",
     });
-    router.push(`https://rakibur5000.binarybards.online/api/v1/auth/google`);
+    router.push(`https://www.api.liramarkets.com/api/v1/auth/google`);
   };
 
   return (
