@@ -55,9 +55,9 @@ export function SelectPredictions({
   const router = useRouter();
 
   const tiersArr = tiers?.tiers || [];
-
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
+  const selected = searchParams.get("items") || "";
   const activeRange = searchParams.get("range") || tiers?.tiers[0]._id;
   const minValue = searchParams.get("rangeStart") || "";
   const maxValue = searchParams.get("rangeEnd") || "";
@@ -102,6 +102,40 @@ export function SelectPredictions({
     }
   }, [contestId, activeRange, minValue, maxValue]);
 
+  useEffect(() => {
+    if (selected && apiResult?.length) {
+      const values = selected.split(",").map((v) => v.trim());
+      const matchedItems = apiResult
+        .filter((item: any) => values.includes(item.value?.toString()))
+        .map((item: any) =>
+          JSON.stringify({
+            _id: item._id,
+            price: Number(item.price),
+            value: item.value,
+          })
+        );
+      setSelectedItems(new Set(matchedItems));
+    }
+  }, [selected, apiResult]);
+
+  // const toggleItem = (item: { _id: string; price: string; value: number }) => {
+  //   console.log(item?.value);
+  //   const newSelected = new Set(selectedItems);
+  //   const key = JSON.stringify({
+  //     _id: item._id,
+  //     price: Number(item.price),
+  //     value: item.value,
+  //   });
+
+  //   if (newSelected.has(key)) {
+  //     newSelected.delete(key);
+  //   } else {
+  //     newSelected.add(key);
+  //   }
+
+  //   setSelectedItems(newSelected);
+  // };
+
   const toggleItem = (item: { _id: string; price: string; value: number }) => {
     const newSelected = new Set(selectedItems);
     const key = JSON.stringify({
@@ -110,10 +144,38 @@ export function SelectPredictions({
       value: item.value,
     });
 
+    // Get current items from searchParams
+    const selected = searchParams.get("items") || "";
+    const selectedList = selected
+      ? selected.split(",").map((v) => v.trim())
+      : [];
+
     if (newSelected.has(key)) {
+      // Remove item from state
       newSelected.delete(key);
+
+      // Remove item.value from search params
+      const updatedList = selectedList.filter(
+        (v) => v !== item.value.toString()
+      );
+      router.push(
+        `?${new URLSearchParams({
+          ...Object.fromEntries(searchParams),
+          items: updatedList.join(","),
+        }).toString()}`
+      );
     } else {
+      // Add item to state
       newSelected.add(key);
+
+      // Add item.value to search params
+      const updatedList = [...selectedList, item.value.toString()];
+      router.push(
+        `?${new URLSearchParams({
+          ...Object.fromEntries(searchParams),
+          items: updatedList.join(","),
+        }).toString()}`
+      );
     }
 
     setSelectedItems(newSelected);
@@ -164,6 +226,15 @@ export function SelectPredictions({
   // };
 
   const handlePayment = async () => {
+    const ids = Array.from(selectedItems).map((item) => {
+      const parsed = JSON.parse(item);
+      return { id: parsed._id };
+    });
+
+    if (ids.length === 0) {
+      toast.error("Please select at least one prediction.");
+      return;
+    }
     const payload = {
       contestId,
     };
@@ -319,6 +390,40 @@ export function SelectPredictions({
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
+                    <DialogTitle>Be in waitlist</DialogTitle>
+                    <DialogDescription className="my-5">
+                      Please confirm that you want to join the waitlist. Once
+                      completed, this action cannot be undone.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button
+                        onClick={handlePayment}
+                        type="submit"
+                        className="bg-dark-primary px-4 hover:bg-dark-primary/90 text-primary-foreground cursor-pointer"
+                      >
+                        Confirm
+                      </Button>
+                    </DialogClose>
+                    {/* <Button
+                      onClick={handlePayment}
+                      type="submit"
+                      className="bg-dark-primary px-4 hover:bg-dark-primary/90 text-primary-foreground cursor-pointer"
+                    >
+                      Confirm
+                    </Button> */}
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+              {/* <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer">
+                    Continue
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
                     <DialogTitle>Confirm Payment</DialogTitle>
                     <DialogDescription className="my-5">
                       Please confirm that you want to proceed with this payment.
@@ -340,7 +445,7 @@ export function SelectPredictions({
                     </Button>
                   </DialogFooter>
                 </DialogContent>
-              </Dialog>
+              </Dialog> */}
             </div>
           </div>
         </Card>
