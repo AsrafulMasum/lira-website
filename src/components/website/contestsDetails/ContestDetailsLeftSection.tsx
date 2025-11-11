@@ -20,6 +20,8 @@ const ContestDetailsLeftSection = ({
   customValue: string | undefined;
   rules: string | undefined;
 }) => {
+  const predictions = contest?.predictions?.generatedPredictions;
+
   return (
     <div className="col-span-2">
       <div className="sticky top-[100px]">
@@ -81,6 +83,8 @@ const ContestDetailsLeftSection = ({
                 <RangeSheet
                   minValue={contest?.minValue}
                   maxValue={contest?.maxValue}
+                  predictions={predictions}
+                  contestId={contest?._id}
                 />
               </Sheet>
 

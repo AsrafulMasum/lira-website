@@ -12,7 +12,14 @@ import AddCustomValue from "./AddCustomValue";
 import SearchSheet from "./sheets/SearchSheet";
 import moment from "moment";
 
-const ContestDetailsMobileView = ({ contest, tiers, livePrice, rules }: any) => {
+const ContestDetailsMobileView = ({
+  contest,
+  tiers,
+  livePrice,
+  rules,
+}: any) => {
+  const predictions = contest?.predictions?.generatedPredictions;
+
   return (
     <section className="pt-5">
       <h4 className="text-2xl font-semibold text-[#002913]">
@@ -103,6 +110,8 @@ const ContestDetailsMobileView = ({ contest, tiers, livePrice, rules }: any) => 
           <RangeSheet
             minValue={contest?.minValue}
             maxValue={contest?.maxValue}
+            predictions={predictions}
+            contestId={contest?._id}
           />
         </Sheet>
 
