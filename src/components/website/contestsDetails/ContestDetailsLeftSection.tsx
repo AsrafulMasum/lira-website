@@ -8,17 +8,20 @@ import RangeSheet from "./sheets/RangeSheet";
 import ContestCountdown from "@/hooks/ContestCountdown";
 import SearchSheet from "./sheets/SearchSheet";
 import moment from "moment";
-import { apiRequest } from "@/helpers/apiRequest";
 
 const ContestDetailsLeftSection = ({
   contest,
   tiers,
   customValue,
+  rules,
 }: {
   contest: any;
   tiers: any;
   customValue: string | undefined;
+  rules: string | undefined;
 }) => {
+  const predictions = contest?.predictions?.generatedPredictions;
+
   return (
     <div className="col-span-2">
       <div className="sticky top-[100px]">
@@ -80,6 +83,8 @@ const ContestDetailsLeftSection = ({
                 <RangeSheet
                   minValue={contest?.minValue}
                   maxValue={contest?.maxValue}
+                  predictions={predictions}
+                  contestId={contest?._id}
                 />
               </Sheet>
 
@@ -106,8 +111,9 @@ const ContestDetailsLeftSection = ({
         </div>
 
         <p className="text-gray-text font-semibold text-sm mt-4 text-center">
-          * Price is according to Bloomberg. Each prediction must be unique.
-          Closest prediction to the actual value wins
+          {/* * Price is according to Bloomberg. Each prediction must be unique.
+          Closest prediction to the actual value wins */}
+          {rules}
         </p>
       </div>
     </div>

@@ -49,7 +49,7 @@ const Contests = ({ data, category }: { data: any; category: string }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
         {data?.result?.map((contest: contest) => (
           <Link key={contest._id} href={`/contests/${contest._id}`}>
-            <Card className="max-w-[390px] lg:w-auto shadow-none">
+            <Card className="max-w-[390px] lg:w-auto shadow-none h-72 justify-between">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-[#002913] leading-[132%]">
                   {contest?.name} on{" "}
@@ -57,7 +57,7 @@ const Contests = ({ data, category }: { data: any; category: string }) => {
                     {moment(contest?.endTime).format("MMMM D [at] h:mm A")}
                   </span>
                 </CardTitle>
-                <CardDescription className="flex items-center justify-between text-sm text-gray">
+                <CardDescription className="flex flex-col md:flex-row md:items-center justify-between gap-1 text-sm text-gray">
                   <p className="flex items-center gap-2">
                     <Clock size={16} /> Ends In:{" "}
                     <ContestCountdown
@@ -85,7 +85,7 @@ const Contests = ({ data, category }: { data: any; category: string }) => {
                       {contest?.prize?.title}
                     </p>
                     <p className="text-primary text-sm font-semibold">
-                      $ {contest?.prize?.prizePool}{" "}
+                      $ {contest?.prize?.prizePool?.toLocaleString()}{" "}
                       <span className="text-gray-text font-normal pl-1.5">
                         Prize pool
                       </span>

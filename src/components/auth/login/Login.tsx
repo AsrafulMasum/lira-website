@@ -73,6 +73,14 @@ const Login = () => {
     }
   };
 
+  const handleGoogle = async () => {
+    // redirect to google auth page
+    const params = new URLSearchParams({
+      from: "register",
+    });
+    router.push(`https://www.api.liramarkets.com/api/v1/auth/google`);
+  };
+
   return (
     <div
       className={cn(
@@ -140,7 +148,9 @@ const Login = () => {
                       id="remember"
                       name="remember"
                       checked={remember}
-                      onCheckedChange={(val) => setRemember(val === 'indeterminate' ? false : val)}
+                      onCheckedChange={(val) =>
+                        setRemember(val === "indeterminate" ? false : val)
+                      }
                       className="size-5 border-primary"
                     />
                     <label
@@ -165,36 +175,36 @@ const Login = () => {
                 >
                   Log In
                 </Button>
-
-                {/* social buttons */}
-                <div className="flex justify-center items-center gap-4 md:mt-10">
-                  <Button
-                    className="bg-transparent hover:bg-transparent h-10 px-5 shadow-none"
-                    style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.10)" }}
-                  >
-                    <FcGoogle />
-                    <span className="text-[#606060]">Continue with Google</span>
-                  </Button>
-                </div>
-
-                <div className="flex justify-center items-center gap-3 md:mt-10">
-                  <Separator className="!w-[145px]" />
-                  <p>OR</p>
-                  <Separator className="!w-[145px]" />
-                </div>
-
-                {/* link to sign up */}
-                <div className="text-center text-sm">
-                  Don&apos;t have any account?{" "}
-                  <Link
-                    href="/sign-up"
-                    className="font-medium text-primary hover:underline underline-offset-4"
-                  >
-                    Sign Up
-                  </Link>
-                </div>
               </div>
             </form>
+            {/* social buttons */}
+            <div className="flex justify-center items-center gap-4 md:mt-10">
+              <Button
+                onClick={handleGoogle}
+                className="bg-transparent hover:bg-transparent h-10 px-5 shadow-none cursor-pointer"
+                style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.10)" }}
+              >
+                <FcGoogle />
+                <span className="text-[#606060]">Continue with Google</span>
+              </Button>
+            </div>
+
+            <div className="flex justify-center items-center gap-3 md:mt-10">
+              <Separator className="!w-[145px]" />
+              <p>OR</p>
+              <Separator className="!w-[145px]" />
+            </div>
+
+            {/* link to sign up */}
+            <div className="text-center text-sm">
+              Don&apos;t have any account?{" "}
+              <Link
+                href="/sign-up"
+                className="font-medium text-primary hover:underline underline-offset-4"
+              >
+                Sign Up
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>

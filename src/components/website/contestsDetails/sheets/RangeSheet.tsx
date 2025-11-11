@@ -8,9 +8,27 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import RangeBarChart from "@/components/shared/RangeBarChart";
-import { useUpdateSearchParams } from "@/hooks/useUpdateSearchParams";
+import { apiRequest } from "@/helpers/apiRequest";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+interface Prediction {
+  _id: string;
+  value: number;
+  isAvailable: boolean;
+  price: number;
+}
 
 function generateChartData(minAmount: number, maxAmount: number) {
   const fixedHeights = [60, 80, 100, 70, 50];
@@ -33,12 +51,16 @@ function generateChartData(minAmount: number, maxAmount: number) {
 const RangeSheet = ({
   minValue,
   maxValue,
+  predictions,
+  contestId,
 }: {
   minValue: number;
   maxValue: number;
+  predictions: Prediction[];
+  contestId: string;
 }) => {
   const searchParams = useSearchParams();
-  const updateSearchParams = useUpdateSearchParams();
+  const router = useRouter();
   const chartData = generateChartData(minValue, maxValue);
 
   const [rangeStart, setRangeStart] = useState<number | null>(null);
@@ -57,7 +79,7 @@ const RangeSheet = ({
       setRangeEnd(maxValue);
     }
     setIsLoaded(true);
-  }, [minValue, maxValue]);
+  }, [minValue, maxValue, searchParams]);
 
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
@@ -104,20 +126,58 @@ const RangeSheet = ({
     setRangeEnd(maxValue);
   };
 
-  const handleSelect = () => {
-    updateSearchParams({
-      rangeStart: String(rangeStart),
-      rangeEnd: String(rangeEnd),
+  // const handleSelect = async () => {
+  //   const start = rangeStart ?? minValue;
+  //   const end = rangeEnd ?? maxValue;
+
+  //   const ids = predictions
+  //     .filter(
+  //       (item) =>
+  //         item.isAvailable === true && item.value >= start && item.value <= end
+  //     )
+  //     .map((item) => ({ id: item._id }));
+  //   const payload = {
+  //     contestId,
+  //     generatedPredictionsIds: ids,
+  //   };
+  //   console.log(payload);
+
+  //   const res = await apiRequest("/orders/create-and-checkout", {
+  //     method: "POST",
+  //     body: payload,
+  //   });
+
+  //   if (res?.success) {
+  //     globalThis.location.href = res?.data?.url;
+  //   } else {
+  //     toast.error(res?.message || "Failed to initiate payment.");
+  //   }
+  // };
+
+  const handleSelect = async () => {
+    const payload = {
+      contestId,
+    };
+
+    const res = await apiRequest("/wait-list/create", {
+      method: "POST",
+      body: payload,
     });
+
+    if (res?.success) {
+      toast.success("You have been added to the WaitList.");
+      router.push("/profile");
+    }
   };
 
-  const takenValues = chartData
+  const takenValues = predictions
     .filter(
       (item) =>
-        item.amount >= (rangeStart || 0) &&
-        item.amount <= (rangeEnd || maxValue)
+        item.isAvailable === false &&
+        item.value >= (rangeStart ?? minValue) &&
+        item.value <= (rangeEnd ?? maxValue)
     )
-    .map((item) => formatCurrency(item.amount));
+    .map((item) => item.value);
 
   if (!isLoaded) {
     return null;
@@ -180,11 +240,13 @@ const RangeSheet = ({
           </div>
 
           {/* Information Text */}
-          <div className="text-center text-sm font-medium text-muted-foreground">
-            These numbers are taken: {takenValues.join(", ")}
-            <br />
-            you will receive the rest
-          </div>
+          {takenValues?.length !== 0 && (
+            <div className="text-center text-sm font-medium text-muted-foreground">
+              These numbers are taken: {takenValues.join(", ")}
+              <br />
+              you will receive the rest
+            </div>
+          )}
         </div>
 
         {/* Action Buttons */}
@@ -202,12 +264,70 @@ const RangeSheet = ({
           >
             View list
           </Button> */}
-          <Button
-            onClick={handleSelect}
-            className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer flex-1"
-          >
-            Select
-          </Button>
+          {/* <Dialog>
+            <DialogTrigger asChild>
+              <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer flex-1">
+                Select
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Confirm Payment</DialogTitle>
+                <DialogDescription className="my-5">
+                  Please confirm that you want to proceed with this payment.
+                  Once completed, this action cannot be reversed.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline" className="cursor-pointer">
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button
+                  onClick={handleSelect}
+                  type="submit"
+                  className="bg-dark-primary px-4 hover:bg-dark-primary/90 text-primary-foreground cursor-pointer"
+                >
+                  Confirm Payment
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog> */}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer flex-1">
+                Select
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Be in waitlist</DialogTitle>
+                <DialogDescription className="my-5">
+                  Please confirm that you want to join the waitlist. Once
+                  completed, this action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button
+                    onClick={handleSelect}
+                    type="submit"
+                    className="bg-dark-primary px-4 hover:bg-dark-primary/90 text-primary-foreground cursor-pointer"
+                  >
+                    Confirm
+                  </Button>
+                </DialogClose>
+                {/* <Button
+                      onClick={handlePayment}
+                      type="submit"
+                      className="bg-dark-primary px-4 hover:bg-dark-primary/90 text-primary-foreground cursor-pointer"
+                    >
+                      Confirm
+                    </Button> */}
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </SheetContent>

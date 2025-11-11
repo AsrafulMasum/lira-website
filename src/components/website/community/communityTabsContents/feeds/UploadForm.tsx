@@ -32,6 +32,7 @@ const UploadForm = () => {
         toast.error(res?.message, { id: "createPost" });
       }
     } catch (error) {
+      console.log(error)
       toast.error("Something went wrong. Please try again.", {
         id: "createPost",
       });

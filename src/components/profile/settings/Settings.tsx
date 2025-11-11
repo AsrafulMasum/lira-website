@@ -77,7 +77,7 @@ const Settings = async ({ notificationData }: any) => {
           </TabsContent>
 
           <TabsContent value="security">
-            <Security profile={profile} />
+            <Security />
           </TabsContent>
 
           <TabsContent value="payments">

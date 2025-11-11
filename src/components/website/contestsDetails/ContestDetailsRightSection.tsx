@@ -22,7 +22,7 @@ const ContestDetailsRightSection = ({ contest, livePrice, liveNews }: any) => {
       </h4>
 
       <p className="text-primary font-semibold text-2xl mt-2">
-        $ {contest?.prize?.prizePool}{" "}
+        $ {contest?.prize?.prizePool?.toLocaleString()}{" "}
         <span className="text-gray-text text-base">Prize pool</span>
       </p>
 
@@ -42,7 +42,7 @@ const ContestDetailsRightSection = ({ contest, livePrice, liveNews }: any) => {
           <h4 className="text-lg text-[#002913] font-semibold">
             Live {contest?.category} Price
           </h4>
-          <h4 className="text-primary font-semibold">$ {livePrice?.currentValue}</h4>
+          <h4 className="text-primary font-semibold">$ {livePrice?.currentValue?.toLocaleString()}</h4>
         </div>
 
         <div className="flex justify-between items-center mb-1">

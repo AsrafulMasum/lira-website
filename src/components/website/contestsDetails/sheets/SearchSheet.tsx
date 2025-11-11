@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { apiRequest } from "@/helpers/apiRequest";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { useUpdateSearchParams } from "@/hooks/useUpdateSearchParams";
 
 type Prediction = {
   value: string;
@@ -16,7 +17,7 @@ type Prediction = {
 type SearchSheetProps = {
   contestId: string;
   tiers: {
-    tiers: { _id: string }[];
+    tiers: { _id: string; pricePerPrediction: number }[];
   };
 };
 
@@ -30,7 +31,10 @@ const SearchSheet = ({ contestId, tiers }: SearchSheetProps) => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [filteredPredictions, setFilteredPredictions] = useState<string[]>([]);
 
-  // ✅ Fetch data dynamically
+  const updateSearchParams = useUpdateSearchParams();
+  const selected = searchParams.get("items") || "";
+
+  // Fetch data dynamically
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -52,7 +56,7 @@ const SearchSheet = ({ contestId, tiers }: SearchSheetProps) => {
     }
   }, [contestId, activeRange]);
 
-  // ✅ Dynamic filtering based on backend data
+  // Dynamic filtering based on backend data
   useEffect(() => {
     if (searchValue.trim() === "") {
       setFilteredPredictions([]);
@@ -69,12 +73,33 @@ const SearchSheet = ({ contestId, tiers }: SearchSheetProps) => {
     }
   }, [searchValue, items, apiResult]);
 
+  useEffect(() => {
+    const parsedItems = selected.split(",").map((item) => item.trim());
+    setItems(parsedItems);
+  }, [selected]);
+
+  // const removeItem = (index: number) => {
+  //   setItems(items.filter((_, i) => i !== index));
+  // };
+
+  // const handleRemoveAll = () => {
+  //   setItems([]);
+  // };
+
   const removeItem = (index: number) => {
-    setItems(items.filter((_, i) => i !== index));
+    const updatedItems = items.filter((_, i) => i !== index);
+    setItems(updatedItems);
+
+    // Update the URL search params
+    const itemString = updatedItems.join(",");
+    updateSearchParams({ items: itemString });
   };
 
   const handleRemoveAll = () => {
     setItems([]);
+
+    // Clear 'items' from URL search params
+    updateSearchParams({ items: "" });
   };
 
   const addPrediction = (prediction: string) => {
@@ -86,7 +111,11 @@ const SearchSheet = ({ contestId, tiers }: SearchSheetProps) => {
   };
 
   const handlePayment = () => {
-    toast.info("Payment will be available soon.");
+    toast.info("Items added to your list.");
+    console.log(items);
+
+    const itemString = items.join(",");
+    updateSearchParams({ items: itemString });
   };
 
   return (
@@ -100,7 +129,7 @@ const SearchSheet = ({ contestId, tiers }: SearchSheetProps) => {
         </SheetTitle>
       </SheetHeader>
 
-      {/* 🔍 Search Input */}
+      {/* Search Input */}
       <div className="mb-4 relative">
         <Input
           type="text"
@@ -127,7 +156,7 @@ const SearchSheet = ({ contestId, tiers }: SearchSheetProps) => {
         )}
       </div>
 
-      {/* 🧾 Selected Items */}
+      {/* Selected Items */}
       <div className="flex-1 overflow-y-auto space-y-3 pb-6 scrollbar-hide">
         {items.map((item, index) => (
           <div
@@ -153,7 +182,7 @@ const SearchSheet = ({ contestId, tiers }: SearchSheetProps) => {
         ))}
       </div>
 
-      {/* ⚙️ Bottom Summary */}
+      {/* Bottom Summary */}
       <div
         className="bg-white p-2 rounded-2xl mb-6"
         style={{
@@ -182,7 +211,7 @@ const SearchSheet = ({ contestId, tiers }: SearchSheetProps) => {
           </div>
           <div className="flex items-center gap-4">
             <div className="text-primary font-semibold text-lg">
-              {items.length * 3}
+              {items.length * tiers?.tiers[0]?.pricePerPrediction}
             </div>
             <Button
               onClick={handlePayment}

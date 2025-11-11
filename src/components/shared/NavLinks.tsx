@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import HowItWorksModalContent from "./HowItWorksModalContent";
-import { Menu, X } from "lucide-react";
 
 const NavLinks = ({ profile }: any) => {
   // const [menuOpen, setMenuOpen] = useState(false);

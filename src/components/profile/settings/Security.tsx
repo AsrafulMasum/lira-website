@@ -23,7 +23,7 @@ interface ImagePreview {
   preview: string;
 }
 
-const Security = ({ profile }: any) => {
+const Security = () => {
   const [images, setImages] = useState<ImagePreview[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 

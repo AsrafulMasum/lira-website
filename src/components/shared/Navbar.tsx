@@ -33,7 +33,11 @@ const Navbar = async () => {
                   >
                     {profile?.image ? (
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${profile?.image}`}
+                        src={
+                          profile?.image?.startsWith("http")
+                            ? profile?.image
+                            : `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${profile?.image}`
+                        }
                         alt="Profile Picture"
                         width={36}
                         height={36}
@@ -83,14 +87,14 @@ const Navbar = async () => {
                     href="/login"
                     className="flex justify-center items-center gap-2 text-sm font-bold text-dark-primary bg-bg rounded-xl h-10 px-4 border border-border-color cursor-pointer"
                   >
-                    Log In
+                    Log In / Sign Up
                   </Link>
-                  <Link
+                  {/* <Link
                     href="/sign-up"
                     className="flex justify-center items-center gap-2 text-sm font-bold text-bg bg-dark-primary rounded-xl h-10 px-4 border border-border-color cursor-pointer"
                   >
                     Sign up
-                  </Link>
+                  </Link> */}
                 </div>
               )}
             </div>

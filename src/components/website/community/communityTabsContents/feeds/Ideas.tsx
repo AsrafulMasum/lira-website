@@ -1,27 +1,14 @@
 import React from "react";
 import Card from "./Card";
-import { apiRequest } from "@/helpers/apiRequest";
 
-const Ideas = async ({ from }: { from: string }) => {
-  // console.log(from);
-  const { data } = await apiRequest("/community/posts", {
-    method: "GET",
-    cache: "no-store",
-    tags: ["posts"],
-  });
-  const posts = data?.result;
+interface Props {
+  from: string;
+  posts?: any;
+  voted?: any;
+  myPosts?: any;
+}
 
-  const { data: voted } = await apiRequest("/community/voted-posts", {
-    method: "GET",
-    cache: "no-store",
-    tags: ["voted-posts"],
-  });
-
-  const { data: myPosts } = await apiRequest("/community/my-posts", {
-    method: "GET",
-    cache: "no-store",
-    tags: ["my-posts"],
-  });
+const Ideas = async ({ from, posts, voted, myPosts }: Props) => {
 
   return (
     <div className="space-y-4 pt-5 pb-10">
