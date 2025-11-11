@@ -27,6 +27,10 @@ const page = async ({ params, searchParams }: PageProps) => {
     method: "GET",
   });
 
+  const { data: rules } = await apiRequest(`/settings?key=note`, {
+    method: "GET",
+  });
+
   const group = data?.group;
   const category = data?.category;
 
@@ -102,6 +106,7 @@ const page = async ({ params, searchParams }: PageProps) => {
             contest={data}
             tiers={tiers}
             customValue={customValue}
+            rules={rules}
           />
 
           {/* right */}
@@ -117,6 +122,7 @@ const page = async ({ params, searchParams }: PageProps) => {
             contest={data}
             tiers={tiers}
             livePrice={livePrice}
+            rules={rules}
           />
         </div>
       </ContainerLayout>

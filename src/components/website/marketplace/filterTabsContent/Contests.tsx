@@ -57,7 +57,7 @@ const Contests = ({ data, category }: { data: any; category: string }) => {
                     {moment(contest?.endTime).format("MMMM D [at] h:mm A")}
                   </span>
                 </CardTitle>
-                <CardDescription className="flex items-center justify-between text-sm text-gray">
+                <CardDescription className="flex flex-col md:flex-row md:items-center justify-between gap-1 text-sm text-gray">
                   <p className="flex items-center gap-2">
                     <Clock size={16} /> Ends In:{" "}
                     <ContestCountdown

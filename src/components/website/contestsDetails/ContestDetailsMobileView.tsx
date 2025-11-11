@@ -12,7 +12,7 @@ import AddCustomValue from "./AddCustomValue";
 import SearchSheet from "./sheets/SearchSheet";
 import moment from "moment";
 
-const ContestDetailsMobileView = ({ contest, tiers, livePrice }: any) => {
+const ContestDetailsMobileView = ({ contest, tiers, livePrice, rules }: any) => {
   return (
     <section className="pt-5">
       <h4 className="text-2xl font-semibold text-[#002913]">
@@ -22,7 +22,7 @@ const ContestDetailsMobileView = ({ contest, tiers, livePrice }: any) => {
         </span>{" "}
       </h4>
 
-      <div className="flex items-center gap-4 text-gray mt-3">
+      <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 text-gray mt-3">
         <p className="flex items-center gap-2">
           <Clock size={16} /> Ends In:{" "}
           <ContestCountdown endDate={contest?.endTime} isMarketPlace={true} />
@@ -116,6 +116,12 @@ const ContestDetailsMobileView = ({ contest, tiers, livePrice }: any) => {
           </DialogTrigger>
           <AddCustomValue />
         </Dialog>
+
+        <p className="text-gray-text font-semibold text-sm mt-4 text-center col-span-2">
+          {/* * Price is according to Bloomberg. Each prediction must be unique.
+          Closest prediction to the actual value wins */}
+          {rules}
+        </p>
       </div>
 
       <div className="bg-bg py-4 px-6 rounded-2xl mt-8 flex items-center gap-6">
