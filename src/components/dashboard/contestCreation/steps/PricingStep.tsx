@@ -31,6 +31,13 @@ const PricingStep: React.FC<PricingStepProps> = ({ data, onUpdate }) => {
     data.pricingModel || "flat"
   );
 
+  // Sync active tab with prefilled pricing model changes
+  React.useEffect(() => {
+    if (data.pricingModel && data.pricingModel !== activeTab) {
+      setActiveTab(data.pricingModel);
+    }
+  }, [data.pricingModel]);
+
   const handleTabChange = (tab: PricingModel) => {
     setActiveTab(tab);
     onUpdate({ pricingModel: tab });

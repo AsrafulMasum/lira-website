@@ -27,6 +27,32 @@ const contestApi = api.injectEndpoints({
       providesTags: ["contests"],
     }),
 
+    getContestById: builder.query({
+      query: (contestId) => ({
+        url: `/contest/contest/admin/${contestId}`,
+        method: "GET",
+      }),
+      providesTags: ["contests"],
+    }),
+
+    changeContestStatus: builder.mutation({
+      query: ({ contestId, data }) => ({
+        url: `/contest/${contestId}/update-status`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["contests"],
+    }),
+
+    updateContest: builder.mutation({
+      query: ({ contestId, formData }) => ({
+        url: `/contest/${contestId}`,
+        method: "PATCH",
+        body: formData,
+      }),
+      invalidatesTags: ["contests"],
+    }),
+
     getContestByCategoryId: builder.query({
       query: (categoryId) => ({
         url: `/contest/category/${categoryId}`,
@@ -41,6 +67,14 @@ const contestApi = api.injectEndpoints({
         method: "GET",
       }),
       providesTags: ["contests"],
+    }),
+
+    copyContest: builder.mutation({
+      query: ({ contestId }) => ({
+        url: `/contest/${contestId}/copy`,
+        method: "POST",
+      }),
+      invalidatesTags: ["contests"],
     }),
 
     getContestDetails: builder.query({
@@ -91,6 +125,10 @@ export const {
   useGetContestsQuery,
   useGetContestByCategoryIdQuery,
   useGetManualWinnerContestQuery,
+  useCopyContestMutation,
+  useGetContestByIdQuery,
+  useUpdateContestMutation,
+  useChangeContestStatusMutation,
   useGetContestDetailsQuery,
   useCreateManualContestWinnerMutation,
   useCreateContestMutation,
