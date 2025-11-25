@@ -40,7 +40,7 @@ type contest = {
 };
 
 const Contests = ({ data, category }: { data: any; category: string }) => {
-
+  console.log(category);
   return (
     <section>
       <h4 className="text-2xl font-semibold text-[#4B524E] capitalize mt-10 mb-3 px-1">
@@ -95,11 +95,11 @@ const Contests = ({ data, category }: { data: any; category: string }) => {
               </CardContent>
               <CardFooter className="flex justify-between items-center">
                 <p className="bg-bg py-2 px-3 rounded-lg text-sm text-gray">
-                  {contest.category}
+                  {category || contest?.category}
                 </p>
                 <CardAction>
                   <p className="bg-primary py-2 px-3 rounded-lg font-semibold text-white">
-                    <span className="text-sm font-normal">From</span> $ {" "}
+                    <span className="text-sm font-normal">From</span> ${" "}
                     {contest?.pricing?.predictionType === "priceOnly"
                       ? `${contest?.pricing?.flatPrice}`
                       : `${contest?.pricing?.tiers[0]?.pricePerPrediction}`}
