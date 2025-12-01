@@ -40,7 +40,6 @@ type contest = {
 };
 
 const Contests = ({ data, category }: { data: any; category: string }) => {
-  console.log(category);
   return (
     <section>
       <h4 className="text-2xl font-semibold text-[#4B524E] capitalize mt-10 mb-3 px-1">
@@ -76,7 +75,7 @@ const Contests = ({ data, category }: { data: any; category: string }) => {
                   <Image
                     width={48}
                     height={48}
-                    src={`${process.env.IMAGE_BASE_URL}${contest?.image}`}
+                    src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${contest?.image}`}
                     alt={contest?.prize?.title}
                     className="mt-2 size-12 object-cover rounded-lg"
                   />

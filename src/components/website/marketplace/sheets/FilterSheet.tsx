@@ -26,7 +26,7 @@ const entriesChartData = [
   { value: 3, amount: 30, height: 50 },
 ];
 
-const FilterSheet = ({ range }: any) => {
+const FilterSheet = ({ range, setIsOpen }: any) => {
   const updateSearchParams = useUpdateSearchParams();
 
   // 🧭 Extract dynamic range from server (with safe fallbacks)
@@ -96,6 +96,8 @@ const FilterSheet = ({ range }: any) => {
       entriesMin: null,
       entriesMax: null,
     });
+
+    setIsOpen(false);
   };
 
   // ✅ Apply filters
@@ -108,6 +110,8 @@ const FilterSheet = ({ range }: any) => {
       entriesMin: String(entriesRangeStart),
       entriesMax: String(entriesRangeEnd),
     });
+
+    setIsOpen(false);
   };
 
   const sortOptions: string[] = [
