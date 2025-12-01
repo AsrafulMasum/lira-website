@@ -8,8 +8,8 @@ const Feeds = ({ posts }: any) => {
   return (
     <section className="bg-[#F2F7F5] min-h-[calc(100vh-160px)] pt-4">
       <ContainerLayout>
-        <UploadForm />
         <SearchFilter />
+        <UploadForm />
         <Ideas from="feeds" posts={posts} />
       </ContainerLayout>
     </section>

@@ -3,7 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Users, LogIn, HelpCircle, BarChart3, UserPlus } from "lucide-react";
+import {
+  Users,
+  LogIn,
+  HelpCircle,
+  BarChart3,
+  UserPlus,
+  Landmark,
+} from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import HowItWorksModalContent from "./HowItWorksModalContent";
 
@@ -11,6 +18,13 @@ const MobileBottomNav = ({ profile }: any) => {
   const pathname = usePathname();
 
   const navItems = [
+    {
+      href: "/marketplace",
+      label: "Marketplace",
+      icon: Landmark,
+      show: profile,
+      isDialog: false,
+    },
     {
       href: "/community",
       label: "Community",
@@ -48,7 +62,7 @@ const MobileBottomNav = ({ profile }: any) => {
     },
   ];
 
-  const isActive = (href: string) => pathname === href;
+  const isActive = (href: string) => pathname?.includes(href);
 
   return (
     <nav className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
@@ -61,7 +75,7 @@ const MobileBottomNav = ({ profile }: any) => {
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href === "/marketplace" ? "/" : item.href}
               className="flex flex-col items-center justify-center flex-1 py-3 relative transition-colors"
             >
               {active && (
@@ -92,7 +106,7 @@ const MobileBottomNav = ({ profile }: any) => {
           </DialogTrigger>
           <HowItWorksModalContent />
         </Dialog>
-        {profile && profile?.role !== "SUPER_ADMIN" && (
+        {/* {profile && profile?.role !== "SUPER_ADMIN" && (
           <Link
             href="/profile"
             className="flex flex-col items-center justify-center flex-1 py-3 relative transition-colors"
@@ -156,7 +170,7 @@ const MobileBottomNav = ({ profile }: any) => {
               {profile?.name?.split(" ")[0]}
             </span>
           </Link>
-        )}
+        )} */}
       </div>
     </nav>
   );

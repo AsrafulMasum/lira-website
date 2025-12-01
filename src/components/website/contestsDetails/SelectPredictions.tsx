@@ -495,13 +495,12 @@ export function SelectPredictions({
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Confirm Payment</DialogTitle>
+                <DialogTitle>Confirm</DialogTitle>
                 <DialogDescription className="my-5">
-                  Please confirm that you want to proceed with this payment.
-                  Once completed, this action cannot be reversed.
+                  Lira is launching soon. Join the waitlist to get early access.
                 </DialogDescription>
               </DialogHeader>
-              <DialogFooter>
+              <DialogFooter className="flex justify-center">
                 <DialogClose asChild>
                   <Button variant="outline" className="cursor-pointer">
                     Cancel
@@ -512,7 +511,7 @@ export function SelectPredictions({
                   type="submit"
                   className="bg-dark-primary px-4 hover:bg-dark-primary/90 text-primary-foreground cursor-pointer"
                 >
-                  Confirm Payment
+                  Join waitlist
                 </Button>
               </DialogFooter>
             </DialogContent>
