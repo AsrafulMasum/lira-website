@@ -4,9 +4,10 @@ import LatestNews from "./LatestNews";
 import ContestCountdown from "@/hooks/ContestCountdown";
 import { CircleQuestionMark } from "lucide-react";
 import Image from "next/image";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import HowItWorksModalContent from "@/components/shared/HowItWorksModalContent";
 
 const ContestDetailsRightSection = ({ contest, livePrice, liveNews }: any) => {
-
   return (
     <div className="col-span-1">
       <Image
@@ -27,7 +28,15 @@ const ContestDetailsRightSection = ({ contest, livePrice, liveNews }: any) => {
       </p>
 
       <p className="flex items-center gap-1 text-gray font-semibold text-sm mt-3">
-        <CircleQuestionMark size={16} /> Learn how it works
+        <CircleQuestionMark size={16} /> Learn{" "}
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className="hover:underline font-bold cursor-pointer">
+              How it works
+            </button>
+          </DialogTrigger>
+          <HowItWorksModalContent />
+        </Dialog>
       </p>
 
       <div className="bg-bg py-4 px-6 rounded-2xl mt-8 flex items-center gap-6">
@@ -42,7 +51,9 @@ const ContestDetailsRightSection = ({ contest, livePrice, liveNews }: any) => {
           <h4 className="text-lg text-[#002913] font-semibold">
             Live {contest?.category} Price
           </h4>
-          <h4 className="text-primary font-semibold">$ {livePrice?.currentValue?.toLocaleString()}</h4>
+          <h4 className="text-primary font-semibold">
+            $ {livePrice?.currentValue?.toLocaleString()}
+          </h4>
         </div>
 
         <div className="flex justify-between items-center mb-1">
@@ -52,7 +63,9 @@ const ContestDetailsRightSection = ({ contest, livePrice, liveNews }: any) => {
           <p className="text-gray-text text-xs">Current</p>
         </div>
 
-        <p className="text-gray-text text-xs mb-5">Data from {livePrice?.metadata?.source} API</p>
+        <p className="text-gray-text text-xs mb-5">
+          Data from {livePrice?.metadata?.source} API
+        </p>
 
         <LiveChart livePrice={livePrice} category={contest?.category} />
       </div>

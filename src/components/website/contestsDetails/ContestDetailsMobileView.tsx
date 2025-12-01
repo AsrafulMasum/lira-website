@@ -11,6 +11,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import AddCustomValue from "./AddCustomValue";
 import SearchSheet from "./sheets/SearchSheet";
 import moment from "moment";
+import HowItWorksModalContent from "@/components/shared/HowItWorksModalContent";
 
 const ContestDetailsMobileView = ({
   contest,
@@ -62,7 +63,15 @@ const ContestDetailsMobileView = ({
           </p>
 
           <p className="flex items-center gap-1 text-gray font-semibold text-sm mt-2">
-            <CircleQuestionMark size={16} /> Learn how it works
+            <CircleQuestionMark size={16} /> Learn{" "}
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="hover:underline font-bold cursor-pointer">
+                  How it works
+                </button>
+              </DialogTrigger>
+              <HowItWorksModalContent />
+            </Dialog>
           </p>
         </div>
       </div>
