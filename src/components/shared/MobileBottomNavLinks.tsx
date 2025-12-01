@@ -65,7 +65,7 @@ const MobileBottomNav = ({ profile }: any) => {
   const isActive = (href: string) => pathname?.includes(href);
 
   return (
-    <nav className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+    <nav className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.15)]">
       <div className="flex items-stretch justify-around">
         {navItems.map((item) => {
           if (!item.show) return null;

@@ -181,7 +181,7 @@ const Login = () => {
             <div className="flex justify-center items-center gap-4 md:mt-10">
               <Button
                 onClick={handleGoogle}
-                className="bg-transparent hover:bg-transparent h-10 px-5 shadow-none cursor-pointer"
+                className="bg-transparent hover:bg-transparent h-12 !px-10 shadow-none cursor-pointer"
                 style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.10)" }}
               >
                 <FcGoogle />
@@ -189,7 +189,7 @@ const Login = () => {
               </Button>
             </div>
 
-            <div className="flex justify-center items-center gap-3 md:mt-10">
+            <div className="flex justify-center items-center gap-3 md:mt-10 mb-4">
               <Separator className="!w-[145px]" />
               <p>OR</p>
               <Separator className="!w-[145px]" />
