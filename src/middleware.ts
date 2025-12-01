@@ -67,7 +67,7 @@ export async function middleware(request: NextRequest) {
       if (groups?.length && tabs?.length) {
         return NextResponse.redirect(
           new URL(
-            `/marketplace/${groups[0]._id}?category=${tabs[0]._id}`,
+            `/marketplace/All?tab=All`,
             request.url
           )
         );
