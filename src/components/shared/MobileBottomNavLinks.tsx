@@ -176,4 +176,4 @@ const MobileBottomNav = ({ profile }: any) => {
   );
 };
 
-export default MobileBottomNav;
+export default MobileBottomNav; 
