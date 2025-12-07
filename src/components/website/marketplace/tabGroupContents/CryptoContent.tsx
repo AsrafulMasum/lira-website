@@ -29,9 +29,10 @@ const CryptoContent: React.FC<CryptoContentProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleDone = () => {
-    setIsOpen(false);
-  };
+  // const handleDone = () => {
+  //   setIsOpen(false);
+  // };
+
   return (
     <section className="bg-bg min-h-[calc(100vh-112px)] py-10">
       <ContainerLayout>

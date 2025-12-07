@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useMediaQuery } from "react-responsive";
 
 const US_STATES = [
   "alabama",
@@ -91,6 +92,8 @@ const states = US_STATES.map((state) => ({
 }));
 
 const SignUp = () => {
+  const isMobile = useMediaQuery({ maxWidth: 767 });
+
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
@@ -150,11 +153,7 @@ const SignUp = () => {
   };
 
   return (
-    <div
-      className={cn(
-        "max-h-screen flex items-center justify-center lg:overflow-hidden"
-      )}
-    >
+    <div className={cn("flex items-center justify-center lg:overflow-hidden")}>
       <div className="w-full lg:w-1/2 min-h-screen md:p-6">
         <Card className="h-full py-10 xl:px-[100px] shadow-none border-none">
           <CardHeader className="text-center">
@@ -217,9 +216,13 @@ const SignUp = () => {
                           onClick={() =>
                             setIsPasswordVisible(!isPasswordVisible)
                           }
-                          className="text-slate-400 absolute right-5 top-1.5 cursor-pointer"
+                          className="text-slate-400 absolute right-2 md:right-5 top-2 md:top-1.5 cursor-pointer"
                         >
-                          {!isPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
+                          {!isPasswordVisible ? (
+                            <EyeOffIcon size={isMobile ? 20 : 24} />
+                          ) : (
+                            <EyeIcon size={isMobile ? 20 : 24} />
+                          )}
                         </span>
                       </div>
                     </div>
@@ -248,12 +251,12 @@ const SignUp = () => {
                               !isConfirmPasswordVisible
                             )
                           }
-                          className="text-slate-400 absolute right-5 top-1.5 cursor-pointer"
+                          className="text-slate-400 absolute right-2 md:right-5 top-2.5 md:top-1.5 cursor-pointer"
                         >
                           {!isConfirmPasswordVisible ? (
-                            <EyeOffIcon />
+                            <EyeOffIcon size={isMobile ? 20 : 24} />
                           ) : (
-                            <EyeIcon />
+                            <EyeIcon size={isMobile ? 20 : 24} />
                           )}
                         </span>
                       </div>
@@ -335,10 +338,10 @@ const SignUp = () => {
               </div>
             </form>
             {/* social button */}
-            <div className="flex justify-center items-center gap-4 md:mt-10 mb-4">
+            <div className="flex justify-center items-center gap-4 mt-4 md:mt-10 mb-4">
               <Button
                 onClick={handleGoogle}
-                className="bg-transparent hover:bg-transparent h-12 !px-10 shadow-none cursor-pointer"
+                className="bg-transparent border hover:bg-transparent h-12 !px-10 shadow-none cursor-pointer"
                 style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.10)" }}
               >
                 <FcGoogle />
