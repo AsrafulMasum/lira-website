@@ -82,16 +82,12 @@ const Login = () => {
   };
 
   return (
-    <div
-      className={cn(
-        "flex items-center justify-center overflow-hidden"
-      )}
-    >
+    <div className={cn("flex items-center justify-center overflow-hidden")}>
       <div className="w-full lg:w-1/2 min-h-screen md:p-6">
         <Card className="h-full xl:py-16 xl:px-[100px] shadow-none border-none">
           <CardHeader className="text-center">
             <figure className="flex justify-center mb-7">
-              <Image src={logo} alt="logo" height={85} />
+              <Image priority src={logo} alt="logo" height={85} />
             </figure>
             <CardTitle className="text-2xl">Log in to your account</CardTitle>
             <CardDescription className="py-6 text-[#5C5C5C]">
