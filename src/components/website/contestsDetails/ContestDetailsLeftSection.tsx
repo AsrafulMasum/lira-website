@@ -110,11 +110,12 @@ const ContestDetailsLeftSection = ({
           />
         </div>
 
-        <p className="text-gray-text font-semibold text-sm mt-4 text-center">
-          {/* * Price is according to Bloomberg. Each prediction must be unique.
-          Closest prediction to the actual value wins */}
-          {rules}
-        </p>
+        {rules && (
+          <div
+            className="text-gray-text font-semibold text-sm mt-4 text-center"
+            dangerouslySetInnerHTML={{ __html: rules }}
+          ></div>
+        )}
       </div>
     </div>
   );

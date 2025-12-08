@@ -26,7 +26,7 @@ const entriesChartData = [
   { value: 3, amount: 30, height: 50 },
 ];
 
-const FilterSheet = ({ range }: any) => {
+const FilterSheet = ({ range, setIsOpen }: any) => {
   const updateSearchParams = useUpdateSearchParams();
 
   // 🧭 Extract dynamic range from server (with safe fallbacks)
@@ -96,6 +96,8 @@ const FilterSheet = ({ range }: any) => {
       entriesMin: null,
       entriesMax: null,
     });
+
+    setIsOpen(false);
   };
 
   // ✅ Apply filters
@@ -108,6 +110,8 @@ const FilterSheet = ({ range }: any) => {
       entriesMin: String(entriesRangeStart),
       entriesMax: String(entriesRangeEnd),
     });
+
+    setIsOpen(false);
   };
 
   const sortOptions: string[] = [
@@ -121,10 +125,10 @@ const FilterSheet = ({ range }: any) => {
 
   return (
     <SheetContent
-      className="w-full h-[75%] lg:h-full sm:max-w-md px-6 rounded-t-2xl lg:rounded-t-none lg:rounded-l-2xl pt-10 bg-[#FAFFFC] overflow-y-auto scrollbar-hide"
+      className="w-full h-[100%] lg:h-full sm:max-w-md px-6 rounded-t-2xl lg:rounded-t-none lg:rounded-l-2xl pt-10 bg-[#FAFFFC] overflow-y-auto scrollbar-hide"
       side={isMobile ? "bottom" : "right"}
     >
-      <SheetHeader className="space-y-0 p-0 pb-6">
+      <SheetHeader className="space-y-0 p-0 pb-4">
         <SheetTitle className="text-xl font-semibold text-[#002913]">
           Filter / Sort
         </SheetTitle>
@@ -176,7 +180,7 @@ const FilterSheet = ({ range }: any) => {
                     onClick={() => isAvailable && setPrizeType(type)}
                     disabled={!isAvailable}
                     className={cn(
-                      "relative h-12 transition-all duration-200 font-medium text-sm flex items-center justify-center cursor-pointer",
+                      "relative h-10 transition-all duration-200 font-medium text-sm flex items-center justify-center cursor-pointer",
                       isSelected && isAvailable
                         ? "bg-primary text-white rounded-2xl px-4 gap-2"
                         : isAvailable
@@ -231,14 +235,14 @@ const FilterSheet = ({ range }: any) => {
           <Button
             onClick={handleClear}
             variant="outline"
-            className="bg-bg h-12 px-4 text-base font-bold text-primary rounded-2xl flex-1 cursor-pointer"
+            className="bg-bg h-10 px-4 text-base font-bold text-primary rounded-2xl flex-1 cursor-pointer"
           >
             Clear
           </Button>
 
           <Button
             onClick={handleApplyFilters}
-            className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl flex-1 cursor-pointer"
+            className="bg-dark-primary h-10 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl flex-1 cursor-pointer"
           >
             View list
           </Button>

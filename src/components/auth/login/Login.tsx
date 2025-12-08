@@ -84,10 +84,10 @@ const Login = () => {
   return (
     <div
       className={cn(
-        "max-h-screen flex items-center justify-center overflow-hidden"
+        "flex items-center justify-center overflow-hidden"
       )}
     >
-      <div className="lg:w-1/2 h-screen p-6">
+      <div className="w-full lg:w-1/2 min-h-screen md:p-6">
         <Card className="h-full xl:py-16 xl:px-[100px] shadow-none border-none">
           <CardHeader className="text-center">
             <figure className="flex justify-center mb-7">
@@ -155,14 +155,14 @@ const Login = () => {
                     />
                     <label
                       htmlFor="remember"
-                      className="text-xs md:text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      className="text-xs md:text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
                     >
                       Remember Password
                     </label>
                   </div>
                   <Link
                     href="forgot-password"
-                    className="text-xs md:text-sm text-[#FF4040] font-medium underline-offset-4 hover:underline"
+                    className="text-xs md:text-sm text-[#FF4040] font-medium underline-offset-4 hover:underline text-nowrap"
                   >
                     Forgot your password?
                   </Link>
@@ -178,10 +178,10 @@ const Login = () => {
               </div>
             </form>
             {/* social buttons */}
-            <div className="flex justify-center items-center gap-4 md:mt-10">
+            <div className="flex justify-center items-center gap-4 mt-4 md:mt-10">
               <Button
                 onClick={handleGoogle}
-                className="bg-transparent hover:bg-transparent h-10 px-5 shadow-none cursor-pointer"
+                className="bg-transparent hover:bg-transparent h-12 !px-10 shadow-none cursor-pointer border"
                 style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.10)" }}
               >
                 <FcGoogle />
@@ -189,7 +189,7 @@ const Login = () => {
               </Button>
             </div>
 
-            <div className="flex justify-center items-center gap-3 md:mt-10">
+            <div className="flex justify-center items-center gap-3 mt-4 md:mt-10 mb-4">
               <Separator className="!w-[145px]" />
               <p>OR</p>
               <Separator className="!w-[145px]" />

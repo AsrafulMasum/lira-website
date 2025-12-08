@@ -1,3 +1,5 @@
+"use client";
+
 import ContainerLayout from "@/layout/ContainerLayout";
 import { ListFilter } from "lucide-react";
 import Contests from "../filterTabsContent/Contests";
@@ -5,6 +7,7 @@ import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import FilterSheet from "../sheets/FilterSheet";
 import SearchInput from "./SearchInput";
 import CategoryTabs from "./CategoryTabs";
+import { useState } from "react";
 
 interface Tab {
   _id: string;
@@ -18,12 +21,18 @@ interface CryptoContentProps {
   tabName: string | undefined;
 }
 
-const CryptoContent: React.FC<CryptoContentProps> = async ({
+const CryptoContent: React.FC<CryptoContentProps> = ({
   tabs,
   activeTab,
   data,
   tabName,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // const handleDone = () => {
+  //   setIsOpen(false);
+  // };
+
   return (
     <section className="bg-bg min-h-[calc(100vh-112px)] py-10">
       <ContainerLayout>
@@ -32,17 +41,17 @@ const CryptoContent: React.FC<CryptoContentProps> = async ({
             <SearchInput />
 
             <div>
-              <Sheet>
+              <Sheet open={isOpen} onOpenChange={setIsOpen}>
                 <SheetTrigger asChild>
                   <button className="flex justify-center items-center gap-2 bg-[#FAFFFC] w-12 h-12 text-sm font-medium text-primary rounded-2xl border border-border-color cursor-pointer">
                     <ListFilter className="size-4" />
                   </button>
                 </SheetTrigger>
-                <FilterSheet range={data?.range} />
+                <FilterSheet range={data?.range} setIsOpen={setIsOpen} />
               </Sheet>
             </div>
           </div>
-          
+
           <CategoryTabs tabs={tabs} activeTab={activeTab} />
         </div>
 

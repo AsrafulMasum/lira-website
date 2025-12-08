@@ -48,7 +48,7 @@ const ChangePassword = () => {
       
       if (res?.success) {
         toast.success("Password reset successful", { id: "reset" });
-        router.push(redirect || "/");
+        router.push(redirect || "/login");
       } else {
         toast.error(res?.message, { id: "reset" });
       }

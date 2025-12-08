@@ -1,86 +1,73 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { apiRequest } from "./helpers/apiRequest";
+import getProfile from "./helpers/getProfile";
 
 export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
+  const accessToken = request.cookies.get("accessToken")?.value;
+  const refreshToken = request.cookies.get("refreshToken")?.value;
+  const protectedRoutes = ["/contests", "/profile", "/community", "/dashboard"];
+  const isProtected = protectedRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
 
-  // Check if we're on the callback route
+  // Try to get the user (may return null or user object with role)
+  const user = await getProfile();
+  console.log("user", user);
+
+  // Handle OAuth(Google) callback (login)
   if (pathname === "/auth/callback") {
     const accessToken = searchParams.get("accessToken");
     const refreshToken = searchParams.get("refreshToken");
     const success = searchParams.get("success");
 
     if (accessToken && refreshToken && success === "true") {
-      // Store tokens in cookies (secure & HTTP-only)
       const response = NextResponse.redirect(new URL("/", request.url));
-
       response.cookies.set("accessToken", accessToken, {
-        httpOnly: false,
         path: "/",
+        httpOnly: false,
       });
-
       response.cookies.set("refreshToken", refreshToken, {
-        httpOnly: false,
         path: "/",
+        httpOnly: false,
       });
-
       return response;
     }
 
-    // If something’s missing, redirect to login
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Get accessToken from cookies for protected routes
-  const accessToken = request.cookies.get("accessToken")?.value;
-  const protectedRoutes = ["/contests", "/profile", "/community", "/dashboard"];
-  const isProtected = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
+  if (!user && (accessToken || refreshToken)) {
+    const response = NextResponse.redirect(new URL("/login", request.url));
+    response.cookies.delete("accessToken");
+    response.cookies.delete("refreshToken");
+    return response;
+  }
 
-  // Block access if not authenticated
-  if (isProtected && !accessToken) {
-    if (pathname.startsWith("/dashboard")) {
+  // If it's a protected route and no valid user (or no token) → redirect to login
+  if (isProtected && (!user || !accessToken)) {
+    // Also, optionally clear cookies if token present but user invalid
+    const response = NextResponse.redirect(new URL("/login", request.url));
+    response.cookies.delete("accessToken");
+    response.cookies.delete("refreshToken");
+    return response;
+  }
+
+  // If requesting /dashboard, enforce role check
+  if (pathname.startsWith("/dashboard")) {
+    if (!user || user.role !== "SUPER_ADMIN") {
+      // Not allowed → redirect to home
       return NextResponse.redirect(new URL("/", request.url));
     }
-    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Prevent logged-in users from visiting /login
-  if (accessToken && pathname === "/login") {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  // Root redirection logic
+  // Root redirection (custom logic)
   if (pathname === "/") {
-    try {
-      const { data: groups } = await apiRequest("/groups", {
-        method: "GET",
-        cache: "no-store",
-      });
-      const { data: tabs } = await apiRequest(
-        `/categories/?groupId=${groups?.[0]?._id}`,
-        { method: "GET", cache: "no-store" }
-      );
-
-      if (groups?.length && tabs?.length) {
-        return NextResponse.redirect(
-          new URL(
-            `/marketplace/${groups[0]._id}?category=${tabs[0]._id}`,
-            request.url
-          )
-        );
-      }
-
-      return NextResponse.redirect(new URL("/marketplace", request.url));
-    } catch (err) {
-      console.error("Middleware error:", err);
-      return NextResponse.redirect(new URL("/marketplace", request.url));
-    }
+    return NextResponse.redirect(
+      new URL("/marketplace/All?tab=All", request.url)
+    );
   }
 
-  // Let the request continue
   return NextResponse.next();
 }
 
@@ -88,7 +75,7 @@ export const config = {
   matcher: [
     "/",
     "/login",
-    "/auth/callback", // include callback route
+    "/auth/callback",
     "/contests/:path*",
     "/community/:path*",
     "/dashboard/:path*",

@@ -144,38 +144,33 @@ export function SelectPredictions({
       value: item.value,
     });
 
-    // Get current items from searchParams
     const selected = searchParams.get("items") || "";
     const selectedList = selected
       ? selected.split(",").map((v) => v.trim())
       : [];
 
+    const updateURL = (list: string[]) => {
+      router.replace(
+        `?${new URLSearchParams({
+          ...Object.fromEntries(searchParams),
+          items: list.join(","),
+        }).toString()}`,
+        { scroll: false }
+      );
+    };
+
     if (newSelected.has(key)) {
-      // Remove item from state
       newSelected.delete(key);
 
-      // Remove item.value from search params
       const updatedList = selectedList.filter(
         (v) => v !== item.value.toString()
       );
-      router.push(
-        `?${new URLSearchParams({
-          ...Object.fromEntries(searchParams),
-          items: updatedList.join(","),
-        }).toString()}`
-      );
+      updateURL(updatedList);
     } else {
-      // Add item to state
       newSelected.add(key);
 
-      // Add item.value to search params
       const updatedList = [...selectedList, item.value.toString()];
-      router.push(
-        `?${new URLSearchParams({
-          ...Object.fromEntries(searchParams),
-          items: updatedList.join(","),
-        }).toString()}`
-      );
+      updateURL(updatedList);
     }
 
     setSelectedItems(newSelected);
@@ -495,13 +490,12 @@ export function SelectPredictions({
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Confirm Payment</DialogTitle>
+                <DialogTitle>Confirm</DialogTitle>
                 <DialogDescription className="my-5">
-                  Please confirm that you want to proceed with this payment.
-                  Once completed, this action cannot be reversed.
+                  Lira is launching soon. Join the waitlist to get early access.
                 </DialogDescription>
               </DialogHeader>
-              <DialogFooter>
+              <DialogFooter className="flex justify-center">
                 <DialogClose asChild>
                   <Button variant="outline" className="cursor-pointer">
                     Cancel
@@ -512,7 +506,7 @@ export function SelectPredictions({
                   type="submit"
                   className="bg-dark-primary px-4 hover:bg-dark-primary/90 text-primary-foreground cursor-pointer"
                 >
-                  Confirm Payment
+                  Join waitlist
                 </Button>
               </DialogFooter>
             </DialogContent>

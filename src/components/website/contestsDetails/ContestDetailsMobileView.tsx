@@ -11,6 +11,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import AddCustomValue from "./AddCustomValue";
 import SearchSheet from "./sheets/SearchSheet";
 import moment from "moment";
+import HowItWorksModalContent from "@/components/shared/HowItWorksModalContent";
 
 const ContestDetailsMobileView = ({
   contest,
@@ -62,7 +63,15 @@ const ContestDetailsMobileView = ({
           </p>
 
           <p className="flex items-center gap-1 text-gray font-semibold text-sm mt-2">
-            <CircleQuestionMark size={16} /> Learn how it works
+            <CircleQuestionMark size={16} /> Learn{" "}
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="hover:underline font-bold cursor-pointer">
+                  How it works
+                </button>
+              </DialogTrigger>
+              <HowItWorksModalContent />
+            </Dialog>
           </p>
         </div>
       </div>
@@ -126,11 +135,12 @@ const ContestDetailsMobileView = ({
           <AddCustomValue />
         </Dialog>
 
-        <p className="text-gray-text font-semibold text-sm mt-4 text-center col-span-2">
-          {/* * Price is according to Bloomberg. Each prediction must be unique.
-          Closest prediction to the actual value wins */}
-          {rules}
-        </p>
+        {rules && (
+          <div
+            className="text-gray-text font-semibold text-sm mt-4 text-center"
+            dangerouslySetInnerHTML={{ __html: rules }}
+          ></div>
+        )}
       </div>
 
       <div className="bg-bg py-4 px-6 rounded-2xl mt-8 flex items-center gap-6">

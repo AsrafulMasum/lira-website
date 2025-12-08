@@ -24,7 +24,7 @@ const Navbar = async () => {
               <MobileBottomNavLinks profile={profile} />
             </div>
 
-            <div className="hidden md:flex gap-4">
+            <div className="flex gap-4">
               {profile ? (
                 profile?.role !== "SUPER_ADMIN" && (
                   <Link

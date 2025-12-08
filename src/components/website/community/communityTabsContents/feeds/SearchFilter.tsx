@@ -37,7 +37,7 @@ const SearchFilter = () => {
   }, [query, selected, router, searchParams]);
 
   return (
-    <div className="flex items-center gap-2 w-full max-w-2xl mx-auto mt-5">
+    <div className="flex items-center gap-2 w-full max-w-2xl mx-auto mb-5">
       {/* Search Input */}
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -66,7 +66,7 @@ const SearchFilter = () => {
             New
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setSelected("Trending")}>
-            Trending
+            Most Popular
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
