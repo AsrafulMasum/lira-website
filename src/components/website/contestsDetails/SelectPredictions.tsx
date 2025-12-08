@@ -56,6 +56,8 @@ export function SelectPredictions({
 
   const tiersArr = tiers?.tiers || [];
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [disableButtons, setDisableButtons] = useState(false);
 
   const selected = searchParams.get("items") || "";
   const activeRange = searchParams.get("range") || tiers?.tiers[0]._id;
@@ -102,6 +104,7 @@ export function SelectPredictions({
     }
   }, [contestId, activeRange, minValue, maxValue]);
 
+  // Update selectedItems when selected changes
   useEffect(() => {
     if (selected && apiResult?.length) {
       const values = selected.split(",").map((v) => v.trim());
@@ -136,44 +139,118 @@ export function SelectPredictions({
   //   setSelectedItems(newSelected);
   // };
 
-  const toggleItem = (item: { _id: string; price: string; value: number }) => {
-    const newSelected = new Set(selectedItems);
-    const key = JSON.stringify({
-      _id: item._id,
-      price: Number(item.price),
-      value: item.value,
-    });
+  // const toggleItem = (item: { _id: string; price: string; value: number }) => {
+  //   const newSelected = new Set(selectedItems);
+  //   const key = JSON.stringify({
+  //     _id: item._id,
+  //     price: Number(item.price),
+  //     value: item.value,
+  //   });
 
-    const selected = searchParams.get("items") || "";
-    const selectedList = selected
-      ? selected.split(",").map((v) => v.trim())
-      : [];
+  //   const selected = searchParams.get("items") || "";
+  //   const selectedList = selected
+  //     ? selected.split(",").map((v) => v.trim())
+  //     : [];
 
-    const updateURL = (list: string[]) => {
-      router.replace(
-        `?${new URLSearchParams({
+  //   const updateURL = (list: string[]) => {
+  //     router.replace(
+  //       `?${new URLSearchParams({
+  //         ...Object.fromEntries(searchParams),
+  //         items: list.join(","),
+  //       }).toString()}`,
+  //       { scroll: false }
+  //     );
+  //   };
+
+  //   if (newSelected.has(key)) {
+  //     newSelected.delete(key);
+
+  //     const updatedList = selectedList.filter(
+  //       (v) => v !== item.value.toString()
+  //     );
+  //     updateURL(updatedList);
+  //   } else {
+  //     newSelected.add(key);
+
+  //     const updatedList = [...selectedList, item.value.toString()];
+  //     updateURL(updatedList);
+  //   }
+
+  //   setSelectedItems(newSelected);
+  // };
+
+  const toggleItem = async (item: {
+    _id: string;
+    price: string;
+    value: number;
+  }) => {
+    // Prevent multiple rapid clicks (lock all items)
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    try {
+      // Clone current selected items Set
+      const newSelected = new Set(selectedItems);
+
+      // Convert item to a unique comparable string key
+      const key = JSON.stringify({
+        _id: item._id,
+        price: Number(item.price),
+        value: item.value,
+      });
+
+      // Get current selected values from URL (?items=1,2,3)
+      const selected = searchParams.get("items") || "";
+      const selectedList = selected
+        ? selected.split(",").map((v) => v.trim())
+        : [];
+
+      // Helper function to update the URL & wait for completion
+      const updateURL = async (list: string[]) => {
+        const params = new URLSearchParams({
           ...Object.fromEntries(searchParams),
           items: list.join(","),
-        }).toString()}`,
-        { scroll: false }
-      );
-    };
+        });
 
-    if (newSelected.has(key)) {
-      newSelected.delete(key);
+        // Wait for router.replace to finish before allowing next click
+        await router.replace(`?${params.toString()}`, { scroll: false });
+      };
 
-      const updatedList = selectedList.filter(
-        (v) => v !== item.value.toString()
-      );
-      updateURL(updatedList);
-    } else {
-      newSelected.add(key);
+      // If item is already selected, remove it
+      if (newSelected.has(key)) {
+        newSelected.delete(key);
 
-      const updatedList = [...selectedList, item.value.toString()];
-      updateURL(updatedList);
+        // Remove value from items list
+        const updatedList = selectedList.filter(
+          (v) => v !== item.value.toString()
+        );
+
+        // Update URL with new list
+        await updateURL(updatedList);
+      } else {
+        // If not selected, add the item
+        newSelected.add(key);
+
+        // Add value to items list
+        const updatedList = [...selectedList, item.value.toString()];
+
+        // Update URL with new list
+        await updateURL(updatedList);
+      }
+
+      // Update internal state of selected items
+      setSelectedItems(newSelected);
+    } finally {
+      // Unlock processing state
+      setIsProcessing(false);
+
+      // Keep buttons disabled for 1500ms
+      setDisableButtons(true);
+
+      setTimeout(() => {
+        setDisableButtons(false);
+      }, 1500);
     }
-
-    setSelectedItems(newSelected);
   };
 
   const totalPrice = Array.from(selectedItems).reduce((sum, str) => {
@@ -309,9 +386,12 @@ export function SelectPredictions({
                 <button
                   key={item._id}
                   onClick={() => isAvailable && toggleItem(item)}
-                  disabled={!isAvailable}
+                  disabled={!isAvailable || isProcessing || disableButtons}
                   className={cn(
                     "relative h-12 transition-all duration-200 font-medium text-sm flex items-center justify-center cursor-pointer",
+                    isProcessing || disableButtons
+                      ? "opacity-50 cursor-not-allowed"
+                      : "",
                     isSelected && isAvailable
                       ? "bg-primary text-white rounded-2xl px-4 gap-2"
                       : isAvailable

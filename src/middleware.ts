@@ -13,7 +13,6 @@ export async function middleware(request: NextRequest) {
 
   // Try to get the user (may return null or user object with role)
   const user = await getProfile();
-  console.log("user", user);
 
   // Handle OAuth(Google) callback (login)
   if (pathname === "/auth/callback") {
