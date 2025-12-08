@@ -33,7 +33,8 @@ export default async function TabPage({ params, searchParams }: PageProps) {
     }
   );
 
-  const activeTab = searchParamsValue?.tab ?? tabs[0]?._id;
+  // const activeTab = searchParamsValue?.tab ?? tabs[0]?._id;
+  const activeTab = "All";
 
   const queryParams = new URLSearchParams();
 
@@ -72,7 +73,8 @@ export default async function TabPage({ params, searchParams }: PageProps) {
     }
   );
 
-  const tabName = tabs.find((tab: any) => tab._id === activeTab)?.name;
+  // const tabName = tabs.find((tab: any) => tab._id === activeTab)?.name;
+  const tabName = "All";
 
   return (
     <CryptoContent
