@@ -1,3 +1,63 @@
+// const handlePayment = async () => {
+//   const ids = Array.from(selectedItems).map((item) => {
+//     const parsed = JSON.parse(item);
+//     return { id: parsed._id };
+//   });
+
+//   const customPredictions =
+//     customValue && customValue.length > 0
+//       ? customValue.split(",").map((v) => ({ value: Number(v) }))
+//       : [];
+
+//   const payload = {
+//     contestId,
+//     generatedPredictionsIds: ids,
+//     customPredictions,
+//   };
+
+//   const res = await apiRequest("/orders/create-and-checkout", {
+//     method: "POST",
+//     body: payload,
+//   });
+
+//   if (res?.success) {
+//     globalThis.location.href = res?.data?.url;
+//   } else {
+//     toast.error(res?.message || "Failed to initiate payment.");
+//   }
+// };
+
+/* <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer">
+                    Continue
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Confirm Payment</DialogTitle>
+                    <DialogDescription className="my-5">
+                      Please confirm that you want to proceed with this payment.
+                      Once completed, this action cannot be reversed.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline" className="cursor-pointer">
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                    <Button
+                      onClick={handlePayment}
+                      type="submit"
+                      className="bg-dark-primary px-4 hover:bg-dark-primary/90 text-primary-foreground cursor-pointer"
+                    >
+                      Confirm Payment
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog> */
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -42,35 +102,60 @@ interface Tier {
   tiers: TierItem[];
 }
 
+interface SelectedItemData {
+  _id: string;
+  price: number;
+  value: number;
+}
+
+interface WaitListPayload {
+  contestId: string | undefined;
+}
+
+interface ApiResponse {
+  success: boolean;
+  message?: string;
+  data?: unknown;
+}
+
+interface SelectPredictionsProps {
+  tiers?: Tier;
+  contestId?: string;
+  customValue?: string | undefined;
+}
+
 export function SelectPredictions({
   tiers,
   contestId,
   customValue,
-}: {
-  tiers?: Tier;
-  contestId?: string;
-  customValue?: string | undefined;
-}) {
+}: SelectPredictionsProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const tiersArr = tiers?.tiers || [];
-  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [disableButtons, setDisableButtons] = useState(false);
+  const tiersArr: TierItem[] = tiers?.tiers || [];
+  const [selectedItems, setSelectedItems] = useState<Map<string, Set<string>>>(
+    new Map()
+  );
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [disableButtons, setDisableButtons] = useState<boolean>(false);
 
-  const selected = searchParams.get("items") || "";
-  const activeRange = searchParams.get("range") || tiers?.tiers[0]._id;
-  const minValue = searchParams.get("rangeStart") || "";
-  const maxValue = searchParams.get("rangeEnd") || "";
-  const activeTier = tiersArr?.find((tier) => tier._id === activeRange);
+  const selected: string = searchParams.get("items") || "";
+  const activeRange: string =
+    searchParams.get("range") || tiers?.tiers[0]._id || "";
+  const minValue: string = searchParams.get("rangeStart") || "";
+  const maxValue: string = searchParams.get("rangeEnd") || "";
+  const activeTier: TierItem | undefined = tiersArr?.find(
+    (tier) => tier._id === activeRange
+  );
 
-  const [apiResult, setApiResult] = useState<any>(null);
+  const [apiResult, setApiResult] = useState<SelectableItem[] | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // Fetch data on mount or when contestId/activeRange changes
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (): Promise<void> => {
       try {
+        setIsLoading(true);
         let url = `/contest/contest/prediction/${contestId}/tiers/${activeRange}`;
 
         const queryParams = new URLSearchParams();
@@ -96,6 +181,8 @@ export function SelectPredictions({
         setApiResult(response.data);
       } catch (error) {
         console.error("Failed to fetch prediction data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -117,80 +204,31 @@ export function SelectPredictions({
             value: item.value,
           })
         );
-      setSelectedItems(new Set(matchedItems));
+      const newMap = new Map(selectedItems);
+      newMap.set(activeRange, new Set(matchedItems));
+      setSelectedItems(newMap);
+    } else if (!selected && activeRange) {
+      // Clear selections for current tier if no items in URL
+      const newMap = new Map(selectedItems);
+      newMap.set(activeRange, new Set());
+      setSelectedItems(newMap);
     }
-  }, [selected, apiResult]);
-
-  // const toggleItem = (item: { _id: string; price: string; value: number }) => {
-  //   console.log(item?.value);
-  //   const newSelected = new Set(selectedItems);
-  //   const key = JSON.stringify({
-  //     _id: item._id,
-  //     price: Number(item.price),
-  //     value: item.value,
-  //   });
-
-  //   if (newSelected.has(key)) {
-  //     newSelected.delete(key);
-  //   } else {
-  //     newSelected.add(key);
-  //   }
-
-  //   setSelectedItems(newSelected);
-  // };
-
-  // const toggleItem = (item: { _id: string; price: string; value: number }) => {
-  //   const newSelected = new Set(selectedItems);
-  //   const key = JSON.stringify({
-  //     _id: item._id,
-  //     price: Number(item.price),
-  //     value: item.value,
-  //   });
-
-  //   const selected = searchParams.get("items") || "";
-  //   const selectedList = selected
-  //     ? selected.split(",").map((v) => v.trim())
-  //     : [];
-
-  //   const updateURL = (list: string[]) => {
-  //     router.replace(
-  //       `?${new URLSearchParams({
-  //         ...Object.fromEntries(searchParams),
-  //         items: list.join(","),
-  //       }).toString()}`,
-  //       { scroll: false }
-  //     );
-  //   };
-
-  //   if (newSelected.has(key)) {
-  //     newSelected.delete(key);
-
-  //     const updatedList = selectedList.filter(
-  //       (v) => v !== item.value.toString()
-  //     );
-  //     updateURL(updatedList);
-  //   } else {
-  //     newSelected.add(key);
-
-  //     const updatedList = [...selectedList, item.value.toString()];
-  //     updateURL(updatedList);
-  //   }
-
-  //   setSelectedItems(newSelected);
-  // };
+  }, [selected, apiResult, activeRange]);
 
   const toggleItem = async (item: {
     _id: string;
     price: string;
     value: number;
-  }) => {
+  }): Promise<void> => {
     // Prevent multiple rapid clicks (lock all items)
     if (isProcessing) return;
     setIsProcessing(true);
 
     try {
-      // Clone current selected items Set
-      const newSelected = new Set(selectedItems);
+      // Get current tier's selected items
+      const currentTierItems =
+        selectedItems.get(activeRange) || new Set<string>();
+      const newTierItems = new Set(currentTierItems);
 
       // Convert item to a unique comparable string key
       const key = JSON.stringify({
@@ -213,12 +251,12 @@ export function SelectPredictions({
         });
 
         // Wait for router.replace to finish before allowing next click
-        await router.replace(`?${params.toString()}`, { scroll: false });
+        router.replace(`?${params.toString()}`, { scroll: false });
       };
 
       // If item is already selected, remove it
-      if (newSelected.has(key)) {
-        newSelected.delete(key);
+      if (newTierItems.has(key)) {
+        newTierItems.delete(key);
 
         // Remove value from items list
         const updatedList = selectedList.filter(
@@ -229,7 +267,7 @@ export function SelectPredictions({
         await updateURL(updatedList);
       } else {
         // If not selected, add the item
-        newSelected.add(key);
+        newTierItems.add(key);
 
         // Add value to items list
         const updatedList = [...selectedList, item.value.toString()];
@@ -238,8 +276,10 @@ export function SelectPredictions({
         await updateURL(updatedList);
       }
 
-      // Update internal state of selected items
-      setSelectedItems(newSelected);
+      // Update selectedItems with new tier items
+      const newMap = new Map(selectedItems);
+      newMap.set(activeRange, newTierItems);
+      setSelectedItems(newMap);
     } finally {
       // Unlock processing state
       setIsProcessing(false);
@@ -249,69 +289,59 @@ export function SelectPredictions({
 
       setTimeout(() => {
         setDisableButtons(false);
-      }, 1500);
+      }, 2000);
     }
   };
 
-  const totalPrice = Array.from(selectedItems).reduce((sum, str) => {
-    const { price } = JSON.parse(str);
-    return sum + price;
-  }, 0);
-
-  const takenPercentage = Math.round(
-    (selectedItems.size / apiResult?.length) * 100
+  const totalPrice = Array.from(selectedItems.values()).reduce(
+    (sum, tierSet) => {
+      return (
+        sum +
+        Array.from(tierSet).reduce((tierSum, str) => {
+          const { price } = JSON.parse(str);
+          return tierSum + price;
+        }, 0)
+      );
+    },
+    0
   );
 
-  const handleClick = (id: string) => {
+  const totalSelectedCount = Array.from(selectedItems.values()).reduce(
+    (sum, tierSet) => {
+      return sum + tierSet.size;
+    },
+    0
+  );
+
+  const takenPercentage = Math.round(
+    (apiResult?.length ? totalSelectedCount / apiResult.length : 0) * 100
+  );
+
+  const handleClick = (id: string): void => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("range", id);
     router.push(`?${params.toString()}`);
   };
 
-  // const handlePayment = async () => {
-  //   const ids = Array.from(selectedItems).map((item) => {
-  //     const parsed = JSON.parse(item);
-  //     return { id: parsed._id };
-  //   });
-
-  //   const customPredictions =
-  //     customValue && customValue.length > 0
-  //       ? customValue.split(",").map((v) => ({ value: Number(v) }))
-  //       : [];
-
-  //   const payload = {
-  //     contestId,
-  //     generatedPredictionsIds: ids,
-  //     customPredictions,
-  //   };
-
-  //   const res = await apiRequest("/orders/create-and-checkout", {
-  //     method: "POST",
-  //     body: payload,
-  //   });
-
-  //   if (res?.success) {
-  //     globalThis.location.href = res?.data?.url;
-  //   } else {
-  //     toast.error(res?.message || "Failed to initiate payment.");
-  //   }
-  // };
-
-  const handlePayment = async () => {
-    const ids = Array.from(selectedItems).map((item) => {
-      const parsed = JSON.parse(item);
-      return { id: parsed._id };
-    });
+  const handlePayment = async (): Promise<void> => {
+    const ids: { id: string }[] = Array.from(selectedItems.values()).flatMap(
+      (tierSet) =>
+        Array.from(tierSet).map((item) => {
+          const parsed: SelectedItemData = JSON.parse(item);
+          return { id: parsed._id };
+        })
+    );
 
     if (ids.length === 0) {
       toast.error("Please select at least one prediction.");
       return;
     }
-    const payload = {
+
+    const payload: WaitListPayload = {
       contestId,
     };
 
-    const res = await apiRequest("/wait-list/create", {
+    const res: ApiResponse = await apiRequest("/wait-list/create", {
       method: "POST",
       body: payload,
     });
@@ -328,13 +358,13 @@ export function SelectPredictions({
         <Card className="w-full min-w-3xl max-w-4xl mx-auto pt-6 pb-0 border border-border-color shadow-none rounded-3xl gap-0">
           {/* Price Range Tabs */}
           <div className="flex gap-1 px-6 border-b">
-            {tiersArr?.map((range: { _id: string; name: string }) => (
+            {tiersArr?.map((range: TierItem) => (
               <button
-                key={range?._id}
-                onClick={() => handleClick(range?._id)}
+                key={range._id}
+                onClick={() => handleClick(range._id)}
                 className={cn(
                   "mx-4 py-2 text-base font-semibold border-b-2 transition-colors cursor-pointer",
-                  activeRange === range?._id
+                  activeRange === range._id
                     ? "border-primary text-primary"
                     : "border-transparent text-muted-foreground hover:text-foreground"
                 )}
@@ -372,58 +402,67 @@ export function SelectPredictions({
 
           {/* Selection Grid */}
           <div className="grid grid-cols-5 gap-3 px-6 pb-3 bg-bg">
-            {apiResult?.map((item: SelectableItem) => {
-              const isSelected: boolean = Array.from(selectedItems).some(
-                (str) => {
-                  const parsed = JSON.parse(str);
-                  return parsed._id === item._id;
-                }
-              );
+            {isLoading ? (
+              <div className="relative py-10 flex justify-center w-full col-span-5">
+                <div className="w-16 h-16 border-4 border-border rounded-full animate-spin border-t-primary"></div>
+                <div className="absolute inset-0 w-16 h-16 border-4 border-transparent rounded-full animate-pulse border-t-accent"></div>
+              </div>
+            ) : (
+              apiResult?.map((item: SelectableItem) => {
+                const currentTierItems =
+                  selectedItems.get(activeRange) || new Set<string>();
+                const isSelected: boolean = Array.from(currentTierItems).some(
+                  (str) => {
+                    const parsed = JSON.parse(str);
+                    return parsed._id === item._id;
+                  }
+                );
 
-              const isAvailable: boolean = item?.isAvailable;
+                const isAvailable: boolean = item?.isAvailable;
 
-              return (
-                <button
-                  key={item._id}
-                  onClick={() => isAvailable && toggleItem(item)}
-                  disabled={!isAvailable || isProcessing || disableButtons}
-                  className={cn(
-                    "relative h-12 transition-all duration-200 font-medium text-sm flex items-center justify-center cursor-pointer",
-                    isProcessing || disableButtons
-                      ? "opacity-50 cursor-not-allowed"
-                      : "",
-                    isSelected && isAvailable
-                      ? "bg-primary text-white rounded-2xl px-4 gap-2"
-                      : isAvailable
-                      ? "bg-white text-primary rounded-2xl border border-gray-200 hover:border-gray-300"
-                      : "bg-gray-50 text-gray-400 rounded-2xl border border-gray-200 cursor-not-allowed"
-                  )}
-                >
-                  {!isSelected && isAvailable && (
-                    <div className="absolute left-4 w-5 h-5 border-2 border-gray-300 rounded-full" />
-                  )}
+                return (
+                  <button
+                    key={item._id}
+                    onClick={() => isAvailable && toggleItem(item)}
+                    disabled={!isAvailable || isProcessing || disableButtons}
+                    className={cn(
+                      "relative h-12 transition-all duration-200 font-medium text-sm flex items-center justify-center cursor-pointer",
+                      isProcessing || disableButtons
+                        ? "opacity-50 cursor-not-allowed"
+                        : "",
+                      isSelected && isAvailable
+                        ? "bg-primary text-white rounded-2xl px-4 gap-2"
+                        : isAvailable
+                        ? "bg-white text-primary rounded-2xl border border-gray-200 hover:border-gray-300"
+                        : "bg-gray-50 text-gray-400 rounded-2xl border border-gray-200 cursor-not-allowed"
+                    )}
+                  >
+                    {!isSelected && isAvailable && (
+                      <div className="absolute left-4 w-5 h-5 border-2 border-gray-300 rounded-full" />
+                    )}
 
-                  {!isSelected && !isAvailable && (
-                    <div className="absolute left-4 w-5 h-5 bg-border-color rounded-full" />
-                  )}
+                    {!isSelected && !isAvailable && (
+                      <div className="absolute left-4 w-5 h-5 bg-border-color rounded-full" />
+                    )}
 
-                  {isSelected && isAvailable && (
-                    <div className="absolute left-4 w-5 h-5 bg-white rounded-full flex justify-center items-center">
-                      <Check className="w-4 h-4 text-primary" />
-                    </div>
-                  )}
+                    {isSelected && isAvailable && (
+                      <div className="absolute left-4 w-5 h-5 bg-white rounded-full flex justify-center items-center">
+                        <Check className="w-4 h-4 text-primary" />
+                      </div>
+                    )}
 
-                  <span>{item?.value?.toLocaleString()}</span>
-                </button>
-              );
-            })}
+                    <span>{item?.value?.toLocaleString()}</span>
+                  </button>
+                );
+              })
+            )}
           </div>
 
           {/* Footer */}
           <div className="hidden lg:flex items-center justify-between p-6 border-t">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span className="text-2xl font-semibold text-dark-primary">
-                {selectedItems.size}
+                {totalSelectedCount}
               </span>
               <span>Selected</span>
 
@@ -445,8 +484,8 @@ export function SelectPredictions({
                   </button>
                 </SheetTrigger>
                 <SelectedValueSheet
-                  selectedItems={Array.from(selectedItems).map((item) =>
-                    JSON.parse(item)
+                  selectedItems={Array.from(selectedItems.values()).flatMap(
+                    (set) => Array.from(set).map((item) => JSON.parse(item))
                   )}
                   customValue={customValue}
                 />
@@ -473,40 +512,6 @@ export function SelectPredictions({
                   </DialogHeader>
                   <DialogFooter>
                     <DialogClose asChild>
-                      <Button
-                        onClick={handlePayment}
-                        type="submit"
-                        className="bg-dark-primary px-4 hover:bg-dark-primary/90 text-primary-foreground cursor-pointer"
-                      >
-                        Confirm
-                      </Button>
-                    </DialogClose>
-                    {/* <Button
-                      onClick={handlePayment}
-                      type="submit"
-                      className="bg-dark-primary px-4 hover:bg-dark-primary/90 text-primary-foreground cursor-pointer"
-                    >
-                      Confirm
-                    </Button> */}
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-              {/* <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer">
-                    Continue
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Confirm Payment</DialogTitle>
-                    <DialogDescription className="my-5">
-                      Please confirm that you want to proceed with this payment.
-                      Once completed, this action cannot be reversed.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <DialogClose asChild>
                       <Button variant="outline" className="cursor-pointer">
                         Cancel
                       </Button>
@@ -516,11 +521,11 @@ export function SelectPredictions({
                       type="submit"
                       className="bg-dark-primary px-4 hover:bg-dark-primary/90 text-primary-foreground cursor-pointer"
                     >
-                      Confirm Payment
+                      Confirm
                     </Button>
                   </DialogFooter>
                 </DialogContent>
-              </Dialog> */}
+              </Dialog>
             </div>
           </div>
         </Card>
@@ -529,7 +534,7 @@ export function SelectPredictions({
       <div className="flex lg:hidden items-center justify-between p-6 border-t">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span className="text-2xl font-semibold text-dark-primary">
-            {selectedItems.size}
+            {totalSelectedCount}
           </span>
           <span>Selected</span>
 
@@ -551,8 +556,8 @@ export function SelectPredictions({
               </button>
             </SheetTrigger>
             <SelectedValueSheet
-              selectedItems={Array.from(selectedItems).map((item) =>
-                JSON.parse(item)
+              selectedItems={Array.from(selectedItems.values()).flatMap((set) =>
+                Array.from(set).map((item) => JSON.parse(item))
               )}
               customValue={customValue}
             />
@@ -562,6 +567,7 @@ export function SelectPredictions({
           <span className="text-2xl font-semibold text-primary">
             {"$" + totalPrice}
           </span>
+
           <Dialog>
             <DialogTrigger asChild>
               <Button className="bg-dark-primary h-12 px-4 text-base font-bold hover:bg-dark-primary/90 text-primary-foreground rounded-2xl cursor-pointer">
