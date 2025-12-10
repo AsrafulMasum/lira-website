@@ -130,5 +130,6 @@ export const {
   useGetDashboardAnalyticsQuery,
 
   useGetAllWaitingListQuery,
+  useLazyGetAllWaitingListQuery,
   useDeleteWaitingListMutation,
 } = publicApi;
