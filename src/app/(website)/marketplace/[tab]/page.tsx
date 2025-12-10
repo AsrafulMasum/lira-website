@@ -33,7 +33,8 @@ export default async function TabPage({ params, searchParams }: PageProps) {
     }
   );
 
-  const activeTab = searchParamsValue?.tab ?? tabs[0]?._id;
+  const activeTab = searchParamsValue?.tab ?? "All";
+  // const activeTab = "All";
 
   const queryParams = new URLSearchParams();
 

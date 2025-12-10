@@ -122,6 +122,7 @@ const page = async ({ params, searchParams }: PageProps) => {
             tiers={tiers}
             livePrice={livePrice}
             rules={rule}
+            liveNews={liveNews}
           />
         </div>
       </ContainerLayout>

@@ -30,7 +30,7 @@ const NavLinks = ({ profile }: any) => {
             <HowItWorksModalContent />
           </Dialog>
         </li>
-        {profile?.role !== "SUPER_ADMIN" && (
+        {profile && profile?.role !== "SUPER_ADMIN" && (
           <li>
             <Link
               href="/my-entries"

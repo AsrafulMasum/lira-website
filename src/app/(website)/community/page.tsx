@@ -8,10 +8,10 @@ const page = async ({ searchParams }: { searchParams: any }) => {
   const query = resolvedSearchParams?.q || "";
 
   const queryParams = new URLSearchParams();
-
+  console.log(sort);
   if (query) queryParams.append("searchTerm", query);
   if (sort === "New") queryParams.append("sort", "createdAt");
-  if (sort === "Trending") queryParams.append("sort", "-upvote");
+  if (sort === "Most Popular") queryParams.append("sort", "-upvote");
 
   const { data } = await apiRequest(
     `/community/posts?${queryParams.toString()}`,

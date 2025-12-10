@@ -6,14 +6,13 @@ export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
   const accessToken = request.cookies.get("accessToken")?.value;
   const refreshToken = request.cookies.get("refreshToken")?.value;
-  const protectedRoutes = ["/contests", "/profile", "/community", "/dashboard"];
+  const protectedRoutes = ["/contests", "/profile", "/community", "/dashboard", "/my-entries"];
   const isProtected = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   );
 
   // Try to get the user (may return null or user object with role)
   const user = await getProfile();
-  console.log("user", user);
 
   // Handle OAuth(Google) callback (login)
   if (pathname === "/auth/callback") {
@@ -75,6 +74,7 @@ export const config = {
   matcher: [
     "/",
     "/login",
+    "/my-entries",
     "/auth/callback",
     "/contests/:path*",
     "/community/:path*",

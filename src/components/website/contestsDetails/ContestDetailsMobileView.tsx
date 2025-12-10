@@ -18,6 +18,7 @@ const ContestDetailsMobileView = ({
   tiers,
   livePrice,
   rules,
+  liveNews,
 }: any) => {
   const predictions = contest?.predictions?.generatedPredictions;
 
@@ -150,33 +151,37 @@ const ContestDetailsMobileView = ({
         <ContestCountdown endDate={contest?.endTime} isMarketPlace={false} />
       </div>
 
-      <div className="mt-8">
-        <div className="flex justify-between items-center">
-          <h4 className="text-lg text-[#002913] font-semibold">
-            Live {contest?.category} Price
-          </h4>
-          <h4 className="text-primary font-semibold">
-            $ {livePrice?.currentValue}
-          </h4>
-        </div>
+      {livePrice && (
+        <div className="mt-8">
+          <div className="flex justify-between items-center">
+            <h4 className="text-lg text-[#002913] font-semibold">
+              Live {contest?.category} Price
+            </h4>
+            <h4 className="text-primary font-semibold">
+              $ {livePrice?.currentValue}
+            </h4>
+          </div>
 
-        <div className="flex justify-between items-center mb-1">
-          <p className="text-sm text-primary font-semibold">
-            24H Change: {livePrice?.changePercent}%
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm text-primary font-semibold">
+              24H Change: {livePrice?.changePercent}%
+            </p>
+            <p className="text-gray-text text-xs">Current</p>
+          </div>
+
+          <p className="text-gray-text text-xs mb-5">
+            Data from {livePrice?.metadata?.source} API
           </p>
-          <p className="text-gray-text text-xs">Current</p>
+
+          <LiveChart livePrice={livePrice} category={contest?.category} />
         </div>
+      )}
 
-        <p className="text-gray-text text-xs mb-5">
-          Data from {livePrice?.metadata?.source} API
-        </p>
-
-        <LiveChart livePrice={livePrice} category={contest?.category} />
-      </div>
-
-      <div>
-        <LatestNews />
-      </div>
+      {liveNews && (
+        <div>
+          <LatestNews liveNews={liveNews} />
+        </div>
+      )}
     </section>
   );
 };

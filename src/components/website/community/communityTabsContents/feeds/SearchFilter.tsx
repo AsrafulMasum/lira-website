@@ -55,17 +55,17 @@ const SearchFilter = () => {
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            className="h-12 w-28 gap-4 font-medium bg-background rounded-xl shadow-none hover:bg-white cursor-pointer"
+            className="h-12 w-40 gap-4 font-medium bg-background rounded-xl shadow-none hover:bg-white cursor-pointer flex items-center justify-between"
           >
             {selected}
             <ChevronDown className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-40">
+        <DropdownMenuContent className="w-40">
           <DropdownMenuItem onClick={() => setSelected("New")}>
             New
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setSelected("Trending")}>
+          <DropdownMenuItem onClick={() => setSelected("Most Popular")}>
             Most Popular
           </DropdownMenuItem>
         </DropdownMenuContent>
