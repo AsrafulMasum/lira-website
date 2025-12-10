@@ -13,11 +13,12 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download } from "lucide-react";
 import moment from "moment";
 import {
   useDeleteWaitingListMutation,
   useGetAllWaitingListQuery,
+  useLazyGetAllWaitingListQuery,
 } from "@/redux/apiSlices/publicSlice";
 import { FaTrash } from "react-icons/fa6";
 import { toast } from "sonner";
@@ -31,6 +32,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import * as XLSX from "xlsx";
 
 const WaitingList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -42,8 +44,50 @@ const WaitingList = () => {
     page: currentPage,
     limit: itemsPerPage,
   });
+  const [triggerGetAllWaitingList, { isLoading: isExporting }] =
+    useLazyGetAllWaitingListQuery();
+
   const [deleteWaitingList, { isLoading: isDeleteLoading }] =
     useDeleteWaitingListMutation();
+
+  const handleDownloadExcel = async () => {
+    try {
+      const res = await triggerGetAllWaitingList({
+        page: 1,
+        limit: 10000,
+      }).unwrap();
+      const listData = res?.data || [];
+
+      if (listData.length === 0) {
+        toast.error("No waiting list entries to export");
+        return;
+      }
+
+      const exportData = listData.map((item: any) => {
+        const user = item?.userId || {};
+        const contest = item?.contestId || {};
+        return {
+          User: user?.name || "-",
+          Email: user?.email || "-",
+          Contest: contest?.name || "-",
+          Group: contest?.group || "-",
+          Category: contest?.category || "-",
+          "Created At": item?.createdAt
+            ? moment(item.createdAt).format("MMM D, YYYY h:mm A")
+            : "-",
+        };
+      });
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(exportData);
+      XLSX.utils.book_append_sheet(wb, ws, "Waiting List");
+      XLSX.writeFile(wb, "Waiting_List.xlsx");
+      toast.success("Waiting list exported successfully");
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Failed to export waiting list");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -108,11 +152,22 @@ const WaitingList = () => {
   return (
     <div className="p-6 space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Waiting List</CardTitle>
-          <p className="text-muted-foreground">
-            Users who joined contest waitlist
-          </p>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-2xl font-bold">Waiting List</CardTitle>
+            <p className="text-muted-foreground">
+              Users who joined contest waitlist
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={handleDownloadExcel}
+            disabled={isExporting}
+            className="flex items-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            {isExporting ? "Exporting..." : "Download Excel"}
+          </Button>
         </CardHeader>
       </Card>
 
@@ -258,7 +313,10 @@ const WaitingList = () => {
       )}
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Waitlist Entry</AlertDialogTitle>
@@ -267,7 +325,13 @@ const WaitingList = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="cursor-pointer" onClick={() => { setIsDeleteDialogOpen(false); setDeleteId(null); }}>
+            <AlertDialogCancel
+              className="cursor-pointer"
+              onClick={() => {
+                setIsDeleteDialogOpen(false);
+                setDeleteId(null);
+              }}
+            >
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
