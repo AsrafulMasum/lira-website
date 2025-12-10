@@ -13,14 +13,15 @@ const ContestDetailsLeftSection = ({
   contest,
   tiers,
   customValue,
-  rules,
+  rule,
 }: {
   contest: any;
   tiers: any;
   customValue: string | undefined;
-  rules: string | undefined;
+  rule: string | undefined;
 }) => {
   const predictions = contest?.predictions?.generatedPredictions;
+  console.log("Hukka hua rules", rule);
 
   return (
     <div className="col-span-2">
@@ -110,10 +111,10 @@ const ContestDetailsLeftSection = ({
           />
         </div>
 
-        {rules && (
+        {rule && (
           <div
             className="text-gray-text font-semibold text-sm mt-4 text-center"
-            dangerouslySetInnerHTML={{ __html: rules }}
+            dangerouslySetInnerHTML={{ __html: rule }}
           ></div>
         )}
       </div>

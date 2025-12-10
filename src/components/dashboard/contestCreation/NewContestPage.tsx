@@ -54,6 +54,7 @@ interface ContestData {
   predictionEventTime: string;
   endOffset: string;
   endOffsetTime?: string;
+  rule: string;
 }
 
 const steps: { id: Step; label: string }[] = [
@@ -100,6 +101,7 @@ const NewContestPage = () => {
     predictionEventTime: "",
     endOffset: "",
     endOffsetTime: "",
+    rule: "",
   });
 
   // Force client-side rendering
@@ -233,6 +235,7 @@ const NewContestPage = () => {
       startTime: new Date().toISOString(), // Current time as start time
       endTime: eventDateTime,
       endOffsetTime,
+      rule: contestData.rule,
     };
   };
 

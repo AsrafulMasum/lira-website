@@ -56,6 +56,7 @@ interface ContestData {
   predictionEventTime: string;
   endOffset: string;
   endOffsetTime?: string;
+  rule: string;
 }
 
 const steps: { id: Step; label: string }[] = [
@@ -143,6 +144,7 @@ const EditContestPage = () => {
     predictionEventTime: "",
     endOffset: "",
     endOffsetTime: "",
+    rule: "",
   });
 
   useEffect(() => {

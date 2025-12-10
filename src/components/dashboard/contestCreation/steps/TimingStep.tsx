@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -16,6 +17,7 @@ interface ContestData {
   predictionEventTime: string;
   endOffset: string;
   endOffsetTime?: string;
+  rule: string;
 }
 
 interface TimingStepProps {
@@ -173,6 +175,17 @@ const TimingStep: React.FC<TimingStepProps> = ({ data, onUpdate }) => {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      {/* Rule Field */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-gray-700">Rule</label>
+        <Textarea
+          placeholder="Enter contest rules..."
+          value={data.rule || ""}
+          onChange={(e) => handleInputChange("rule", e.target.value)}
+          className="min-h-[100px] w-full mt-2 bg-bg rounded-xl"
+        />
       </div>
 
       {/* Display calculated End Offset Time */}
