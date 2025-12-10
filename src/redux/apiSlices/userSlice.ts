@@ -3,8 +3,8 @@ import api from "../api/baseApi";
 const userApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllUsers: builder.query({
-      query: (page) => ({
-        url: `/user-managements/?page=${page}`,
+      query: ({ page, limit = 10 }) => ({
+        url: `/user-managements/?page=${page}&limit=${limit}`,
         method: "GET",
       }),
       providesTags: ["users"],
@@ -21,4 +21,8 @@ const userApi = api.injectEndpoints({
   }),
 });
 
-export const { useGetAllUsersQuery, useChangeUserStatusMutation } = userApi;
+export const {
+  useGetAllUsersQuery,
+  useLazyGetAllUsersQuery,
+  useChangeUserStatusMutation,
+} = userApi;

@@ -5,6 +5,7 @@ import Loading from "@/app/loading";
 import {
   useChangeUserStatusMutation,
   useGetAllUsersQuery,
+  useLazyGetAllUsersQuery,
 } from "@/redux/apiSlices/userSlice";
 import {
   Table,
@@ -21,18 +22,28 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Eye, ChevronLeft, ChevronRight, Lock, Unlock } from "lucide-react";
+import {
+  Eye,
+  ChevronLeft,
+  ChevronRight,
+  Lock,
+  Unlock,
+  Download,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import * as XLSX from "xlsx";
 
 interface User {
   _id: string;
   name: string;
   role: string;
   email: string;
+  phone?: string;
+  address?: string;
   image: string;
   status: string;
   verified: boolean;
@@ -46,7 +57,10 @@ const AllUsersPage = () => {
     data: usersData,
     isLoading,
     isFetching,
-  } = useGetAllUsersQuery(currentPage);
+  } = useGetAllUsersQuery({ page: currentPage });
+  const [triggerGetAllUsers, { isLoading: isExporting }] =
+    useLazyGetAllUsersQuery();
+
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
@@ -56,6 +70,40 @@ const AllUsersPage = () => {
   const itemsPerPage = 10;
   const [changeUserStatus, { isLoading: isChangingStatus }] =
     useChangeUserStatusMutation();
+
+  const handleDownloadExcel = async () => {
+    try {
+      const res = await triggerGetAllUsers({ page: 1, limit: 10000 }).unwrap();
+      const allUsers = res?.data || [];
+
+      if (allUsers.length === 0) {
+        toast.error("No users to export");
+        return;
+      }
+
+      const exportData = allUsers.map((user: User) => ({
+        Name: user.name || "-",
+        Email: user.email || "-",
+        Role: user.role || "-",
+        Phone: user.phone || "-",
+        Address: user.address || "-",
+        Status: user.status || "-",
+        Verified: user.verified ? "Yes" : "No",
+        "Joined At": user.createdAt
+          ? format(new Date(user.createdAt), "PPP")
+          : "-",
+      }));
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(exportData);
+      XLSX.utils.book_append_sheet(wb, ws, "All Users");
+      XLSX.writeFile(wb, "All_Users_List.xlsx");
+      toast.success("Users list exported successfully");
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Failed to export users list");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -127,11 +175,22 @@ const AllUsersPage = () => {
   return (
     <div className="container mx-auto">
       <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">All Users</CardTitle>
-          <p className="text-muted-foreground">
-            Manage all users in the system
-          </p>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-2xl font-bold">All Users</CardTitle>
+            <p className="text-muted-foreground">
+              Manage all users in the system
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={handleDownloadExcel}
+            disabled={isExporting}
+            className="flex items-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            {isExporting ? "Exporting..." : "Download Excel"}
+          </Button>
         </CardHeader>
       </Card>
 
@@ -159,7 +218,11 @@ const AllUsersPage = () => {
                 <TableCell>
                   {user.image ? (
                     <Image
-                      src={user.image?.startsWith("http") ? user.image : `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${user.image}`}
+                      src={
+                        user.image?.startsWith("http")
+                          ? user.image
+                          : `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${user.image}`
+                      }
                       alt={user.name}
                       width={40}
                       height={40}
