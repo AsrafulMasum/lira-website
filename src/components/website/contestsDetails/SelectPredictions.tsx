@@ -289,7 +289,7 @@ export function SelectPredictions({
 
       setTimeout(() => {
         setDisableButtons(false);
-      }, 2000);
+      }, 1500);
     }
   };
 

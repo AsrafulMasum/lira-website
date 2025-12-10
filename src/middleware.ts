@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
   const accessToken = request.cookies.get("accessToken")?.value;
   const refreshToken = request.cookies.get("refreshToken")?.value;
-  const protectedRoutes = ["/contests", "/profile", "/community", "/dashboard"];
+  const protectedRoutes = ["/contests", "/profile", "/community", "/dashboard", "/my-entries"];
   const isProtected = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   );
@@ -74,6 +74,7 @@ export const config = {
   matcher: [
     "/",
     "/login",
+    "/my-entries",
     "/auth/callback",
     "/contests/:path*",
     "/community/:path*",
