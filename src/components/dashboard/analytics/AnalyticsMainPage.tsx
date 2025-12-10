@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import * as XLSX from "xlsx";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 
 // Import the new components
 import AnalyticsFilters, { FilterState } from "./AnalyticsFilters";
@@ -51,6 +54,58 @@ export default function AnalyticsPage() {
 
   console.log(allAnalyticsData);
 
+  const handleDownloadExcel = () => {
+    if (!allAnalyticsData) return;
+
+    const wb = XLSX.utils.book_new();
+
+    // 1. Financial Performance Sheet
+    if (financialPerformance) {
+      const financialData = [
+        { Metric: "Total Revenue", Value: financialPerformance.totalRevenue },
+        { Metric: "Net Profit", Value: financialPerformance.netProfit },
+        { Metric: "Gross Margin", Value: financialPerformance.grossMargin },
+        { Metric: "Refund Rate", Value: financialPerformance.refundRate },
+      ];
+      const wsFinancial = XLSX.utils.json_to_sheet(financialData);
+      XLSX.utils.book_append_sheet(wb, wsFinancial, "Financial Performance");
+    }
+
+    // 2. Revenue Over Time Sheet
+    if (revenueOverTime && Array.isArray(revenueOverTime)) {
+      const wsRevenue = XLSX.utils.json_to_sheet(revenueOverTime);
+      XLSX.utils.book_append_sheet(wb, wsRevenue, "Revenue Over Time");
+    }
+
+    // 3. Top Products Sheet
+    if (topProductsByRevenue && Array.isArray(topProductsByRevenue)) {
+      const wsProducts = XLSX.utils.json_to_sheet(topProductsByRevenue);
+      XLSX.utils.book_append_sheet(wb, wsProducts, "Top Products");
+    }
+
+    // 4. User Activity Sheet
+    if (userActivity) {
+      const activityData = [
+        { Metric: "Active Users", Value: userActivity.activeUsers },
+        { Metric: "New Signups", Value: userActivity.newSignups },
+        // Add more metrics if available in userActivity object
+      ];
+      const wsActivity = XLSX.utils.json_to_sheet(activityData);
+      XLSX.utils.book_append_sheet(wb, wsActivity, "User Activity");
+    }
+
+    // 5. Geographic Distribution Sheet
+    if (geographicDistribution && Array.isArray(geographicDistribution)) {
+      const wsGeo = XLSX.utils.json_to_sheet(geographicDistribution);
+      XLSX.utils.book_append_sheet(wb, wsGeo, "Geographic Distribution");
+    }
+
+    // Add more sheets as needed for other data sections
+
+    // Generate Excel file
+    XLSX.writeFile(wb, "Analytics_Report.xlsx");
+  };
+
   return (
     <div className="min-h-screen bg-white rounded-2xl p-6 md:p-8">
       <div className="space-y-8">
@@ -64,6 +119,14 @@ export default function AnalyticsPage() {
               Monitor performance and user engagement
             </p>
           </div>
+          <Button
+            onClick={handleDownloadExcel}
+            variant="outline"
+            className="gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Download Excel
+          </Button>
         </div>
 
         {/* Filters Component */}

@@ -158,26 +158,13 @@ const AllUsersPage = () => {
                 </TableCell>
                 <TableCell>
                   {user.image ? (
-                    <div className="h-10 w-10 rounded-full overflow-hidden">
-                      <Image
-                        src={
-                          user.image && process.env.NEXT_PUBLIC_IMAGE_BASE_URL
-                            ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${user.image}`
-                            : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                                user.name
-                              )}`
-                        }
-                        alt={user.name}
-                        width={40}
-                        height={40}
-                        className="h-full w-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src =
-                            "https://ui-avatars.com/api/?name=" +
-                            encodeURIComponent(user.name);
-                        }}
-                      />
-                    </div>
+                    <Image
+                      src={user.image?.startsWith("http") ? user.image : `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${user.image}`}
+                      alt={user.name}
+                      width={40}
+                      height={40}
+                      className="rounded-full"
+                    />
                   ) : (
                     <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
                       <span className="text-gray-500 text-sm font-medium">

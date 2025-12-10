@@ -1,19 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import DetailsStep from "./steps/DetailsStep";
 import TimingStep from "./steps/TimingStep";
 import ContestTimeline from "./ContestTimeline";
 import PredictionsStep from "./steps/PredictionsStep";
 import PricingStep from "./steps/PricingStep";
-import { useCreateContestMutation } from "@/redux/apiSlices/contestSlice";
+import {
+  useGetContestByIdQuery,
+  useUpdateContestMutation,
+} from "@/redux/apiSlices/contestSlice";
 import { toast } from "sonner";
 
 type Step = "details" | "predictions" | "pricing" | "timing";
-
 type PricingModel = "flat" | "tiered" | "tiered-percent";
 
 interface Tier {
@@ -64,13 +66,54 @@ const steps: { id: Step; label: string }[] = [
   { id: "timing", label: "Timing" },
 ];
 
-const NewContestPage = () => {
+// Helper to normalize placePercentages object to array [p1, p2, ...]
+const normalizePlacePercentages = (obj: Record<string, number> | undefined) => {
+  if (!obj || typeof obj !== "object") return [100];
+  const entries = Object.entries(obj)
+    .map(([key, value]) => ({ key: Number(key), value }))
+    .filter((e) => !Number.isNaN(e.key))
+    .sort((a, b) => a.key - b.key)
+    .map((e) => e.value);
+  return entries.length ? entries : [100];
+};
+
+const mapPredictionTypeToModel = (
+  predictionType: string | undefined
+): PricingModel => {
+  switch (predictionType) {
+    case "tier":
+      return "tiered";
+    case "percentage":
+      return "tiered-percent";
+    case "priceOnly":
+    default:
+      return "flat";
+  }
+};
+
+const EditContestPage = () => {
   const router = useRouter();
+  const params = useParams();
+  const contestId = useMemo(() => {
+    const raw = params?.id;
+    if (!raw) return "";
+    if (Array.isArray(raw)) return raw[0] ?? "";
+    return String(raw);
+  }, [params]);
+
+  const {
+    data: contestResponse,
+    isLoading,
+    isError,
+  } = useGetContestByIdQuery(contestId, {
+    skip: !contestId,
+  });
+  const [updateContest, { isLoading: isUpdating }] = useUpdateContestMutation();
+
   const [currentStep, setCurrentStep] = useState<Step>("details");
   const [completedSteps, setCompletedSteps] = useState<Step[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const [createContest, { isLoading }] = useCreateContestMutation();
+
   const [contestData, setContestData] = useState<ContestData>({
     category: "",
     name: "",
@@ -104,16 +147,136 @@ const NewContestPage = () => {
     rule: "",
   });
 
-  // Force client-side rendering
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Prefill mapping from backend response
+  useEffect(() => {
+    const res =
+      contestResponse?.data || contestResponse?.result || contestResponse;
+    if (!res) return;
+
+    try {
+      // Details
+      const prize = res?.prize || {};
+      const details = {
+        category: String(res?.categoryId || ""),
+        name: String(res?.name || ""),
+        description: String(res?.description || ""),
+        statesAllowed: Array.isArray(res?.state) ? res.state : [],
+        prizeTitle: String(prize?.title || ""),
+        prizeType: String(prize?.type || "Cash"),
+        prizePool: Number(prize?.prizePool) || 0,
+      };
+
+      // Predictions
+      const predictions = res?.predictions || {};
+      const predictionData = {
+        minValue: String(predictions?.minPrediction ?? ""),
+        maxValue: String(predictions?.maxPrediction ?? ""),
+        increment: String(predictions?.increment ?? ""),
+        unit: String(predictions?.unit ?? "Percentage %"),
+        entriesPerPrediction: Number(
+          predictions?.numberOfEntriesPerPrediction ?? 1
+        ),
+        placePercentages: normalizePlacePercentages(
+          predictions?.placePercentages as Record<string, number> | undefined
+        ),
+      };
+
+      // Pricing
+      const pricing = res?.pricing || {};
+      const pricingModel = mapPredictionTypeToModel(pricing?.predictionType);
+      const tiers: Tier[] = Array.isArray(pricing?.tiers)
+        ? pricing.tiers.map((t: any, idx: number) => {
+            const id = `tier-${idx + 1}`;
+            const pricePerPrediction = String(t?.pricePerPrediction ?? "");
+            if (pricingModel === "tiered") {
+              return {
+                id,
+                minValue: String(t?.min ?? ""),
+                maxValue: String(t?.max ?? ""),
+                pricePerPrediction,
+              };
+            }
+            if (pricingModel === "tiered-percent") {
+              return {
+                id,
+                fromPercent: String(t?.min ?? ""),
+                toPercent: String(t?.max ?? ""),
+                pricePerPrediction,
+              };
+            }
+            return {
+              id,
+              pricePerPrediction,
+            };
+          })
+        : [
+            {
+              id: "tier-1",
+              minValue: "",
+              maxValue: "",
+              fromPercent: "",
+              toPercent: "",
+              pricePerPrediction: "",
+            },
+          ];
+
+      const pricingData = {
+        pricingModel,
+        flatPrice: String(pricing?.flatPrice ?? ""),
+        tiers,
+      };
+
+      // Timing
+      const endTimeISO = res?.endTime ? new Date(res.endTime) : null;
+      const endOffsetISO = res?.endOffsetTime
+        ? new Date(res.endOffsetTime)
+        : null;
+      const predictionEventDate = endTimeISO
+        ? endTimeISO.toISOString().split("T")[0]
+        : "";
+      const predictionEventTime = endTimeISO
+        ? endTimeISO.toTimeString().slice(0, 5)
+        : "";
+
+      let endOffset = "";
+      if (endTimeISO && endOffsetISO) {
+        const diffMs = endTimeISO.getTime() - endOffsetISO.getTime();
+        const hours = Math.round(diffMs / (60 * 60 * 1000));
+        if (hours >= 1 && hours <= 24) {
+          endOffset = `${hours}hours`;
+        } else {
+          endOffset = "1hour";
+        }
+      }
+
+      const timingData = {
+        predictionEventDate,
+        predictionEventTime,
+        endOffset,
+        endOffsetTime: res?.endOffsetTime || "",
+      };
+
+      setContestData((prev) => ({
+        ...prev,
+        ...details,
+        ...predictionData,
+        ...pricingData,
+        ...timingData,
+      }));
+    } catch (e) {
+      // If mapping fails, keep defaults
+      console.error("Failed to prefill contest data", e);
+    }
+  }, [contestResponse]);
 
   const currentStepIndex = steps.findIndex((step) => step.id === currentStep);
   const isFirstStep = currentStepIndex === 0;
   const isLastStep = currentStepIndex === steps.length - 1;
 
-  // Form validation functions
   const validateDetailsStep = () => {
     return (
       contestData.category &&
@@ -161,25 +324,22 @@ const NewContestPage = () => {
     }
   };
 
-  // Transform contest data to API format
+  // Transform contestData to API format for update
   const transformContestData = () => {
-    // Create place percentages object from array
-    const placePercentages = {};
-    contestData.placePercentages.forEach((percentage, index) => {
-      (placePercentages as Record<number, number>)[index + 1] = percentage;
+    // Convert placePercentages array to object {1: p1, 2: p2, ...}
+    const placePercentages: Record<number, number> = {};
+    contestData.placePercentages.forEach((percentage, idx) => {
+      placePercentages[idx + 1] = percentage;
     });
 
-    // Determine pricing type
+    // Determine predictionType from pricingModel
     let predictionType = "";
-    if (contestData.pricingModel === "flat") {
-      predictionType = "priceOnly";
-    } else if (contestData.pricingModel === "tiered") {
-      predictionType = "tier";
-    } else if (contestData.pricingModel === "tiered-percent") {
+    if (contestData.pricingModel === "flat") predictionType = "priceOnly";
+    else if (contestData.pricingModel === "tiered") predictionType = "tier";
+    else if (contestData.pricingModel === "tiered-percent")
       predictionType = "percentage";
-    }
 
-    // Format tiers data (map fields based on pricing model)
+    // Map tiers for API
     const tiers = contestData.tiers.map((tier, index) => {
       const isPercentage = contestData.pricingModel === "tiered-percent";
       const min = isPercentage
@@ -188,7 +348,6 @@ const NewContestPage = () => {
       const max = isPercentage
         ? Number(tier.toPercent) || 0
         : Number(tier.maxValue) || 0;
-
       return {
         name: `Tier ${index + 1}`,
         min,
@@ -198,19 +357,14 @@ const NewContestPage = () => {
       };
     });
 
-    // Combine event date and time in UTC format
+    // Combine event date and time to ISO UTC string
     const eventDateTime = `${contestData.predictionEventDate}T${contestData.predictionEventTime}:00.000Z`;
-
-    // Use the calculated endOffsetTime from TimingStep
     const endOffsetTime = contestData.endOffsetTime || eventDateTime;
 
-    // Get category name from the category ID
-    // In a real implementation, you would fetch this from your categories data
-    // For now, we'll use a placeholder that will be replaced by the backend
     return {
       name: contestData.name.trim(),
-      category: "Category Name", // The API requires a category name
-      categoryId: contestData.category, // The category field already contains the categoryId from the DetailsStep
+      category: "Category Name", // Backend fills actual category name
+      categoryId: contestData.category,
       description: contestData.description.trim(),
       state: contestData.statesAllowed,
       prize: {
@@ -222,7 +376,7 @@ const NewContestPage = () => {
         minPrediction: Number(contestData.minValue) || 0,
         maxPrediction: Number(contestData.maxValue) || 0,
         increment: Number(contestData.increment) || 0,
-        unit: contestData.unit, // Extract just the unit name without any ID
+        unit: contestData.unit,
         numberOfEntriesPerPrediction: contestData.entriesPerPrediction,
         placePercentages,
         generatedPredictions: [],
@@ -232,67 +386,47 @@ const NewContestPage = () => {
         flatPrice: Number(contestData.flatPrice) || 0,
         tiers,
       },
-      startTime: new Date().toISOString(), // Current time as start time
       endTime: eventDateTime,
       endOffsetTime,
-      rule: contestData.rule,
     };
   };
 
   const handleNext = async () => {
-    if (isCurrentStepValid()) {
-      // Log current contest data to console
-      console.log("New Contest Data:", {
-        currentStep,
-        contestData,
-        completedSteps: [...completedSteps, currentStep],
-        isLastStep,
-      });
+    if (!isCurrentStepValid()) return;
 
-      if (isLastStep) {
-        try {
-          setIsSubmitting(true);
-
-          // Create FormData object
-          const formData = new FormData();
-
-          // Add image if available
-          if (contestData.prizeImage) {
-            formData.append("image", contestData.prizeImage);
-          }
-
-          // Transform and add JSON data
-          const apiData = transformContestData();
-          formData.append("data", JSON.stringify(apiData));
-
-          // Submit the contest data
-          const res = await createContest(formData).unwrap();
-
-          if (res.success) {
-            toast.success(res.message || "Contest created successfully!");
-            router.push("/dashboard");
-          } else {
-            toast.error(
-              res.message || "Failed to create contest. Please try again."
-            );
-          }
-        } catch (error) {
-          console.error("Error creating contest:", error);
-          toast.error("Failed to create contest. Please try again.");
-        } finally {
-          setIsSubmitting(false);
+    if (isLastStep) {
+      try {
+        // Build FormData with image and JSON data
+        const formData = new FormData();
+        if (contestData.prizeImage) {
+          formData.append("image", contestData.prizeImage);
         }
-        return;
-      }
+        const apiData = transformContestData();
+        formData.append("data", JSON.stringify(apiData));
 
-      // Mark current step as completed
-      if (!completedSteps.includes(currentStep)) {
-        setCompletedSteps((prev) => [...prev, currentStep]);
-      }
+        const res = await updateContest({
+          contestId,
+          formData,
+        }).unwrap();
 
-      const nextStep = steps[currentStepIndex + 1];
-      setCurrentStep(nextStep.id);
+        if (res?.success) {
+          toast.success(res?.message || "Contest updated successfully!");
+        } else {
+          toast.success("Contest updated successfully!");
+        }
+        router.push("/dashboard");
+      } catch (error) {
+        console.error("Error updating contest:", error);
+        toast.error("Failed to update contest. Please try again.");
+      }
+      return;
     }
+
+    if (!completedSteps.includes(currentStep)) {
+      setCompletedSteps((prev) => [...prev, currentStep]);
+    }
+    const nextStep = steps[currentStepIndex + 1];
+    setCurrentStep(nextStep.id);
   };
 
   const handleBack = () => {
@@ -307,7 +441,6 @@ const NewContestPage = () => {
   };
 
   const handleSaveAndExit = () => {
-    // Save draft logic here
     router.push("/dashboard");
   };
 
@@ -332,7 +465,6 @@ const NewContestPage = () => {
     }
   };
 
-  // If not client-side yet, show minimal loading state
   if (!isClient) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -378,23 +510,14 @@ const NewContestPage = () => {
 
           <Button
             onClick={handleNext}
-            disabled={!isCurrentStepValid() || isSubmitting || isLoading}
+            disabled={!isCurrentStepValid() || isUpdating}
             className={`text-white ${
-              isCurrentStepValid() && !isSubmitting && !isLoading
+              isCurrentStepValid() && !isUpdating
                 ? "bg-green-600 hover:bg-green-700"
                 : "bg-gray-400 cursor-not-allowed"
             }`}
           >
-            {isSubmitting || (isLastStep && isLoading) ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {isLastStep ? "Creating..." : "Processing..."}
-              </>
-            ) : isLastStep ? (
-              "Finish"
-            ) : (
-              "Next"
-            )}
+            {isLastStep ? (isUpdating ? "Updating..." : "Finish") : "Next"}
           </Button>
         </div>
       </div>
@@ -406,7 +529,6 @@ const NewContestPage = () => {
           currentStep={currentStep}
           completedSteps={completedSteps}
           onStepClick={(stepId) => {
-            // Only allow clicking on completed steps or current step
             if (completedSteps.includes(stepId) || stepId === currentStep) {
               setCurrentStep(stepId);
             }
@@ -416,10 +538,20 @@ const NewContestPage = () => {
 
       {/* Content */}
       <div className="p-6 bg-white rounded-3xl mt-10">
-        {renderCurrentStep()}
+        {isLoading ? (
+          <div className="flex items-center justify-center h-40">
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          </div>
+        ) : isError ? (
+          <div className="text-red-600">
+            Failed to load contest. You can still edit fields.
+          </div>
+        ) : (
+          renderCurrentStep()
+        )}
       </div>
     </div>
   );
 };
 
-export default NewContestPage;
+export default EditContestPage;

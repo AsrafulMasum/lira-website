@@ -19,6 +19,7 @@ import {
   CircleFadingPlus,
   Combine,
   NotebookPen,
+  ScrollText,
 } from "lucide-react";
 import { RiCommunityLine } from "react-icons/ri";
 import { FaRegHourglassHalf } from "react-icons/fa6";
@@ -115,6 +116,11 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onCollapse }) => {
       icon: <NotebookTabs className="h-5 w-5" />,
     },
     {
+      name: "Contest Rules",
+      href: "/dashboard/manageContestRules",
+      icon: <ScrollText className="h-5 w-5" />,
+    },
+    {
       name: "Get Help",
       href: "/dashboard/get-help",
       icon: <MailQuestionMark className="h-5 w-5" />,
@@ -198,7 +204,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onCollapse }) => {
                   <Link
                     href={item.href}
                     className={cn(
-                      "flex items-center p-3 rounded-lg transition-colors",
+                      "flex items-center px-3 py-2 rounded-lg transition-colors",
                       pathname === item.href
                         ? "bg-green-50 text-green-600"
                         : "text-gray-700 hover:bg-gray-100",

@@ -11,7 +11,7 @@ const Page = () => {
           <CardTitle className="text-2xl font-bold">
             Unit & Types Management
           </CardTitle>
-          <p className="text-muted-foreground">Manage unit types and units</p>
+          <p className="text-muted-foreground">Manage types and units</p>
         </CardHeader>
       </Card>
 

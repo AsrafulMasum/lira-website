@@ -46,7 +46,7 @@ const CommunityPosts = () => {
       </div>
     );
 
-  const communityPosts = posts?.data?.result || [];
+  const communityPosts = posts?.data || [];
   const openDetails = (post: any) => {
     setSelectedPost(post);
     setIsOpen(true);

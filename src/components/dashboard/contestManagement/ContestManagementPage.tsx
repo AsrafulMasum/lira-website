@@ -45,6 +45,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import {
+  useChangeContestStatusMutation,
+  useCopyContestMutation,
   useDeleteContestMutation,
   useGetContestsQuery,
   usePublishContestMutation,
@@ -62,16 +64,26 @@ const getStatusBadge = (status: string) => {
         </Badge>
       );
     case "Draft":
-      return <Badge variant="secondary">{status}</Badge>;
-    case "Done":
+      return (
+        <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">
+          {status}
+        </Badge>
+      );
+    case "Completed":
       return (
         <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">
           {status}
         </Badge>
       );
-    case "Deleted":
+    case "Canceled":
       return (
         <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
+          {status}
+        </Badge>
+      );
+    case "Deleted":
+      return (
+        <Badge className="bg-red-200 text-red-800 hover:bg-red-100">
           {status}
         </Badge>
       );
@@ -87,6 +99,21 @@ const ContestManagementPage = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [contestToDelete, setContestToDelete] = useState<any>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Copy confirmation dialog state
+  const [copyDialogOpen, setCopyDialogOpen] = useState(false);
+  const [contestToCopy, setContestToCopy] = useState<any>(null);
+  const [isCopying, setIsCopying] = useState(false);
+
+  
+
+  // Status change confirmation dialog state
+  const [statusConfirmOpen, setStatusConfirmOpen] = useState(false);
+  const [statusTargetContest, setStatusTargetContest] = useState<any>(null);
+  const [pendingStatus, setPendingStatus] = useState<
+    "Canceled" | "Completed" | null
+  >(null);
+  const [isStatusUpdating, setIsStatusUpdating] = useState(false);
 
   // Search and filter states
   const [searchQuery, setSearchQuery] = useState("");
@@ -108,6 +135,8 @@ const ContestManagementPage = () => {
     useGetAllCategoryQuery(undefined);
   const [publishContest] = usePublishContestMutation();
   const [deleteContest] = useDeleteContestMutation();
+  const [copyContest] = useCopyContestMutation();
+  const [changeContestStatus] = useChangeContestStatusMutation();
 
   if (isLoading || isLoadingCategories) {
     return <Loading />;
@@ -138,9 +167,24 @@ const ContestManagementPage = () => {
     }
   };
 
+  const handleCopyContest = async (contestId: string) => {
+    try {
+      await copyContest({ contestId }).unwrap();
+      toast.success("Contest copied successfully");
+    } catch (error) {
+      toast.error("Failed to copy contest");
+      console.error("Copy error:", error);
+    }
+  };
+
   const handleDeleteClick = (contest: any) => {
     setContestToDelete(contest);
     setDeleteDialogOpen(true);
+  };
+
+  const handleCopyClick = (contest: any) => {
+    setContestToCopy(contest);
+    setCopyDialogOpen(true);
   };
 
   const handleConfirmDelete = async () => {
@@ -157,6 +201,49 @@ const ContestManagementPage = () => {
       console.error("Delete error:", error);
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleConfirmCopy = async () => {
+    if (!contestToCopy) return;
+    try {
+      setIsCopying(true);
+      await handleCopyContest(contestToCopy._id);
+      setCopyDialogOpen(false);
+      setContestToCopy(null);
+    } catch (error) {
+      // handleCopyContest already handles toast and logging
+    } finally {
+      setIsCopying(false);
+    }
+  };
+
+  const openStatusConfirm = (
+    contest: any,
+    status: "Canceled" | "Completed"
+  ) => {
+    setStatusTargetContest(contest);
+    setPendingStatus(status);
+    setStatusConfirmOpen(true);
+  };
+
+  const handleConfirmStatusChange = async () => {
+    if (!statusTargetContest || !pendingStatus) return;
+    try {
+      setIsStatusUpdating(true);
+      await changeContestStatus({
+        contestId: statusTargetContest._id,
+        data: { status: pendingStatus },
+      }).unwrap();
+      toast.success(`Status updated to ${pendingStatus}`);
+      setStatusConfirmOpen(false);
+      setStatusTargetContest(null);
+      setPendingStatus(null);
+    } catch (error) {
+      toast.error("Failed to update status");
+      console.error("Status change error:", error);
+    } finally {
+      setIsStatusUpdating(false);
     }
   };
 
@@ -217,6 +304,80 @@ const ContestManagementPage = () => {
             >
               {isDeleting ? "Deleting..." : "Delete Contest"}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Copy Confirmation Dialog */}
+      <Dialog open={copyDialogOpen} onOpenChange={setCopyDialogOpen}>
+        <DialogContent className="sm:max-w-md p-6 rounded-xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-[#002913]">
+              Copy Contest
+            </DialogTitle>
+            <DialogDescription className="text-gray-600">
+              are you sure to copy this contest?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-end gap-3 mt-6">
+            <Button
+              variant="outline"
+              onClick={() => setCopyDialogOpen(false)}
+              className="bg-bg border-border-color hover:bg-bg text-dark-primary"
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmCopy} disabled={isCopying}>
+              {isCopying ? "Copying..." : "Confirm"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Status Change Confirmation Dialog */}
+      <Dialog open={statusConfirmOpen} onOpenChange={setStatusConfirmOpen}>
+        <DialogContent
+          className={`sm:max-w-md p-6 rounded-xl ${
+            pendingStatus === "Canceled" ? "border-red-200" : ""
+          }`}
+        >
+          <DialogHeader>
+            <DialogTitle className={`text-xl font-semibold text-gray-900`}>
+              Confirm Action
+            </DialogTitle>
+            <DialogDescription className="text-gray-600">
+              {pendingStatus === "Completed"
+                ? "are you sure to complete this contest?"
+                : pendingStatus === "Canceled"
+                ? "are you sure to cancel this contest?"
+                : "are you sure to do this?"}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-end gap-3 mt-6">
+            <Button
+              variant="outline"
+              onClick={() => setStatusConfirmOpen(false)}
+              className="bg-bg border-border-color hover:bg-bg text-dark-primary"
+            >
+              Cancel
+            </Button>
+            {pendingStatus === "Canceled" ? (
+              <Button
+                onClick={handleConfirmStatusChange}
+                disabled={isStatusUpdating}
+                variant="destructive"
+              >
+                {isStatusUpdating ? "Updating..." : "Confirm"}
+              </Button>
+            ) : (
+              <Button
+                onClick={handleConfirmStatusChange}
+                disabled={isStatusUpdating}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                {isStatusUpdating ? "Updating..." : "Confirm"}
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -299,6 +460,7 @@ const ContestManagementPage = () => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Serial</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Status</TableHead>
@@ -311,8 +473,9 @@ const ContestManagementPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {contestsData?.map((contest: any) => (
+            {contestsData?.map((contest: any, index: number) => (
               <TableRow key={contest._id}>
+                <TableCell>{index + 1}</TableCell>
                 <TableCell>{`${contest.name?.slice(0, 40)}${
                   contest.name?.length > 40 ? "..." : ""
                 }`}</TableCell>
@@ -352,7 +515,7 @@ const ContestManagementPage = () => {
                         variant="ghost"
                         size="sm"
                         className="h-8 w-8 p-0 bg-bg text-primary cursor-pointer"
-                        title="Copy"
+                        title="View Contest Details"
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -365,7 +528,9 @@ const ContestManagementPage = () => {
                           className="h-8 w-8 p-0 bg-bg text-primary cursor-pointer"
                           title="Edit"
                         >
-                          <Edit className="h-4 w-4" />
+                          <Link href={`/dashboard/edit-contest/${contest._id}`}>
+                            <Edit className="h-4 w-4" />
+                          </Link>
                         </Button>
                         <Button
                           variant="ghost"
@@ -389,6 +554,7 @@ const ContestManagementPage = () => {
                           <Upload className="h-4 w-4" />
                         </Button>
                         <Button
+                          onClick={() => handleCopyClick(contest)}
                           variant="ghost"
                           size="sm"
                           className="h-8 w-8 p-0 bg-bg text-primary cursor-pointer"
@@ -411,6 +577,7 @@ const ContestManagementPage = () => {
                     {contest.status === "Active" && (
                       <>
                         <Button
+                          onClick={() => openStatusConfirm(contest, "Canceled")}
                           variant="ghost"
                           size="sm"
                           className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-100 bg-red-50 cursor-pointer"
@@ -419,6 +586,9 @@ const ContestManagementPage = () => {
                           <X className="h-4 w-4" />
                         </Button>
                         <Button
+                          onClick={() =>
+                            openStatusConfirm(contest, "Completed")
+                          }
                           variant="ghost"
                           size="sm"
                           className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-100 bg-bg cursor-pointer"
@@ -431,6 +601,7 @@ const ContestManagementPage = () => {
                           size="sm"
                           className="h-8 w-8 p-0 bg-bg text-primary cursor-pointer"
                           title="Copy"
+                          onClick={() => handleCopyClick(contest)}
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
@@ -444,6 +615,7 @@ const ContestManagementPage = () => {
                           size="sm"
                           className="h-8 w-8 p-0 bg-bg text-primary cursor-pointer"
                           title="Copy"
+                          onClick={() => handleCopyClick(contest)}
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
