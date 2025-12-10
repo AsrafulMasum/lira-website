@@ -8,21 +8,20 @@ import RangeSheet from "./sheets/RangeSheet";
 import ContestCountdown from "@/hooks/ContestCountdown";
 import SearchSheet from "./sheets/SearchSheet";
 import moment from "moment";
+import getProfile from "@/helpers/getProfile";
 
-const ContestDetailsLeftSection = ({
+const ContestDetailsLeftSection = async ({
   contest,
   tiers,
   customValue,
-  rule,
 }: {
   contest: any;
   tiers: any;
   customValue: string | undefined;
-  rule: string | undefined;
 }) => {
   const predictions = contest?.predictions?.generatedPredictions;
-  console.log("Hukka hua rules", rule);
-
+  const profile = await getProfile()
+console.log(profile)
   return (
     <div className="col-span-2">
       <div className="sticky top-[100px]">
@@ -81,12 +80,14 @@ const ContestDetailsLeftSection = ({
                     Range
                   </button>
                 </SheetTrigger>
-                <RangeSheet
+                
+                  <RangeSheet
                   minValue={contest?.minValue}
                   maxValue={contest?.maxValue}
                   predictions={predictions}
                   contestId={contest?._id}
                 />
+                
               </Sheet>
 
               <Dialog>
@@ -111,10 +112,10 @@ const ContestDetailsLeftSection = ({
           />
         </div>
 
-        {rule && (
+        {contest?.rule && (
           <div
             className="text-gray-text font-semibold text-sm mt-4 text-center"
-            dangerouslySetInnerHTML={{ __html: rule }}
+            dangerouslySetInnerHTML={{ __html: contest?.rule }}
           ></div>
         )}
       </div>

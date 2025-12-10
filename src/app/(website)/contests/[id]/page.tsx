@@ -105,7 +105,6 @@ const page = async ({ params, searchParams }: PageProps) => {
             contest={data}
             tiers={tiers}
             customValue={customValue}
-            rule={rule}
           />
 
           {/* right */}
