@@ -147,9 +147,9 @@ export function SelectPredictions({
   const activeTier: TierItem | undefined = tiersArr?.find(
     (tier) => tier._id === activeRange
   );
-
   const [apiResult, setApiResult] = useState<SelectableItem[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  console.log(apiResult);
 
   // Fetch data on mount or when contestId/activeRange changes
   useEffect(() => {

@@ -8,20 +8,20 @@ import RangeSheet from "./sheets/RangeSheet";
 import ContestCountdown from "@/hooks/ContestCountdown";
 import SearchSheet from "./sheets/SearchSheet";
 import moment from "moment";
+import getProfile from "@/helpers/getProfile";
 
-const ContestDetailsLeftSection = ({
+const ContestDetailsLeftSection = async ({
   contest,
   tiers,
   customValue,
-  rules,
 }: {
   contest: any;
   tiers: any;
   customValue: string | undefined;
-  rules: string | undefined;
 }) => {
   const predictions = contest?.predictions?.generatedPredictions;
-
+  const profile = await getProfile()
+console.log(contest)
   return (
     <div className="col-span-2">
       <div className="sticky top-[100px]">
@@ -80,12 +80,14 @@ const ContestDetailsLeftSection = ({
                     Range
                   </button>
                 </SheetTrigger>
-                <RangeSheet
+                
+                  <RangeSheet
                   minValue={contest?.minValue}
                   maxValue={contest?.maxValue}
                   predictions={predictions}
                   contestId={contest?._id}
                 />
+                
               </Sheet>
 
               <Dialog>
