@@ -110,10 +110,10 @@ const ContestDetailsLeftSection = ({
           />
         </div>
 
-        {rules && (
+        {contest?.rule && (
           <div
             className="text-gray-text font-semibold text-sm mt-4 text-center"
-            dangerouslySetInnerHTML={{ __html: rules }}
+            dangerouslySetInnerHTML={{ __html: contest?.rule }}
           ></div>
         )}
       </div>

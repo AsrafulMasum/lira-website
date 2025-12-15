@@ -244,14 +244,25 @@ export function SelectPredictions({
         : [];
 
       // Helper function to update the URL & wait for completion
-      const updateURL = async (list: string[]) => {
+      // const updateURL = async (list: string[]) => {
+      //   const params = new URLSearchParams({
+      //     ...Object.fromEntries(searchParams),
+      //     items: list.join(","),
+      //   });
+
+      //   // Wait for router.replace to finish before allowing next click
+      //   router.replace(`?${params.toString()}`, { scroll: false });
+      // };
+
+      const updateURL = (list: string[]) => {
         const params = new URLSearchParams({
           ...Object.fromEntries(searchParams),
           items: list.join(","),
         });
 
-        // Wait for router.replace to finish before allowing next click
-        router.replace(`?${params.toString()}`, { scroll: false });
+        const newUrl = `?${params.toString()}`;
+
+        window.history.replaceState(null, "", newUrl);
       };
 
       // If item is already selected, remove it
@@ -285,11 +296,11 @@ export function SelectPredictions({
       setIsProcessing(false);
 
       // Keep buttons disabled for 1500ms
-      setDisableButtons(true);
+      // setDisableButtons(true);
 
-      setTimeout(() => {
-        setDisableButtons(false);
-      }, 1500);
+      // setDisableButtons(false);
+      // setTimeout(() => {
+      // }, 500);
     }
   };
 
