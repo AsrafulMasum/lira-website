@@ -74,7 +74,11 @@ const SearchSheet = ({ contestId, tiers }: SearchSheetProps) => {
   }, [searchValue, items, apiResult]);
 
   useEffect(() => {
-    const parsedItems = selected.split(",").map((item) => item.trim());
+    const parsedItems = selected
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item !== "");
+
     setItems(parsedItems);
   }, [selected]);
 
