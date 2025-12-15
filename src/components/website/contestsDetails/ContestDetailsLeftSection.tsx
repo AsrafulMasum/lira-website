@@ -20,8 +20,8 @@ const ContestDetailsLeftSection = async ({
   customValue: string | undefined;
 }) => {
   const predictions = contest?.predictions?.generatedPredictions;
-  const profile = await getProfile()
-console.log(contest)
+//   const profile = await getProfile()
+// console.log(profile)
   return (
     <div className="col-span-2">
       <div className="sticky top-[100px]">
