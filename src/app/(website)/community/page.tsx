@@ -21,8 +21,7 @@ const page = async ({ searchParams }: { searchParams: any }) => {
       tags: ["posts"],
     }
   );
-  const posts = data;
-
+  const posts = data?.filter((post: any) => post.status === "approved") || [];
   const { data: voted } = await apiRequest(
     `/community/voted-posts?${queryParams.toString()}`,
     {
