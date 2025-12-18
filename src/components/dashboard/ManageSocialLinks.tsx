@@ -51,7 +51,6 @@ const ManageSocialLinks = () => {
     useAddSettingsMutation();
 
   const socialLinks = getSettings?.data;
-  console.log(socialLinks);
 
   // Initialize form data with API data when available
   useEffect(() => {

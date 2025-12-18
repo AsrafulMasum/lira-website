@@ -116,7 +116,7 @@ const SearchSheet = ({ contestId, tiers }: SearchSheetProps) => {
 
   const handlePayment = () => {
     toast.info("Items added to your list.");
-    console.log(items);
+    // console.log(items);
 
     const itemString = items.join(",");
     updateSearchParams({ items: itemString });

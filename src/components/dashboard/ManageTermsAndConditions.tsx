@@ -82,7 +82,6 @@ const ManageTermsAndConditions = () => {
   }
 
   const termsAndConditions = getSettingsData?.data || "";
-  console.log(termsAndConditions);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);

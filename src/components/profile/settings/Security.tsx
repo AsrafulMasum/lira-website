@@ -92,7 +92,6 @@ const Security = () => {
       method: "PATCH",
       body: formData,
     });
-    console.log(res);
     toast.dismiss();
 
     if (res?.success) {

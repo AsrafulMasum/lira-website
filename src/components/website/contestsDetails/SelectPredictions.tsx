@@ -148,7 +148,6 @@ export function SelectPredictions({
   );
   const [apiResult, setApiResult] = useState<SelectableItem[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  console.log(apiResult);
 
   // Fetch data on mount or when contestId/activeRange changes
   useEffect(() => {
@@ -212,7 +211,7 @@ export function SelectPredictions({
       newMap.set(activeRange, new Set());
       setSelectedItems(newMap);
     }
-  }, [selected, apiResult, activeRange, selectedItems]);
+  }, [selected, apiResult, activeRange]);
 
   const toggleItem = async (item: {
     _id: string;

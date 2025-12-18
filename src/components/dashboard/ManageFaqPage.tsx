@@ -70,7 +70,6 @@ const ManageFaqPage = () => {
   }
 
   const allFaq = faqsData?.data || [];
-  console.log(allFaq);
 
   // Handle form input changes
   const handleInputChange = (field: string, value: string) => {
