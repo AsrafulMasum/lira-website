@@ -52,8 +52,6 @@ export default function AnalyticsPage() {
   const loyaltyMetrics = allAnalyticsData?.loyaltyMetrics;
   const geographicDistribution = allAnalyticsData?.geographicDistribution;
 
-  console.log(allAnalyticsData);
-
   const handleDownloadExcel = () => {
     if (!allAnalyticsData) return;
 

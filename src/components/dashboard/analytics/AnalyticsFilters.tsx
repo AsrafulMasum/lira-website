@@ -47,7 +47,6 @@ export default function AnalyticsFilters({
   }
 
   const categories = getAllCategories?.data || [];
-  console.log(categories);
 
   return (
     <Card>

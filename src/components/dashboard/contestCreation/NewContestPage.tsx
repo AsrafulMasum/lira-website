@@ -242,12 +242,12 @@ const NewContestPage = () => {
   const handleNext = async () => {
     if (isCurrentStepValid()) {
       // Log current contest data to console
-      console.log("New Contest Data:", {
-        currentStep,
-        contestData,
-        completedSteps: [...completedSteps, currentStep],
-        isLastStep,
-      });
+      // console.log("New Contest Data:", {
+      //   currentStep,
+      //   contestData,
+      //   completedSteps: [...completedSteps, currentStep],
+      //   isLastStep,
+      // });
 
       if (isLastStep) {
         try {

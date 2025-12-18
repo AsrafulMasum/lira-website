@@ -82,7 +82,6 @@ const ManagePrivacy = () => {
   }
 
   const privacyPolicy = getSettingsData?.data || "";
-  console.log(privacyPolicy);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);

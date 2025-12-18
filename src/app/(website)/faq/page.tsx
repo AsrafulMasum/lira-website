@@ -12,7 +12,7 @@ const page = async () => {
   const { data } = await apiRequest("/faqs", {
     method: "GET",
   });
-  console.log(data);
+
   return (
     <section className="bg-bg min-h-[calc(100vh-64px)] py-10">
       <ContainerLayout>

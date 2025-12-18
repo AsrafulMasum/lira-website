@@ -58,7 +58,6 @@ const GetHelpMainPage = () => {
     total: 0,
     totalPage: 1,
   };
-  console.log(helpMessages);
 
   const handleViewMessage = (message: any) => {
     setSelectedMessage(message);

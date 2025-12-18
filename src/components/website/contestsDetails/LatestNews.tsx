@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const LatestNews = ({ liveNews }: any) => {
   const slicedNews = liveNews?.slice(0, 3) || [];
-  console.log(slicedNews[0]?.title, "liveNews");
+  // console.log(slicedNews[0]?.title, "liveNews");
   // interface NewsItem {
   //   url?: string;
   //   banner_image?: string;

@@ -81,7 +81,6 @@ const ManageContestRules = () => {
   }
 
   const contestRules = getSettingsData?.data || "";
-  console.log(contestRules);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);

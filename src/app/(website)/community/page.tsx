@@ -8,7 +8,7 @@ const page = async ({ searchParams }: { searchParams: any }) => {
   const query = resolvedSearchParams?.q || "";
 
   const queryParams = new URLSearchParams();
-  console.log(sort);
+
   if (query) queryParams.append("searchTerm", query);
   if (sort === "New") queryParams.append("sort", "createdAt");
   if (sort === "Most Popular") queryParams.append("sort", "-upvote");
