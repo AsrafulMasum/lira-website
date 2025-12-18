@@ -137,7 +137,6 @@ export function SelectPredictions({
     new Map()
   );
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [disableButtons, setDisableButtons] = useState<boolean>(false);
 
   const selected: string = searchParams.get("items") || "";
   const activeRange: string =
@@ -213,7 +212,7 @@ export function SelectPredictions({
       newMap.set(activeRange, new Set());
       setSelectedItems(newMap);
     }
-  }, [selected, apiResult, activeRange]);
+  }, [selected, apiResult, activeRange, selectedItems]);
 
   const toggleItem = async (item: {
     _id: string;
@@ -242,17 +241,6 @@ export function SelectPredictions({
       const selectedList = selected
         ? selected.split(",").map((v) => v.trim())
         : [];
-
-      // Helper function to update the URL & wait for completion
-      // const updateURL = async (list: string[]) => {
-      //   const params = new URLSearchParams({
-      //     ...Object.fromEntries(searchParams),
-      //     items: list.join(","),
-      //   });
-
-      //   // Wait for router.replace to finish before allowing next click
-      //   router.replace(`?${params.toString()}`, { scroll: false });
-      // };
 
       const updateURL = (list: string[]) => {
         const params = new URLSearchParams({
@@ -294,13 +282,6 @@ export function SelectPredictions({
     } finally {
       // Unlock processing state
       setIsProcessing(false);
-
-      // Keep buttons disabled for 1500ms
-      // setDisableButtons(true);
-
-      // setDisableButtons(false);
-      // setTimeout(() => {
-      // }, 500);
     }
   };
 
@@ -435,10 +416,10 @@ export function SelectPredictions({
                   <button
                     key={item._id}
                     onClick={() => isAvailable && toggleItem(item)}
-                    disabled={!isAvailable || isProcessing || disableButtons}
+                    disabled={!isAvailable || isProcessing}
                     className={cn(
                       "relative h-12 transition-all duration-200 font-medium text-sm flex items-center justify-center cursor-pointer",
-                      isProcessing || disableButtons
+                      isProcessing
                         ? "opacity-50 cursor-not-allowed"
                         : "",
                       isSelected && isAvailable

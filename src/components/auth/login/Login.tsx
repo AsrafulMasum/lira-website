@@ -74,10 +74,6 @@ const Login = () => {
   };
 
   const handleGoogle = async () => {
-    // redirect to google auth page
-    const params = new URLSearchParams({
-      from: "register",
-    });
     router.push(`https://www.api.liramarkets.com/api/v1/auth/google`);
   };
 

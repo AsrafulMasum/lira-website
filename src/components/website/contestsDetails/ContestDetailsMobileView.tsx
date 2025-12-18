@@ -17,7 +17,6 @@ const ContestDetailsMobileView = ({
   contest,
   tiers,
   livePrice,
-  rules,
   liveNews,
 }: any) => {
   const predictions = contest?.predictions?.generatedPredictions;
@@ -34,7 +33,7 @@ const ContestDetailsMobileView = ({
       <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 text-gray mt-3">
         <p className="flex items-center gap-2">
           <Clock size={16} /> Ends In:{" "}
-          <ContestCountdown endDate={contest?.endTime} isMarketPlace={true} />
+          <ContestCountdown endDate={contest?.endTime} isMarketPlace={true} /> 
         </p>
         <p className="flex items-center gap-2">
           <Users size={16} />
